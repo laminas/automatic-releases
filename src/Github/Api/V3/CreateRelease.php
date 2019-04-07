@@ -16,7 +16,7 @@ use function Safe\json_encode;
 
 final class CreateRelease
 {
-    private const ENDPOINT = 'https://api.github.com/';
+    private const API_ROOT = 'https://api.github.com/';
 
     /** @var RequestFactoryInterface */
     private $messageFactory;
@@ -51,7 +51,7 @@ final class CreateRelease
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::ENDPOINT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/releases'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/releases'
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

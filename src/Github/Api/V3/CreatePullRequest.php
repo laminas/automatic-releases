@@ -14,7 +14,7 @@ use function Safe\json_encode;
 
 final class CreatePullRequest
 {
-    private const ENDPOINT = 'https://api.github.com/';
+    private const API_ROOT = 'https://api.github.com/';
 
     /** @var RequestFactoryInterface */
     private $messageFactory;
@@ -51,7 +51,7 @@ final class CreatePullRequest
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::ENDPOINT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls'
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')
