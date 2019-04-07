@@ -11,7 +11,7 @@ final class AuthorTest extends TestCase
 {
     public function test() : void
     {
-        $author = Author::make([
+        $author = Author::fromPayload([
             'login' => 'Magoo',
             'url'   => 'http://example.com/',
         ]);

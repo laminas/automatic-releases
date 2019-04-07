@@ -12,7 +12,7 @@ final class MilestoneTest extends TestCase
 {
     public function test() : void
     {
-        $milestone = Milestone::make([
+        $milestone = Milestone::fromPayload([
             'number'       => 123,
             'closed'       => true,
             'title'        => 'The title',
@@ -57,7 +57,7 @@ final class MilestoneTest extends TestCase
 
         self::assertEquals(
             [
-                IssueOrPullRequest::make([
+                IssueOrPullRequest::fromPayload([
                     'number' => 456,
                     'title'  => 'Issue',
                     'author' => [
@@ -70,7 +70,7 @@ final class MilestoneTest extends TestCase
                         'nodes' => [],
                     ],
                 ]),
-                IssueOrPullRequest::make([
+                IssueOrPullRequest::fromPayload([
                     'number' => 789,
                     'title'  => 'PR',
                     'author' => [

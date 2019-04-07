@@ -11,7 +11,7 @@ final class LabelTest extends TestCase
 {
     public function test() : void
     {
-        $label = Label::make([
+        $label = Label::fromPayload([
             'name'  => 'BC Break',
             'color' => 'abcabc',
             'url'   => 'http://example.com/',

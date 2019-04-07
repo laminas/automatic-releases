@@ -37,7 +37,7 @@ final class Milestone
     }
 
     /** @param array<string, mixed> $payload */
-    public static function make(array $payload) : self
+    public static function fromPayload(array $payload) : self
     {
         Assert::that($payload)
               ->keyExists('number')
@@ -90,8 +90,8 @@ final class Milestone
         $instance->url         = new Uri($payload['url']);
 
         $instance->entries = array_merge(
-            array_values(array_map([IssueOrPullRequest::class, 'make'], $payload['issues']['nodes'])),
-            array_values(array_map([IssueOrPullRequest::class, 'make'], $payload['pullRequests']['nodes']))
+            array_values(array_map([IssueOrPullRequest::class, 'fromPayload'], $payload['issues']['nodes'])),
+            array_values(array_map([IssueOrPullRequest::class, 'fromPayload'], $payload['pullRequests']['nodes']))
         );
 
         return $instance;

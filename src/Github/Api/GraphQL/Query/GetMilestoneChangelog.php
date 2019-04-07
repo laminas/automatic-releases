@@ -76,7 +76,7 @@ GRAPHQL;
         RepositoryName $repositoryName,
         int $milestoneNumber
     ) : Milestone {
-        return Milestone::make($this->runQuery->__invoke(
+        return Milestone::fromPayload($this->runQuery->__invoke(
             self::QUERY,
             [
                 'repositoryName'  => $repositoryName->name(),

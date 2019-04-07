@@ -24,7 +24,7 @@ final class Label
     }
 
     /** @param array<string, mixed> $payload */
-    public static function make(array $payload) : self
+    public static function fromPayload(array $payload) : self
     {
         Assert::that($payload)
               ->keyExists('color')

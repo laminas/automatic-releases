@@ -35,7 +35,7 @@ final class IssueOrPullRequest
     }
 
     /** @param array<string, mixed> $payload */
-    public static function make(array $payload) : self
+    public static function fromPayload(array $payload) : self
     {
         Assert::that($payload)
               ->keyExists('number')
@@ -74,8 +74,8 @@ final class IssueOrPullRequest
 
         $instance->number = $payload['number'];
         $instance->title  = $payload['title'];
-        $instance->author = Author::make($payload['author']);
-        $instance->labels = array_values(array_map([Label::class, 'make'], $payload['labels']['nodes']));
+        $instance->author = Author::fromPayload($payload['author']);
+        $instance->labels = array_values(array_map([Label::class, 'fromPayload'], $payload['labels']['nodes']));
         $instance->url    = new Uri($payload['url']);
         $instance->closed = isset($payload['merged'])
             ? (bool) $payload['merged'] || $payload['closed']

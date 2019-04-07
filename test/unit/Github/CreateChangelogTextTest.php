@@ -26,7 +26,7 @@ Closed issues:
 RELEASE
             ,
             (new CreateChangelogText())
-                ->__invoke(Milestone::make([
+                ->__invoke(Milestone::fromPayload([
                     'number'       => 123,
                     'closed'       => true,
                     'title'        => 'The title',

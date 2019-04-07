@@ -13,7 +13,7 @@ final class IssueOrPullRequestTest extends TestCase
 {
     public function testIssue() : void
     {
-        $issue = IssueOrPullRequest::make([
+        $issue = IssueOrPullRequest::fromPayload([
             'number' => 123,
             'title'  => 'Yadda',
             'author' => [
@@ -43,7 +43,7 @@ final class IssueOrPullRequestTest extends TestCase
         self::assertSame('http://example.com/issue', $issue->url()->__toString());
         self::assertSame('Yadda', $issue->title());
         self::assertEquals(
-            Author::make([
+            Author::fromPayload([
                 'login' => 'Magoo',
                 'url'   => 'http://example.com/author',
             ]),
@@ -51,12 +51,12 @@ final class IssueOrPullRequestTest extends TestCase
         );
         self::assertEquals(
             [
-                Label::make([
+                Label::fromPayload([
                     'name'  => 'BC Break',
                     'color' => 'abcabc',
                     'url'   => 'http://example.com/bc-break',
                 ]),
-                Label::make([
+                Label::fromPayload([
                     'name'  => 'Question',
                     'color' => 'defdef',
                     'url'   => 'http://example.com/question',
@@ -68,7 +68,7 @@ final class IssueOrPullRequestTest extends TestCase
 
     public function testPullRequest() : void
     {
-        $issue = IssueOrPullRequest::make([
+        $issue = IssueOrPullRequest::fromPayload([
             'number' => 123,
             'title'  => 'Yadda',
             'author' => [
@@ -99,7 +99,7 @@ final class IssueOrPullRequestTest extends TestCase
         self::assertSame('http://example.com/issue', $issue->url()->__toString());
         self::assertSame('Yadda', $issue->title());
         self::assertEquals(
-            Author::make([
+            Author::fromPayload([
                 'login' => 'Magoo',
                 'url'   => 'http://example.com/author',
             ]),
@@ -107,12 +107,12 @@ final class IssueOrPullRequestTest extends TestCase
         );
         self::assertEquals(
             [
-                Label::make([
+                Label::fromPayload([
                     'name'  => 'BC Break',
                     'color' => 'abcabc',
                     'url'   => 'http://example.com/bc-break',
                 ]),
-                Label::make([
+                Label::fromPayload([
                     'name'  => 'Question',
                     'color' => 'defdef',
                     'url'   => 'http://example.com/question',
