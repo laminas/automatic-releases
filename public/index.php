@@ -20,20 +20,31 @@ use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 use UnexpectedValueException;
 use Zend\Diactoros\ServerRequestFactory;
-use function escapeshellarg;
-use function exec;
-use function implode;
-use function Safe\chdir;
-use function Safe\file_put_contents;
-use function Safe\getcwd;
-use function Safe\sprintf;
-use function set_error_handler;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
 use const PHP_EOL;
+use function array_map;
+use function assert;
+use function escapeshellarg;
+use function exec;
+use function implode;
+use function is_array;
+use function is_string;
+use function Safe\chdir;
+use function Safe\file_put_contents;
+use function Safe\getcwd;
+use function Safe\preg_match;
+use function Safe\preg_replace;
+use function Safe\sprintf;
+use function Safe\tempnam;
+use function set_error_handler;
+use function sys_get_temp_dir;
+use function trim;
+use function uniqid;
 
 (static function () : void {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -97,27 +108,35 @@ use const PHP_EOL;
         return $runInPath(static function () use ($execute) {
             $execute('git fetch');
 
-            return MergeTargetCandidateBranches::fromAllBranches(...array_map(function (string $branch) : BranchName {
-                return BranchName::fromName(\Safe\preg_replace(
+            return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch) : BranchName {
+                $sanitizedBranch = preg_replace(
                     '/^(?:remotes\\/)?origin\\//',
                     '',
                     trim($branch, "* \t\n\r\0\x0B")
-                ));
+                );
+
+                assert(is_string($sanitizedBranch));
+
+                return BranchName::fromName($sanitizedBranch);
             }, $execute('git branch -r')));
         }, $repositoryDirectory);
     };
 
     $createTag = static function (
-        string $repositoryDirectory, BranchName $sourceBranch, string $tagName, string $changelog, SecretKeyId $keyId
+        string $repositoryDirectory,
+        BranchName $sourceBranch,
+        string $tagName,
+        string $changelog,
+        SecretKeyId $keyId
     ) use (
         $runInPath,
         $execute
     ) : void {
-        $tagFileName = \Safe\tempnam(sys_get_temp_dir(), 'created_tag');
+        $tagFileName = tempnam(sys_get_temp_dir(), 'created_tag');
 
         file_put_contents($tagFileName, $changelog);
 
-        $runInPath(static function () use ($sourceBranch, $tagName, $keyId, $tagFileName, $execute) {
+        $runInPath(static function () use ($sourceBranch, $tagName, $keyId, $tagFileName, $execute) : void {
             $execute(sprintf('git checkout "%s"', $sourceBranch->name()));
             $execute(sprintf(
                 'git tag %s -F %s --cleanup=verbatim --local-user=%s',
@@ -128,11 +147,15 @@ use const PHP_EOL;
         }, $repositoryDirectory);
     };
 
-    $push = static function (string $repositoryDirectory, string $symbol, ?string $alias = null) use (
+    $push = static function (
+        string $repositoryDirectory,
+        string $symbol,
+        ?string $alias = null
+    ) use (
         $runInPath,
         $execute
     ) : void {
-        $runInPath(static function () use ($symbol, $alias, $execute) {
+        $runInPath(static function () use ($symbol, $alias, $execute) : void {
             $execute(sprintf(
                 'git push origin %s',
                 $alias !== null ? escapeshellarg($symbol) . ':' . escapeshellarg($alias) : escapeshellarg($symbol)
@@ -141,7 +164,7 @@ use const PHP_EOL;
     };
 
     $importGpgKey = static function (string $keyContents) use ($execute) : SecretKeyId {
-        $keyFileName = \Safe\tempnam(sys_get_temp_dir(), 'imported-key');
+        $keyFileName = tempnam(sys_get_temp_dir(), 'imported-key');
 
         file_put_contents($keyFileName, $keyContents);
 
@@ -153,7 +176,9 @@ use const PHP_EOL;
         Assert::that($output[0])
               ->regex('/key\\s+([A-F0-9]+):\s+/i');
 
-        \Safe\preg_match('/key\\s+([A-F0-9]+):\s+/i', $output[0], $matches);
+        preg_match('/key\\s+([A-F0-9]+):\s+/i', $output[0], $matches);
+
+        assert(is_array($matches));
 
         return SecretKeyId::fromBase16String($matches[1]);
     };
@@ -206,8 +231,12 @@ use const PHP_EOL;
 
     $releaseBranch = $candidates->targetBranchFor($milestone->version());
 
-    Assert::that($releaseBranch)
-          ->notNull();
+    if ($releaseBranch === null) {
+        throw new RuntimeException(sprintf(
+            'No valid release branch found for version %s',
+            $milestone->version()->fullReleaseName()
+        ));
+    }
 
     $changelog = (new CreateChangelogText())->__invoke($milestoneChangelog);
 
@@ -226,7 +255,7 @@ use const PHP_EOL;
         $releaseBranch->name()
         . '-merge-up-into-'
         . $mergeUpTarget->name()
-        . \uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
+        . uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
     );
 
     $push($releasedRepositoryLocalPath, $tagName);
