@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Roave\SecurityAdvisories;
+namespace Doctrine\AutomaticReleases\WebApplication;
 
 use Assert\Assert;
 use Doctrine\AutomaticReleases\Environment\Variables;
