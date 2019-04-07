@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "43fdb0824cc7b5539b215c51dec503f7",
+    "content-hash": "47b50bf0289d3f0544bd00501fe36265",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3387,6 +3387,50 @@
                 "psr-3"
             ],
             "time": "2018-11-20T15:27:04+00:00"
+        },
+        {
+            "name": "roave/no-leaks",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Roave/no-leaks.git",
+                "reference": "4f26a4d30afbd32a65f4089cb20279f76bb58220"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Roave/no-leaks/zipball/4f26a4d30afbd32a65f4089cb20279f76bb58220",
+                "reference": "4f26a4d30afbd32a65f4089cb20279f76bb58220",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.3",
+                "phpunit/phpunit": "^8.0.4"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0.0",
+                "infection/infection": "^0.12.2",
+                "phpstan/phpstan": "^0.11.4",
+                "phpstan/phpstan-phpunit": "^0.11.0",
+                "phpstan/phpstan-strict-rules": "^0.11.0",
+                "psalm/plugin-phpunit": "^0.5.3",
+                "squizlabs/php_codesniffer": "^3.4.1",
+                "vimeo/psalm": "^3.2.2"
+            },
+            "bin": [
+                "bin/roave-no-leaks"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Roave\\NoLeaks\\PHPUnit\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2019-03-22T13:30:10+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
