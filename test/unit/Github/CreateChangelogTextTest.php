@@ -21,7 +21,7 @@ The description
 Closed issues:
 
  *  [Issue](http://example.com/issue) thanks to [Magoo](http://example.com/author)
- *  [PR](http://example.com/issue) thanks to [Magoo](http://example.com/author)
+ * \[A label\] [PR](http://example.com/issue) thanks to [Magoo](http://example.com/author)
 
 RELEASE
             ,
@@ -61,7 +61,13 @@ RELEASE
                                 'merged' => true,
                                 'closed' => false,
                                 'labels' => [
-                                    'nodes' => [],
+                                    'nodes' => [
+                                        [
+                                            'color' => 'aabbcc',
+                                            'name'  => 'A label',
+                                            'url'   => 'http://example.com/a-label',
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
