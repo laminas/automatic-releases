@@ -21,22 +21,16 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
-use UnexpectedValueException;
+use Symfony\Component\Process\Process;
 use Zend\Diactoros\ServerRequestFactory;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
-use const PHP_EOL;
 use function array_map;
 use function assert;
-use function escapeshellarg;
-use function exec;
-use function implode;
+use function explode;
 use function is_array;
-use function is_string;
-use function Safe\chdir;
 use function Safe\file_put_contents;
-use function Safe\getcwd;
 use function Safe\preg_match;
 use function Safe\preg_replace;
 use function Safe\sprintf;
@@ -58,68 +52,40 @@ use function uniqid;
 
     $buildDir = __DIR__ . '/../build';
 
-    $runInPath = static function (callable $function, string $path) {
-        $originalPath = getcwd();
+    $cleanBuildDir = static function () use ($buildDir) : void {
+        (new Process(['rm', '-rf', $buildDir]))
+            ->mustRun();
 
-        chdir($path);
-
-        try {
-            $returnValue = $function();
-        } finally {
-            chdir($originalPath);
-        }
-
-        return $returnValue;
+        (new Process(['mkdir', $buildDir]))
+            ->mustRun();
     };
 
-    $execute = static function (string $commandString) : array {
-        // may the gods forgive me for this in-lined command addendum, but I CBA to
-        // fix proc_open's handling of exit codes.
-        exec($commandString . ' 2>&1', $output, $result);
-
-        if ($result !== 0) {
-            throw new UnexpectedValueException(sprintf(
-                'Command failed: "%s" "%s"',
-                $commandString,
-                implode(PHP_EOL, $output)
-            ));
-        }
-
-        return $output;
+    $cloneRepository = static function (UriInterface $repositoryUri, string $targetPath) : void {
+        (new Process(['git', 'clone', $repositoryUri->__toString(), $targetPath]))
+            ->mustRun();
     };
 
-    $cleanBuildDir = static function () use ($buildDir, $execute) : void {
-        $execute('rm -rf ' . escapeshellarg($buildDir));
-        $execute('mkdir ' . escapeshellarg($buildDir));
-    };
+    $getBranches = static function (string $repositoryDirectory) : MergeTargetCandidateBranches {
+        (new Process(['git', 'fetch'], $repositoryDirectory))
+            ->mustRun();
 
-    $cloneRepository = static function (UriInterface $repositoryUri, string $targetPath) use ($execute) : void {
-        $execute(
-            'git clone '
-            . escapeshellarg($repositoryUri->__toString())
-            . ' ' . escapeshellarg($targetPath)
+        $branches = explode(
+            "\n",
+            (new Process(['git', 'branch', '-r'], $repositoryDirectory))
+                ->mustRun()
+                ->getOutput()
         );
-    };
 
-    $getBranches = static function (string $repositoryDirectory) use (
-        $runInPath,
-        $execute
-    ) : MergeTargetCandidateBranches {
-        return $runInPath(static function () use ($execute) {
-            $execute('git fetch');
+        return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch) : BranchName {
+            /** @var string $sanitizedBranch */
+            $sanitizedBranch = preg_replace(
+                '/^(?:remotes\\/)?origin\\//',
+                '',
+                trim($branch, "* \t\n\r\0\x0B")
+            );
 
-            return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch) : BranchName {
-                $sanitizedBranch = preg_replace(
-                    '/^(?:remotes\\/)?origin\\//',
-                    '',
-                    trim($branch, "* \t\n\r\0\x0B")
-                );
-
-                assert(is_string($sanitizedBranch));
-
-                return BranchName::fromName($sanitizedBranch);
-            }, $execute('git branch -r')));
-        }, $repositoryDirectory);
+            return BranchName::fromName($sanitizedBranch);
+        }, $branches));
     };
 
     $createTag = static function (
@@ -128,55 +94,45 @@ use function uniqid;
         string $tagName,
         string $changelog,
         SecretKeyId $keyId
-    ) use (
-        $runInPath,
-        $execute
     ) : void {
         $tagFileName = tempnam(sys_get_temp_dir(), 'created_tag');
 
         file_put_contents($tagFileName, $changelog);
 
-        $runInPath(static function () use ($sourceBranch, $tagName, $keyId, $tagFileName, $execute) : void {
-            $execute(sprintf('git checkout "%s"', $sourceBranch->name()));
-            $execute(sprintf(
-                'git tag %s -F %s --cleanup=verbatim --local-user=%s',
-                escapeshellarg($tagName),
-                escapeshellarg($tagFileName),
-                escapeshellarg($keyId->id())
-            ));
-        }, $repositoryDirectory);
+        (new Process(['git', 'checkout', $sourceBranch->name()], $repositoryDirectory))
+            ->mustRun();
+
+        (new Process(
+            ['git', 'tag', $tagName, '-F', $tagFileName, '--cleanup=verbatim', '--local-user=' . $keyId->id()],
+            $repositoryDirectory
+        ))
+            ->mustRun();
     };
 
     $push = static function (
         string $repositoryDirectory,
         string $symbol,
         ?string $alias = null
-    ) use (
-        $runInPath,
-        $execute
     ) : void {
-        $runInPath(static function () use ($symbol, $alias, $execute) : void {
-            $execute(sprintf(
-                'git push origin %s',
-                $alias !== null ? escapeshellarg($symbol) . ':' . escapeshellarg($alias) : escapeshellarg($symbol)
-            ));
-        }, $repositoryDirectory);
+        $pushedRef = $alias !== null ? $symbol . ':' . $alias : $symbol;
+
+        (new Process(['git', 'push', 'origin', $pushedRef], $repositoryDirectory))
+            ->mustRun();
     };
 
-    $importGpgKey = static function (string $keyContents) use ($execute) : SecretKeyId {
+    $importGpgKey = static function (string $keyContents) : SecretKeyId {
         $keyFileName = tempnam(sys_get_temp_dir(), 'imported-key');
 
         file_put_contents($keyFileName, $keyContents);
 
-        $output = $execute(sprintf('gpg --import %s 2>&1 | grep "secret key imported"', escapeshellarg($keyFileName)));
+        $output = (new Process(['gpg', '--import', $keyFileName]))
+            ->mustRun()
+            ->getErrorOutput();
 
         Assert::that($output)
-              ->keyExists(0);
+              ->regex('/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im');
 
-        Assert::that($output[0])
-              ->regex('/key\\s+([A-F0-9]+):\s+/i');
-
-        preg_match('/key\\s+([A-F0-9]+):\s+/i', $output[0], $matches);
+        preg_match('/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im', $output, $matches);
 
         assert(is_array($matches));
 
