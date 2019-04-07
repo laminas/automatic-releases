@@ -69,12 +69,12 @@ use function uniqid;
         (new Process(['git', 'fetch'], $repositoryDirectory))
             ->mustRun();
 
-        $branches = explode(
+        $branches = array_filter(explode(
             "\n",
             (new Process(['git', 'branch', '-r'], $repositoryDirectory))
                 ->mustRun()
                 ->getOutput()
-        );
+        ));
 
         return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch) : BranchName {
             /** @var string $sanitizedBranch */
