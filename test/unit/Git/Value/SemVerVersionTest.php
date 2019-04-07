@@ -10,7 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 final class SemVerVersionTest extends TestCase
 {
-    /** @dataProvider detectableReleases */
+    /**
+     * @dataProvider detectableReleases
+     */
     public function testDetectedReleaseVersions(
         string $milestoneName,
         int $expectedMajor,
@@ -24,8 +26,11 @@ final class SemVerVersionTest extends TestCase
         self::assertSame($expectedVersionName, $version->fullReleaseName());
     }
 
-    /** @return array<int, array<int, int|string>> */
-    public static function detectableReleases() : array
+    /**
+     * @return array<int, array<int, int|string>>
+     * @psalm-return array<int, array{0: string, 1: int, 2: int, 3: string}>
+     */
+    public function detectableReleases() : array
     {
         return [
             ['1.2.3', 1, 2, '1.2.3'],
@@ -35,7 +40,9 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /** @dataProvider invalidReleases */
+    /**
+     * @dataProvider invalidReleases
+     */
     public function testRejectsInvalidReleaseStrings(string $invalid) : void
     {
         $this->expectException(AssertionFailedException::class);
@@ -44,7 +51,7 @@ final class SemVerVersionTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public static function invalidReleases() : array
+    public function invalidReleases() : array
     {
         return [
             ['1.2.3.4'],

@@ -10,7 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 final class SecretKeyIdTest extends TestCase
 {
-    /** @dataProvider invalidKeys */
+    /**
+     * @dataProvider invalidKeys
+     */
     public function testRejectsInvalidKeyIds(string $invalid) : void
     {
         $this->expectException(AssertionFailedException::class);
@@ -18,7 +20,8 @@ final class SecretKeyIdTest extends TestCase
         SecretKeyId::fromBase16String($invalid);
     }
 
-    public static function invalidKeys() : array
+    /** @return array<int, array<int, string>> */
+    public function invalidKeys() : array
     {
         return [
             [''],
@@ -29,7 +32,9 @@ final class SecretKeyIdTest extends TestCase
         ];
     }
 
-    /** @dataProvider validKeys */
+    /**
+     * @dataProvider validKeys
+     */
     public function testAcceptsValidKeyIds(string $valid) : void
     {
         self::assertSame(
@@ -39,7 +44,8 @@ final class SecretKeyIdTest extends TestCase
         );
     }
 
-    public static function validKeys() : array
+    /** @return array<int, array<int, string>> */
+    public function validKeys() : array
     {
         return [
             ['123'],

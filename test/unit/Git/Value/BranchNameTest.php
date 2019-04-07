@@ -10,7 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 final class BranchNameTest extends TestCase
 {
-    /** @dataProvider genericBranchNames */
+    /**
+     * @dataProvider genericBranchNames
+     */
     public function testAllowsAnyBranchName(string $inputName) : void
     {
         $branch = BranchName::fromName($inputName);
@@ -21,7 +23,7 @@ final class BranchNameTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public static function genericBranchNames() : array
+    public function genericBranchNames() : array
     {
         return [
             ['foo'],
@@ -50,7 +52,9 @@ final class BranchNameTest extends TestCase
         self::assertFalse($branch->isReleaseBranch());
     }
 
-    /** @dataProvider releaseBranches */
+    /**
+     * @dataProvider releaseBranches
+     */
     public function testDetectsReleaseBranchVersions(string $inputName, int $major, int $minor) : void
     {
         $branch = BranchName::fromName($inputName);
@@ -60,8 +64,11 @@ final class BranchNameTest extends TestCase
         self::assertSame([$major, $minor], $branch->majorAndMinor());
     }
 
-    /** @return array<int, array<int, int|string>> */
-    public static function releaseBranches() : array
+    /**
+     * @return array<int, array<int, int|string>>
+     * @psalm-return array<int, array{0: string, 1: int, 2: int}>
+     */
+    public function releaseBranches() : array
     {
         return [
             ['1.2', 1, 2],

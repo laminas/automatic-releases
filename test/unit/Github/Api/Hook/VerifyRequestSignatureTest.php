@@ -12,7 +12,9 @@ use Psr\Http\Message\StreamInterface;
 
 final class VerifyRequestSignatureTest extends TestCase
 {
-    /** @dataProvider validSignatures */
+    /**
+     * @dataProvider validSignatures
+     */
     public function testValidSignature(string $secret, string $body, string $signatureHeader) : void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -41,6 +43,7 @@ final class VerifyRequestSignatureTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
+    /** @return array<int, array<int, string>> */
     public function validSignatures() : array
     {
         return [
@@ -49,7 +52,9 @@ final class VerifyRequestSignatureTest extends TestCase
         ];
     }
 
-    /** @dataProvider invalidSignatures */
+    /**
+     * @dataProvider invalidSignatures
+     */
     public function testInvalidSignature(string $secret, string $body, string $signatureHeader) : void
     {
         $request = $this->createMock(RequestInterface::class);
@@ -78,6 +83,7 @@ final class VerifyRequestSignatureTest extends TestCase
         $validator->__invoke($request, $secret);
     }
 
+    /** @return array<int, array<int, string>> */
     public function invalidSignatures() : array
     {
         return [
