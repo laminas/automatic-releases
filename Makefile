@@ -3,8 +3,11 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-all: static-analysis test no-leaks mutation-test cs ## run static analysis, tests, cs
+all: composer-validate static-analysis test no-leaks mutation-test cs ## run static analysis, tests, cs
 	echo "all good"
+
+composer-validate:
+	composer validate
 
 static-analysis:
 	vendor/bin/phpstan analyse

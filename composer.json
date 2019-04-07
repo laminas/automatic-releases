@@ -1,4 +1,8 @@
 {
+    "name": "doctrine/automatic-releases",
+    "type": "project",
+    "description": "Application that eases release management in the Doctrine organisation through GitHub hooks",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Doctrine\\AutomaticReleases\\": "src"
@@ -36,6 +40,9 @@
         "vimeo/psalm": "^3.2"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "7.3.4"
+        }
     }
 }
