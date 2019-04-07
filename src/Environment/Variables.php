@@ -23,6 +23,12 @@ final class Variables
     /** @var string */
     private $githubHookSecret;
 
+    /** @var string */
+    private $gitAuthorName;
+
+    /** @var string */
+    private $gitAuthorEmail;
+
     private function __construct()
     {
     }
@@ -35,6 +41,8 @@ final class Variables
         $instance->githubToken        = self::getenv('GITHUB_TOKEN');
         $instance->signingSecretKey   = self::getenv('SIGNING_SECRET_KEY');
         $instance->githubHookSecret   = self::getenv('GITHUB_HOOK_SECRET');
+        $instance->gitAuthorName      = self::getenv('GIT_AUTHOR_NAME');
+        $instance->gitAuthorEmail     = self::getenv('GIT_AUTHOR_EMAIL');
 
         return $instance;
     }
@@ -42,13 +50,13 @@ final class Variables
     private static function getenv(string $key) : string
     {
         Assert::that($key)
-            ->notEmpty();
+              ->notEmpty();
 
         $value = getenv($key);
 
         Assert::that($value)
-            ->string()
-            ->notEmpty();
+              ->string()
+              ->notEmpty();
 
         assert(is_string($value));
 
@@ -73,5 +81,15 @@ final class Variables
     public function githubHookSecret() : string
     {
         return $this->githubHookSecret;
+    }
+
+    public function gitAuthorName() : string
+    {
+        return $this->gitAuthorName;
+    }
+
+    public function gitAuthorEmail() : string
+    {
+        return $this->gitAuthorEmail;
     }
 }
