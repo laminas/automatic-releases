@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Gpg;
+namespace Doctrine\AutomaticReleases\Test\Unit\Gpg;
 
 use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
