@@ -176,7 +176,6 @@ use const PHP_EOL;
           ->isArray()
           ->keyExists('payload');
 
-    // @TODO use input - validate input against secret key too!
     $milestone      = MilestoneClosedEvent::fromEventJson($_POST['payload']);
     $repositoryName = $milestone->repository();
 
@@ -188,14 +187,12 @@ use const PHP_EOL;
     $importedKey = $importGpgKey($environment->signingSecretKey());
 
     $cleanBuildDir();
-    // @todo probably better to scope the target path
     $cloneRepository($repository, $releasedRepositoryLocalPath);
 
     $candidates = $getBranches($releasedRepositoryLocalPath);
 
     $releaseVersion = $milestone->version();
 
-    // @TODO assert that all items are closed!
     $milestoneChangelog = (new GetMilestoneChangelog(new RunGraphQLQuery(
         Psr17FactoryDiscovery::findRequestFactory(),
         HttpClientDiscovery::find(),
