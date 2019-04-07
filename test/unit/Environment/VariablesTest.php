@@ -20,6 +20,9 @@ final class VariablesTest extends TestCase
         'GITHUB_TOKEN',
         'SIGNING_SECRET_KEY',
         'GITHUB_ORGANISATION',
+        'GITHUB_ORGANISATION',
+        'GIT_AUTHOR_NAME',
+        'GIT_AUTHOR_EMAIL',
     ];
 
     /** @var array<string, string|false> */
@@ -59,11 +62,15 @@ final class VariablesTest extends TestCase
         $signingSecretKey   = uniqid('signingSecretKey', true);
         $githubToken        = uniqid('githubToken', true);
         $githubOrganisation = uniqid('githubOrganisation', true);
+        $gitAuthorName      = uniqid('gitAuthorName', true);
+        $gitAuthorEmail     = uniqid('gitAuthorEmail', true);
 
         putenv('GITHUB_HOOK_SECRET=' . $githubHookSecret);
         putenv('GITHUB_TOKEN=' . $githubToken);
         putenv('SIGNING_SECRET_KEY=' . $signingSecretKey);
         putenv('GITHUB_ORGANISATION=' . $githubOrganisation);
+        putenv('GIT_AUTHOR_NAME=' . $gitAuthorName);
+        putenv('GIT_AUTHOR_EMAIL=' . $gitAuthorEmail);
 
         $variables = Variables::fromEnvironment();
 
@@ -71,5 +78,7 @@ final class VariablesTest extends TestCase
         self::assertSame($signingSecretKey, $variables->signingSecretKey());
         self::assertSame($githubToken, $variables->githubToken());
         self::assertSame($githubOrganisation, $variables->githubOrganisation());
+        self::assertSame($gitAuthorName, $variables->gitAuthorName());
+        self::assertSame($gitAuthorEmail, $variables->gitAuthorEmail());
     }
 }

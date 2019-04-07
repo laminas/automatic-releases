@@ -26,6 +26,7 @@ use Zend\Diactoros\ServerRequestFactory;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
+use function array_filter;
 use function array_map;
 use function assert;
 use function explode;
@@ -60,8 +61,19 @@ use function uniqid;
             ->mustRun();
     };
 
-    $cloneRepository = static function (UriInterface $repositoryUri, string $targetPath) : void {
+    $cloneRepository = static function (
+        UriInterface $repositoryUri,
+        string $targetPath,
+        string $gitAuthorName,
+        string $gitAuthorEmail
+    ) : void {
         (new Process(['git', 'clone', $repositoryUri->__toString(), $targetPath]))
+            ->mustRun();
+
+        (new Process(['git', 'config', 'user.email', $gitAuthorEmail], $targetPath))
+            ->mustRun();
+
+        (new Process(['git', 'config', 'user.name', $gitAuthorName], $targetPath))
             ->mustRun();
     };
 
@@ -172,7 +184,12 @@ use function uniqid;
     $importedKey = $importGpgKey($environment->signingSecretKey());
 
     $cleanBuildDir();
-    $cloneRepository($repository, $releasedRepositoryLocalPath);
+    $cloneRepository(
+        $repository,
+        $releasedRepositoryLocalPath,
+        $environment->gitAuthorName(),
+        $environment->gitAuthorEmail()
+    );
 
     $candidates = $getBranches($releasedRepositoryLocalPath);
 
