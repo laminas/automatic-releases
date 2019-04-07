@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
+
+use Assert\AssertionFailedException;
+use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
+use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use PHPUnit\Framework\TestCase;
+
+final class SemVerVersionTest extends TestCase
+{
+    /** @dataProvider detectableReleases */
+    public function testDetectedReleaseVersions(
+        string $milestoneName,
+        int $expectedMajor,
+        int $expectedMinor,
+        string $expectedVersionName
+    ) {
+        $version = SemVerVersion::fromMilestoneName($milestoneName);
+
+        self::assertSame($expectedMajor, $version->major());
+        self::assertSame($expectedMinor, $version->minor());
+        self::assertSame($expectedVersionName, $version->fullReleaseName());
+    }
+
+    /** @return array<int, array<int, int|string>> */
+    public static function detectableReleases() : array
+    {
+        return [
+            ['1.2.3', 1, 2, '1.2.3'],
+            ['v1.2.3', 1, 2, '1.2.3'],
+            ['v4.3.2', 4, 3, '4.3.2'],
+            ['v44.33.22', 44, 33, '44.33.22'],
+        ];
+    }
+
+    /** @dataProvider invalidReleases */
+    public function testRejectsInvalidReleaseStrings(string $invalid)
+    {
+        $this->expectException(AssertionFailedException::class);
+
+        SemVerVersion::fromMilestoneName($invalid);
+    }
+
+    /** @return array<int, array<int, string>> */
+    public static function invalidReleases() : array
+    {
+        return [
+            ['1.2.3.4'],
+            ['v1.2.3.4'],
+            ['x1.2.3'],
+            ['1.2.3 '],
+            [' 1.2.3'],
+            [''],
+            ['potato'],
+            ['1.2.'],
+            ['1.2'],
+        ];
+    }
+}
