@@ -7,6 +7,7 @@
     "require": {
         "php": "^7.3",
         "beberlei/assert": "^3.2",
+        "infection/infection": "^0.12.2",
         "php-http/curl-client": "^2.0",
         "php-http/discovery": "^1.6",
         "php-http/httplug": "^2.0",

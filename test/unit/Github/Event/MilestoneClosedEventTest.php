@@ -63,6 +63,23 @@ final class MilestoneClosedEventTest extends TestCase
         self::assertFalse(MilestoneClosedEvent::appliesToRequest($request));
     }
 
+    public function testWillNotApplyWithValidEventTypeHeaderAndNoPayload() : void
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->expects(self::any())
+            ->method('getParsedBody')
+            ->willReturn([]);
+
+        $request
+            ->expects(self::any())
+            ->method('getHeaderLine')
+            ->with('X-Github-Event')
+            ->willReturn('milestone');
+
+        self::assertFalse(MilestoneClosedEvent::appliesToRequest($request));
+    }
+
     public function testFromEventJson() : void
     {
         $json = <<<'JSON'
