@@ -26,7 +26,7 @@ final class RepositoryName
     {
         Assert::that($fullName)
             ->notEmpty()
-            ->regex('/^[a-zA-Z0-9_\\.-]+\\/[a-zA-Z0-9_\\.-]+$/');
+            ->regex('~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~');
 
         $instance = new self();
 

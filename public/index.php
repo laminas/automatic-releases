@@ -79,7 +79,7 @@ use function uniqid;
         return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch) : BranchName {
             /** @var string $sanitizedBranch */
             $sanitizedBranch = preg_replace(
-                '/^(?:remotes\\/)?origin\\//',
+                '~^(?:remotes/)?origin/~',
                 '',
                 trim($branch, "* \t\n\r\0\x0B")
             );
