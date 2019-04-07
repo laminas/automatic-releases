@@ -48,6 +48,7 @@ final class CreatePullRequestTest extends TestCase
     {
         $this
             ->messageFactory
+            ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/pulls')
             ->willReturn(new Request('https://the-domain.com/the-path'));

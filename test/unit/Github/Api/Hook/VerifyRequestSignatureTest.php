@@ -19,15 +19,18 @@ final class VerifyRequestSignatureTest extends TestCase
         $stream  = $this->createMock(StreamInterface::class);
 
         $request
+            ->expects(self::any())
             ->method('getHeaderLine')
             ->with('X-Hub-Signature')
             ->willReturn($signatureHeader);
 
         $stream
+            ->expects(self::any())
             ->method('__toString')
             ->willReturn($body);
 
         $request
+            ->expects(self::any())
             ->method('getBody')
             ->willReturn($stream);
 
@@ -53,15 +56,18 @@ final class VerifyRequestSignatureTest extends TestCase
         $stream  = $this->createMock(StreamInterface::class);
 
         $request
+            ->expects(self::any())
             ->method('getHeaderLine')
             ->with('X-Hub-Signature')
             ->willReturn($signatureHeader);
 
         $stream
+            ->expects(self::any())
             ->method('__toString')
             ->willReturn($body);
 
         $request
+            ->expects(self::any())
             ->method('getBody')
             ->willReturn($stream);
 

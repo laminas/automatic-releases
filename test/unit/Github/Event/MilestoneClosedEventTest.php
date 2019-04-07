@@ -16,10 +16,12 @@ final class MilestoneClosedEventTest extends TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request
+            ->expects(self::any())
             ->method('getParsedBody')
             ->willReturn(['payload' => '{"action":"closed"}']);
 
         $request
+            ->expects(self::any())
             ->method('getHeaderLine')
             ->with('X-Github-Event')
             ->willReturn('milestone');
@@ -31,10 +33,12 @@ final class MilestoneClosedEventTest extends TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request
+            ->expects(self::any())
             ->method('getParsedBody')
             ->willReturn(['payload' => '{"action":"closed"}']);
 
         $request
+            ->expects(self::any())
             ->method('getHeaderLine')
             ->with('X-Github-Event')
             ->willReturn('potato');
@@ -46,10 +50,12 @@ final class MilestoneClosedEventTest extends TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request
+            ->expects(self::any())
             ->method('getParsedBody')
             ->willReturn(['payload' => '{"action":"potato"}']);
 
         $request
+            ->expects(self::any())
             ->method('getHeaderLine')
             ->with('X-Github-Event')
             ->willReturn('milestone');
