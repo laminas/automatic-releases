@@ -153,11 +153,15 @@ use function uniqid;
 
     $postData = $request->getParsedBody();
 
+    assert(is_array($postData));
+
     Assert::that($postData)
-          ->isArray()
           ->keyExists('payload');
 
-    $milestone      = MilestoneClosedEvent::fromEventJson($_POST['payload']);
+    Assert::that($postData['payload'])
+        ->isJsonString();
+
+    $milestone      = MilestoneClosedEvent::fromEventJson($postData['payload']);
     $repositoryName = $milestone->repository();
 
     $repositoryName->assertMatchesOwner($environment->githubOrganisation()); // @TODO limit via ENV?
