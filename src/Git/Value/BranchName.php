@@ -46,7 +46,11 @@ final class BranchName
         return $this->name === 'master';
     }
 
-    /** @return array<int, int> */
+    /**
+     * @return array<int, int>
+     *
+     * @psalm-return array{0: int, 1: int}
+     */
     public function majorAndMinor() : array
     {
         Assert::that($this->name)
