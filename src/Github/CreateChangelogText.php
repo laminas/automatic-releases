@@ -31,7 +31,12 @@ MARKDOWN;
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => $milestone->description(),
-            '%closedIssues%' => implode("\n * ", array_map([$this, 'entryToRow'], $milestone->entries())),
+            '%closedIssues%' => implode(
+                "\n * ",
+                array_map(function (IssueOrPullRequest $entry) : string {
+                    return $this->entryToRow($entry);
+                }, $milestone->entries())
+            ),
         ];
 
         return str_replace(
@@ -45,7 +50,12 @@ MARKDOWN;
     {
         $author = $issueOrPullRequest->author();
 
-        return implode(' ', array_map([$this, 'labelToString'], $issueOrPullRequest->labels()))
+        return implode(
+            ' ',
+            array_map(function (Label $label) : string {
+                    return $this->labelToString($label);
+            }, $issueOrPullRequest->labels())
+        )
             . ' '
             . $this->markdownLink($issueOrPullRequest->title(), $issueOrPullRequest->url())
             . ' thanks to '

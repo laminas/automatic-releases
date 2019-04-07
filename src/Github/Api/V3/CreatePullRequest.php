@@ -38,7 +38,7 @@ final class CreatePullRequest
         $this->apiToken       = $apiToken;
     }
 
-    function __invoke(
+    public function __invoke(
         RepositoryName $repository,
         BranchName $head,
         BranchName $target,

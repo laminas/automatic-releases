@@ -23,6 +23,7 @@ final class Label
     {
     }
 
+    /** @param array<string, mixed> $payload */
     public static function make(array $payload) : self
     {
         Assert::that($payload)

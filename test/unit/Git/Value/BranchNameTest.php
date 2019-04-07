@@ -66,6 +66,7 @@ final class BranchNameTest extends TestCase
 
     /**
      * @return array<int, array<int, int|string>>
+     *
      * @psalm-return array<int, array{0: string, 1: int, 2: int}>
      */
     public function releaseBranches() : array

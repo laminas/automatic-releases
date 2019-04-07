@@ -40,7 +40,7 @@ final class CreateRelease
         $this->apiToken       = $apiToken;
     }
 
-    function __invoke(
+    public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version,
         string $releaseNotes

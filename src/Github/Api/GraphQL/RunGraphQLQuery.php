@@ -36,7 +36,8 @@ final class RunGraphQLQuery implements RunQuery
         $this->apiToken       = $apiToken;
     }
 
-    function __invoke(
+    /** {@inheritDoc} */
+    public function __invoke(
         string $query,
         array $variables = []
     ) : array {

@@ -34,6 +34,7 @@ final class IssueOrPullRequest
     {
     }
 
+    /** @param array<string, mixed> $payload */
     public static function make(array $payload) : self
     {
         Assert::that($payload)
@@ -66,6 +67,9 @@ final class IssueOrPullRequest
               ->string()
               ->notEmpty();
 
+        Assert::that($payload['closed'])
+              ->boolean();
+
         $instance = new self();
 
         $instance->number = $payload['number'];
@@ -74,7 +78,7 @@ final class IssueOrPullRequest
         $instance->labels = array_values(array_map([Label::class, 'make'], $payload['labels']['nodes']));
         $instance->url    = new Uri($payload['url']);
         $instance->closed = isset($payload['merged'])
-            ? $payload['merged'] || $payload['closed']
+            ? (bool) $payload['merged'] || $payload['closed']
             : $payload['closed'];
 
         return $instance;

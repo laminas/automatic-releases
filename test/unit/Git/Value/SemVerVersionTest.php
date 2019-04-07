@@ -28,6 +28,7 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return array<int, array<int, int|string>>
+     *
      * @psalm-return array<int, array{0: string, 1: int, 2: int, 3: string}>
      */
     public function detectableReleases() : array
