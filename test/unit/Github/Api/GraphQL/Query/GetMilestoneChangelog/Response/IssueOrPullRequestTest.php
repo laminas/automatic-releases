@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class IssueOrPullRequestTest extends TestCase
 {
-    public function testIssue()
+    public function testIssue() : void
     {
         $issue = IssueOrPullRequest::make([
             'number' => 123,
@@ -66,7 +66,7 @@ final class IssueOrPullRequestTest extends TestCase
         );
     }
 
-    public function testPullRequest()
+    public function testPullRequest() : void
     {
         $issue = IssueOrPullRequest::make([
             'number' => 123,

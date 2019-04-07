@@ -7,6 +7,8 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL;
 use Assert\Assert;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use function Safe\json_decode;
+use function Safe\json_encode;
 
 final class RunGraphQLQuery implements RunQuery
 {
@@ -26,8 +28,7 @@ final class RunGraphQLQuery implements RunQuery
         ClientInterface $client,
         string $apiToken
     ) {
-        Assert
-            ::that($apiToken)
+        Assert::that($apiToken)
             ->notEmpty();
 
         $this->messageFactory = $messageFactory;
@@ -47,7 +48,7 @@ final class RunGraphQLQuery implements RunQuery
 
         $request
             ->getBody()
-            ->write(\Safe\json_encode([
+            ->write(json_encode([
                 'query'     => $query,
                 'variables' => $variables,
             ]));
@@ -64,7 +65,7 @@ final class RunGraphQLQuery implements RunQuery
         Assert::that($responseBody)
               ->isJsonString();
 
-        $responseData = \Safe\json_decode($responseBody, true);
+        $responseData = json_decode($responseBody, true);
 
         Assert::that($responseData)
               ->keyNotExists('errors', $responseBody)

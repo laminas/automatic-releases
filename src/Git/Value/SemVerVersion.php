@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Assert\Assert;
+use function array_map;
+use function assert;
+use function is_array;
+use function Safe\preg_match;
 
 final class SemVerVersion
 {
@@ -23,18 +27,17 @@ final class SemVerVersion
 
     public static function fromMilestoneName(string $name) : self
     {
-        Assert
-            ::that($name)
+        Assert::that($name)
             ->notEmpty()
             ->regex('/^(v)?\\d+\\.\\d+\\.\\d+$/');
 
-        \Safe\preg_match('/(\\d+)\\.(\\d+)\\.(\\d+)/', $name, $matches);
+        preg_match('/(\\d+)\\.(\\d+)\\.(\\d+)/', $name, $matches);
 
-        \assert(is_array($matches));
+        assert(is_array($matches));
 
         $instance = new self();
 
-        list(, $instance->major, $instance->minor, $instance->patch) = array_map('intval', $matches);
+        [, $instance->major, $instance->minor, $instance->patch] = array_map('intval', $matches);
 
         return $instance;
     }

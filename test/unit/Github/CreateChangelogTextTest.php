@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CreateChangelogTextTest extends TestCase
 {
-    public function testGeneratedReleaseText()
+    public function testGeneratedReleaseText() : void
     {
         self::assertSame(
             <<<'RELEASE'

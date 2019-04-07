@@ -11,6 +11,8 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
+use function Safe\json_decode;
+use function Safe\json_encode;
 
 final class CreateRelease
 {
@@ -30,8 +32,7 @@ final class CreateRelease
         ClientInterface $client,
         string $apiToken
     ) {
-        Assert
-            ::that($apiToken)
+        Assert::that($apiToken)
             ->notEmpty();
 
         $this->messageFactory = $messageFactory;
@@ -58,7 +59,7 @@ final class CreateRelease
 
         $request
             ->getBody()
-            ->write(\Safe\json_encode([
+            ->write(json_encode([
                 'tag_name' => $version->fullReleaseName(),
                 'name'     => $version->fullReleaseName(),
                 'body'     => $releaseNotes,
@@ -76,7 +77,7 @@ final class CreateRelease
         Assert::that($responseBody)
               ->isJsonString();
 
-        $responseData = \Safe\json_decode($responseBody, true);
+        $responseData = json_decode($responseBody, true);
 
         Assert::that($responseData)
               ->keyExists('html_url', $responseBody);

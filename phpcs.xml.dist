@@ -12,6 +12,7 @@
     <!-- Ignore warnings and show progress of the run -->
     <arg value="np"/>
 
+    <file>./public</file>
     <file>./src</file>
     <file>./test</file>
 

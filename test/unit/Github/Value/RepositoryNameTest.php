@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class RepositoryNameTest extends TestCase
 {
-    public function test()
+    public function test() : void
     {
         $repositoryName = RepositoryName::fromFullName('foo/bar');
 

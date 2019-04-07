@@ -7,6 +7,8 @@ namespace Doctrine\AutomaticReleases\Github\Value;
 use Assert\Assert;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
+use function explode;
+use function strtolower;
 
 final class RepositoryName
 {
@@ -22,8 +24,7 @@ final class RepositoryName
 
     public static function fromFullName(string $fullName) : self
     {
-        Assert
-            ::that($fullName)
+        Assert::that($fullName)
             ->notEmpty()
             ->regex('/^[a-zA-Z0-9_\\.-]+\\/[a-zA-Z0-9_\\.-]+$/');
 
@@ -36,15 +37,13 @@ final class RepositoryName
 
     public function assertMatchesOwner(string $owner) : void
     {
-        Assert
-            ::that(strtolower($this->owner))
+        Assert::that(strtolower($this->owner))
             ->same(strtolower($owner));
     }
 
     public function uriWithTokenAuthentication(string $token) : UriInterface
     {
-        Assert
-            ::that($token)
+        Assert::that($token)
             ->notEmpty();
 
         return new Uri('https://' . $token . ':x-oauth-basic@github.com/' . $this->owner . '/' . $this->name . '.git');

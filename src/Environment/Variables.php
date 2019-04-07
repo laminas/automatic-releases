@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Environment;
 
 use Assert\Assert;
+use function assert;
+use function getenv;
+use function is_string;
 
 final class Variables
 {
@@ -20,7 +23,6 @@ final class Variables
     /** @var string */
     private $githubHookSecret;
 
-
     private function __construct()
     {
     }
@@ -30,9 +32,9 @@ final class Variables
         $instance = new self();
 
         $instance->githubOrganisation = self::getenv('GITHUB_ORGANISATION');
-        $instance->githubToken = self::getenv('GITHUB_TOKEN');
-        $instance->signingSecretKey = self::getenv('SIGNING_SECRET_KEY');
-        $instance->githubHookSecret = self::getenv('GITHUB_HOOK_SECRET');
+        $instance->githubToken        = self::getenv('GITHUB_TOKEN');
+        $instance->signingSecretKey   = self::getenv('SIGNING_SECRET_KEY');
+        $instance->githubHookSecret   = self::getenv('GITHUB_HOOK_SECRET');
 
         return $instance;
     }
@@ -48,7 +50,7 @@ final class Variables
             ->string()
             ->notEmpty();
 
-        \assert(is_string($value));
+        assert(is_string($value));
 
         return $value;
     }

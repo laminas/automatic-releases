@@ -6,8 +6,6 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
 use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
 final class BranchNameTest extends TestCase

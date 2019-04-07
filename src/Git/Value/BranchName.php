@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Assert\Assert;
+use function array_map;
+use function assert;
+use function is_array;
+use function Safe\preg_match;
 
 final class BranchName
 {
@@ -17,8 +21,7 @@ final class BranchName
 
     public static function fromName(string $name) : self
     {
-        Assert
-            ::that($name)
+        Assert::that($name)
             ->notEmpty();
 
         $instance = new self();
@@ -35,7 +38,7 @@ final class BranchName
 
     public function isReleaseBranch() : bool
     {
-        return \Safe\preg_match('/^(v)?\d+\\.\d+(\\.x)?$/', $this->name) === 1;
+        return preg_match('/^(v)?\d+\\.\d+(\\.x)?$/', $this->name) === 1;
     }
 
     public function isNextMajor() : bool
@@ -49,11 +52,11 @@ final class BranchName
         Assert::that($this->name)
             ->regex('/^(v)?\d+\\.\d+(\\.x)?$/');
 
-        \Safe\preg_match('/^(?:v)?(\d+)\\.(\d+)(?:\\.x)?$/', $this->name, $matches);
+        preg_match('/^(?:v)?(\d+)\\.(\d+)(?:\\.x)?$/', $this->name, $matches);
 
-        \assert(is_array($matches));
+        assert(is_array($matches));
 
-        list(, $major, $minor) = array_map('intval', $matches);
+        [, $major, $minor] = array_map('intval', $matches);
 
         return [$major, $minor];
     }

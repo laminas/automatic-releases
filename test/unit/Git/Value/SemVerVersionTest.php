@@ -6,7 +6,6 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
 use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
 final class SemVerVersionTest extends TestCase
@@ -17,7 +16,7 @@ final class SemVerVersionTest extends TestCase
         int $expectedMajor,
         int $expectedMinor,
         string $expectedVersionName
-    ) {
+    ) : void {
         $version = SemVerVersion::fromMilestoneName($milestoneName);
 
         self::assertSame($expectedMajor, $version->major());
@@ -37,7 +36,7 @@ final class SemVerVersionTest extends TestCase
     }
 
     /** @dataProvider invalidReleases */
-    public function testRejectsInvalidReleaseStrings(string $invalid)
+    public function testRejectsInvalidReleaseStrings(string $invalid) : void
     {
         $this->expectException(AssertionFailedException::class);
 

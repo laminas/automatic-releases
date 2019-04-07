@@ -29,7 +29,6 @@ final class MergeTargetCandidateBranchesTest extends TestCase
             $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.99.0'))
         );
 
-
         self::assertNull($branches->targetBranchFor(SemVerVersion::fromMilestoneName('2.0.0')));
         self::assertEquals(
             BranchName::fromName('master'),

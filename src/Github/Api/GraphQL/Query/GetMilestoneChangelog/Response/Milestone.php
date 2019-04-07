@@ -7,6 +7,10 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChange
 use Assert\Assert;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
+use function array_map;
+use function array_merge;
+use function array_values;
+use function Safe\array_combine;
 
 final class Milestone
 {
@@ -125,11 +129,11 @@ final class Milestone
 
     public function assertAllIssuesAreClosed() : void
     {
-        Assert::thatAll(\Safe\array_combine(
-            array_map(function (IssueOrPullRequest $entry) : string {
+        Assert::thatAll(array_combine(
+            array_map(static function (IssueOrPullRequest $entry) : string {
                 return $entry->url()->__toString();
             }, $this->entries),
-            array_map(function (IssueOrPullRequest $entry) : bool {
+            array_map(static function (IssueOrPullRequest $entry) : bool {
                 return $entry->closed();
             }, $this->entries)
         ))

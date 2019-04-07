@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Assert\Assert;
+use function array_filter;
+use function array_search;
+use function array_values;
+use function assert;
+use function end;
+use function is_int;
+use function Safe\usort;
 
 final class MergeTargetCandidateBranches
 {
@@ -25,7 +32,7 @@ final class MergeTargetCandidateBranches
         Assert::that($mergeTargetBranches)
               ->notEmpty();
 
-        \Safe\usort($mergeTargetBranches, static function (BranchName $a, BranchName $b) : int {
+        usort($mergeTargetBranches, static function (BranchName $a, BranchName $b) : int {
             if ($a->isNextMajor()) {
                 return 1;
             }
@@ -47,12 +54,12 @@ final class MergeTargetCandidateBranches
     public function targetBranchFor(SemVerVersion $version) : ?BranchName
     {
         return array_values(array_filter(
-                $this->sortedBranches,
-                static function (BranchName $branch) use ($version) : bool {
+            $this->sortedBranches,
+            static function (BranchName $branch) use ($version) : bool {
                     return ! $branch->isNextMajor()
                         && $branch->majorAndMinor() === [$version->major(), $version->minor()];
-                }
-            ))[0] ?? null;
+            }
+        ))[0] ?? null;
     }
 
     public function branchToMergeUp(SemVerVersion $version) : BranchName
@@ -60,7 +67,7 @@ final class MergeTargetCandidateBranches
         $targetBranch = $this->targetBranchFor($version);
         $lastBranch   = end($this->sortedBranches);
 
-        \assert($lastBranch instanceof BranchName);
+        assert($lastBranch instanceof BranchName);
 
         $targetBranchKey = array_search($targetBranch, $this->sortedBranches, true);
 

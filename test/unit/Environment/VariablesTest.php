@@ -6,6 +6,8 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Environment;
 
 use Doctrine\AutomaticReleases\Environment\Variables;
 use PHPUnit\Framework\TestCase;
+use function Safe\putenv;
+use function uniqid;
 
 final class VariablesTest extends TestCase
 {
@@ -17,10 +19,10 @@ final class VariablesTest extends TestCase
         $githubToken        = uniqid('githubToken', true);
         $githubOrganisation = uniqid('githubOrganisation', true);
 
-        \Safe\putenv('GITHUB_HOOK_SECRET=' . $githubHookSecret);
-        \Safe\putenv('GITHUB_TOKEN=' . $githubToken);
-        \Safe\putenv('SIGNING_SECRET_KEY=' . $signingSecretKey);
-        \Safe\putenv('GITHUB_ORGANISATION=' . $githubOrganisation);
+        putenv('GITHUB_HOOK_SECRET=' . $githubHookSecret);
+        putenv('GITHUB_TOKEN=' . $githubToken);
+        putenv('SIGNING_SECRET_KEY=' . $signingSecretKey);
+        putenv('GITHUB_ORGANISATION=' . $githubOrganisation);
 
         $variables = Variables::fromEnvironment();
 

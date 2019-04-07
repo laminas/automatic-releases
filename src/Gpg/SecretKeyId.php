@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Gpg;
 
 use Assert\Assert;
-use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\Uri;
 
 final class SecretKeyId
 {

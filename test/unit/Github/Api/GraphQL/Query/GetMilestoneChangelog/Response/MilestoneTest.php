@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MilestoneTest extends TestCase
 {
-    public function test()
+    public function test() : void
     {
         $milestone = Milestone::make([
             'number'       => 123,

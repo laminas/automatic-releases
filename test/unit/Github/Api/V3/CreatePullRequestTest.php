@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\V3;
 
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -15,6 +14,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+use function uniqid;
 
 final class CreatePullRequestTest extends TestCase
 {
@@ -44,7 +44,7 @@ final class CreatePullRequestTest extends TestCase
         );
     }
 
-    public function testSuccessfulRequest()
+    public function testSuccessfulRequest() : void
     {
         $this
             ->messageFactory

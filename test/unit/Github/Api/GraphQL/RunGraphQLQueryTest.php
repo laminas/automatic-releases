@@ -10,9 +10,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+use function uniqid;
 
 final class RunGraphQLQueryTest extends TestCase
 {
@@ -48,7 +48,7 @@ final class RunGraphQLQueryTest extends TestCase
             ->willReturn(new Request('https://the-domain.com/the-path'));
     }
 
-    public function testSuccessfulRequest()
+    public function testSuccessfulRequest() : void
     {
         $validResponse = new Response();
 

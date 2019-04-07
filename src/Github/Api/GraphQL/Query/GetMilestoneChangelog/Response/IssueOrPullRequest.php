@@ -7,6 +7,8 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChange
 use Assert\Assert;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\Uri;
+use function array_map;
+use function array_values;
 
 final class IssueOrPullRequest
 {

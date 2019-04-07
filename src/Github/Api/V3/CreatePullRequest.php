@@ -9,6 +9,8 @@ use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use function Safe\json_decode;
+use function Safe\json_encode;
 
 final class CreatePullRequest
 {
@@ -28,8 +30,7 @@ final class CreatePullRequest
         ClientInterface $client,
         string $apiToken
     ) {
-        Assert
-            ::that($apiToken)
+        Assert::that($apiToken)
             ->notEmpty();
 
         $this->messageFactory = $messageFactory;
@@ -58,7 +59,7 @@ final class CreatePullRequest
 
         $request
             ->getBody()
-            ->write(\Safe\json_encode([
+            ->write(json_encode([
                 'title'                 => $title,
                 'head'                  => $head->name(),
                 'base'                  => $target->name(),
@@ -79,7 +80,7 @@ final class CreatePullRequest
         Assert::that($responseBody)
               ->isJsonString();
 
-        $responseData = \Safe\json_decode($responseBody, true);
+        $responseData = json_decode($responseBody, true);
 
         Assert::that($responseData)
               ->keyExists('url', $responseBody);

@@ -8,6 +8,10 @@ use Assert\Assert;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\ServerRequestInterface;
+use function array_key_exists;
+use function assert;
+use function is_array;
+use function Safe\json_decode;
 
 final class MilestoneClosedEvent
 {
@@ -32,48 +36,42 @@ final class MilestoneClosedEvent
 
         $body = $request->getParsedBody();
 
-        \assert(is_array($body));
+        assert(is_array($body));
 
         if (! array_key_exists('payload', $body)) {
             return false;
         }
 
-        $event = \Safe\json_decode($body['payload'], true);
+        $event = json_decode($body['payload'], true);
 
         return $event['action'] === 'closed';
     }
 
     public static function fromEventJson(string $json) : self
     {
-        $event = \Safe\json_decode($json, true);
+        $event = json_decode($json, true);
 
-        Assert
-            ::that($event)
+        Assert::that($event)
             ->keyExists('milestone')
             ->keyExists('repository')
             ->keyExists('action');
 
-        Assert
-            ::that($event['action'])
+        Assert::that($event['action'])
             ->same('closed');
 
-        Assert
-            ::that($event['milestone'])
+        Assert::that($event['milestone'])
             ->keyExists('title')
             ->keyExists('number');
 
-        Assert
-            ::that($event['milestone']['title'])
+        Assert::that($event['milestone']['title'])
             ->string()
             ->notEmpty();
 
-        Assert
-            ::that($event['milestone']['number'])
+        Assert::that($event['milestone']['number'])
             ->integer()
             ->greaterThan(0);
 
-        Assert
-            ::that($event['repository'])
+        Assert::that($event['repository'])
             ->keyExists('full_name');
 
         $instance = new self();

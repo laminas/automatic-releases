@@ -7,7 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL;
 interface RunQuery
 {
     /**
-     * @param string               $query a GraphQL query
+     * @param string               $query     a GraphQL query
      * @param array<string, mixed> $variables
      *
      * @return mixed[]

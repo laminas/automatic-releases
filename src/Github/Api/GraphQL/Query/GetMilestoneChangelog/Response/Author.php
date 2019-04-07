@@ -36,8 +36,8 @@ final class Author
 
         $instance = new self();
 
-        $instance->name   = $payload['login'];
-        $instance->url    = new Uri($payload['url']);
+        $instance->name = $payload['login'];
+        $instance->url  = new Uri($payload['url']);
 
         return $instance;
     }

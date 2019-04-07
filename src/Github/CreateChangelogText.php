@@ -8,6 +8,10 @@ use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Re
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Label;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Psr\Http\Message\UriInterface;
+use function array_keys;
+use function array_map;
+use function implode;
+use function str_replace;
 
 final class CreateChangelogText
 {
