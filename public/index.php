@@ -177,7 +177,7 @@ use function uniqid;
     $repositoryName = $milestone->repository();
 
     if (class_exists('Tideways\Profiler')) {
-        \Tideways\Profiler::setCustomVariable('repository', $repositoryName->owner() . '/' . $reositoryName->name());
+        \Tideways\Profiler::setCustomVariable('repository', $repositoryName->owner() . '/' . $repositoryName->name());
         \Tideways\Profiler::setCustomVariable('version', $milestone->version()->fullReleaseName());
     }
 
