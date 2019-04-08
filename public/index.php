@@ -176,6 +176,11 @@ use function uniqid;
     $milestone      = MilestoneClosedEvent::fromEventJson($postData['payload']);
     $repositoryName = $milestone->repository();
 
+    if (class_exists('Tideways\Profiler')) {
+        \Tideways\Profiler::setCustomVariable('repository', $repositoryName->owner() . '/' . $reositoryName->name());
+        \Tideways\Profiler::setCustomVariable('version', $milestone->version()->fullReleaseName());
+    }
+
     $repositoryName->assertMatchesOwner($environment->githubOrganisation()); // @TODO limit via ENV?
 
     $repository                  = $repositoryName->uriWithTokenAuthentication($environment->githubToken());
