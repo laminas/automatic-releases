@@ -15,6 +15,7 @@ use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
 use Doctrine\AutomaticReleases\Github\Api\V3\CreateRelease;
 use Doctrine\AutomaticReleases\Github\CreateChangelogText;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Doctrine\AutomaticReleases\Github\JwageGenerateChangelog;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
@@ -215,7 +216,15 @@ use function uniqid;
         ));
     }
 
-    $changelog = (new CreateChangelogText())->__invoke($milestoneChangelog);
+    $changelog = (new CreateChangelogText(JwageGenerateChangelog::create(
+        Psr17FactoryDiscovery::findRequestFactory(),
+        HttpClientDiscovery::find(),
+    )))
+        ->__invoke(
+            $milestoneChangelog,
+            $milestone->repository(),
+            $milestone->version()
+        );
 
     $tagName = $releaseVersion->fullReleaseName();
 
