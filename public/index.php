@@ -30,6 +30,7 @@ use const E_WARNING;
 use function array_filter;
 use function array_map;
 use function assert;
+use function class_exists;
 use function explode;
 use function is_array;
 use function Safe\file_put_contents;
