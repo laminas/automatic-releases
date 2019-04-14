@@ -51,6 +51,12 @@
         <RawObjectIteration errorLevel="info"/>
 
         <InvalidStringClass errorLevel="info"/>
+
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Tideways\Profiler" />
+            </errorLevel>
+        </UndefinedClass>
     </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
