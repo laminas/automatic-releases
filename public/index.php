@@ -22,6 +22,7 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Http\Message\UriInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
+use Tideways\Profiler;
 use Zend\Diactoros\ServerRequestFactory;
 use const E_NOTICE;
 use const E_STRICT;
@@ -176,9 +177,9 @@ use function uniqid;
     $milestone      = MilestoneClosedEvent::fromEventJson($postData['payload']);
     $repositoryName = $milestone->repository();
 
-    if (class_exists('Tideways\Profiler')) {
-        \Tideways\Profiler::setCustomVariable('repository', $repositoryName->owner() . '/' . $repositoryName->name());
-        \Tideways\Profiler::setCustomVariable('version', $milestone->version()->fullReleaseName());
+    if (class_exists(Profiler::class, false)) {
+        Profiler::setCustomVariable('repository', $repositoryName->owner() . '/' . $repositoryName->name());
+        Profiler::setCustomVariable('version', $milestone->version()->fullReleaseName());
     }
 
     $repositoryName->assertMatchesOwner($environment->githubOrganisation()); // @TODO limit via ENV?
