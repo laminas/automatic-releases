@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github;
 
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\IssueOrPullRequest;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Label;
+use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\UriInterface;
 use function array_keys;
-use function array_map;
-use function implode;
 use function str_replace;
 
 final class CreateChangelogText
@@ -20,22 +18,29 @@ Release %release%
 
 %description%
 
-Closed issues:
-
- * %closedIssues%
+%changelogText%
 
 MARKDOWN;
 
-    public function __invoke(Milestone $milestone) : string
+    /** @var GenerateChangelog */
+    private $generateChangelog;
+
+    public function __construct(GenerateChangelog $generateChangelog)
     {
+        $this->generateChangelog = $generateChangelog;
+    }
+
+    public function __invoke(
+        Milestone $milestone,
+        RepositoryName $repositoryName,
+        SemVerVersion $semVerVersion
+    ) : string {
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => $milestone->description(),
-            '%closedIssues%' => implode(
-                "\n * ",
-                array_map(function (IssueOrPullRequest $entry) : string {
-                    return $this->entryToRow($entry);
-                }, $milestone->entries())
+            '%changelogText%' => $this->generateChangelog->__invoke(
+                $repositoryName,
+                $semVerVersion
             ),
         ];
 
@@ -44,27 +49,6 @@ MARKDOWN;
             $replacements,
             self::TEMPLATE
         );
-    }
-
-    private function entryToRow(IssueOrPullRequest $issueOrPullRequest) : string
-    {
-        $author = $issueOrPullRequest->author();
-
-        return implode(
-            ' ',
-            array_map(function (Label $label) : string {
-                    return $this->labelToString($label);
-            }, $issueOrPullRequest->labels())
-        )
-            . ' '
-            . $this->markdownLink($issueOrPullRequest->title(), $issueOrPullRequest->url())
-            . ' thanks to '
-            . $this->markdownLink($author->name(), $author->url());
-    }
-
-    private function labelToString(Label $label) : string
-    {
-        return '\\[' . $label->name() . '\\]';
     }
 
     private function markdownLink(string $text, UriInterface $uri) : string
