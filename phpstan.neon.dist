@@ -4,6 +4,8 @@ parameters:
         - public
         - src
         - test
+    ignoreErrors:
+        - '#Call to static method [a-zA-Z0-9\\_]+\(\) on an unknown class Tideways\Profiler.'
 
 includes:
 	- vendor/phpstan/phpstan-beberlei-assert/extension.neon
