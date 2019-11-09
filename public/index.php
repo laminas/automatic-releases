@@ -129,7 +129,13 @@ use function uniqid;
         string $symbol,
         ?string $alias = null
     ) : void {
-        $pushedRef = $alias !== null ? $symbol . ':' . $alias : $symbol;
+        $commitRef = trim(
+            (new Process(['git', 'rev-parse', $symbol], $repositoryDirectory))
+            ->mustRun()
+            ->getOutput()
+        );
+
+        $pushedRef = $alias !== null ? $commitRef . ':' . $alias : $symbol;
 
         (new Process(['git', 'push', 'origin', $pushedRef], $repositoryDirectory))
             ->mustRun();
