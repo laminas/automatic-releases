@@ -129,15 +129,19 @@ use function uniqid;
         string $symbol,
         ?string $alias = null
     ) : void {
-        $commitRef = trim(
-            (new Process(['git', 'rev-parse', $symbol], $repositoryDirectory))
-            ->mustRun()
-            ->getOutput()
-        );
+        if ($alias === null) {
+            (new Process(['git', 'push', 'origin', $symbol], $repositoryDirectory))
+                ->mustRun();
 
-        $pushedRef = $alias !== null ? $commitRef . ':refs/heads/' . $alias : $symbol;
+            return;
+        }
 
-        (new Process(['git', 'push', 'origin', $pushedRef], $repositoryDirectory))
+        $localTemporaryBranch = uniqid('temporary-branch', true);
+
+        (new Process(['git', 'branch', $localTemporaryBranch, $symbol], $repositoryDirectory))
+            ->mustRun();
+
+        (new Process(['git', 'push', 'origin', $localTemporaryBranch . ':' . $alias], $repositoryDirectory))
             ->mustRun();
     };
 
