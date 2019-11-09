@@ -243,16 +243,10 @@ use function uniqid;
         $importedKey
     );
 
-    $mergeUpTarget = $candidates->branchToMergeUp($milestone->version());
-    $mergeUpBranch = BranchName::fromName(
-        $releaseBranch->name()
-        . '-merge-up-into-'
-        . $mergeUpTarget->name()
-        . uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
-    );
-
     $push($releasedRepositoryLocalPath, $tagName);
-    $push($releasedRepositoryLocalPath, $releaseBranch->name(), $mergeUpBranch->name());
+    $push($releasedRepositoryLocalPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());
+
+    $mergeUpTarget = $candidates->branchToMergeUp($milestone->version());
 
     $releaseUrl = (new CreateRelease(
         Psr17FactoryDiscovery::findRequestFactory(),
@@ -264,17 +258,27 @@ use function uniqid;
         $changelog
     );
 
-    (new CreatePullRequest(
-        Psr17FactoryDiscovery::findRequestFactory(),
-        HttpClientDiscovery::find(),
-        $environment->githubToken()
-    ))->__invoke(
-        $repositoryName,
-        $mergeUpBranch,
-        $mergeUpTarget,
-        'Merge release ' . $tagName . ' into ' . $mergeUpTarget->name(),
-        $changelog
-    );
+    if ($mergeUpTarget !== null) {
+        $mergeUpBranch = BranchName::fromName(
+            $releaseBranch->name()
+            . '-merge-up-into-'
+            . $mergeUpTarget->name()
+            . uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
+        );
+        $push($releasedRepositoryLocalPath, $releaseBranch->name(), $mergeUpBranch->name());
+
+        (new CreatePullRequest(
+            Psr17FactoryDiscovery::findRequestFactory(),
+            HttpClientDiscovery::find(),
+            $environment->githubToken()
+        ))->__invoke(
+            $repositoryName,
+            $mergeUpBranch,
+            $mergeUpTarget,
+            'Merge release ' . $tagName . ' into ' . $mergeUpTarget->name(),
+            $changelog
+        );
+    }
 
     echo 'Released: ' . $releaseUrl->__toString();
 })();

@@ -77,4 +77,11 @@ final class BranchNameTest extends TestCase
             ['33.44.x', 33, 44],
         ];
     }
+
+    public function testEquals() : void
+    {
+        self::assertFalse(BranchName::fromName('foo')->equals(BranchName::fromName('bar')));
+        self::assertFalse(BranchName::fromName('bar')->equals(BranchName::fromName('foo')));
+        self::assertTrue(BranchName::fromName('foo')->equals(BranchName::fromName('foo')));
+    }
 }

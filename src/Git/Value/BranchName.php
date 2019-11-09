@@ -64,4 +64,9 @@ final class BranchName
 
         return [$major, $minor];
     }
+
+    public function equals(self $other) : bool
+    {
+        return $other->name === $this->name;
+    }
 }

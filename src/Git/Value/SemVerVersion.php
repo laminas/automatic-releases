@@ -56,4 +56,9 @@ final class SemVerVersion
     {
         return $this->minor;
     }
+
+    public function targetReleaseBranchName() : BranchName
+    {
+        return BranchName::fromName($this->major . '.' . $this->minor . '.x');
+    }
 }

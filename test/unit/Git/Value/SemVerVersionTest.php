@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
 use Assert\AssertionFailedException;
+use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
 
@@ -64,6 +65,28 @@ final class SemVerVersionTest extends TestCase
             ['potato'],
             ['1.2.'],
             ['1.2'],
+        ];
+    }
+
+    /**
+     * @dataProvider releaseBranchNames
+     */
+    public function testReleaseBranchNames(string $milestoneName, string $expectedTargetBranch) : void
+    {
+        self::assertEquals(
+            BranchName::fromName($expectedTargetBranch),
+            SemVerVersion::fromMilestoneName($milestoneName)
+                ->targetReleaseBranchName()
+        );
+    }
+
+    /** @return array<int, array<int, string>> */
+    public function releaseBranchNames() : array
+    {
+        return [
+            ['1.2.3', '1.2.x'],
+            ['2.0.0', '2.0.x'],
+            ['99.99.99', '99.99.x'],
         ];
     }
 }

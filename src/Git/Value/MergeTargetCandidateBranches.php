@@ -59,20 +59,41 @@ final class MergeTargetCandidateBranches
                     return ! $branch->isNextMajor()
                         && $branch->majorAndMinor() === [$version->major(), $version->minor()];
             }
+        ))[0] ?? $this->nextMajorBranch();
+    }
+
+    private function nextMajorBranch() : ?BranchName
+    {
+        return array_values(array_filter(
+            $this->sortedBranches,
+            static function (BranchName $branch) : bool {
+                return $branch->isNextMajor();
+            }
         ))[0] ?? null;
     }
 
-    public function branchToMergeUp(SemVerVersion $version) : BranchName
+    public function branchToMergeUp(SemVerVersion $version) : ?BranchName
     {
         $targetBranch = $this->targetBranchFor($version);
-        $lastBranch   = end($this->sortedBranches);
+
+        if ($targetBranch === null) {
+            // There's no branch where we can merge this, so we can't merge up either
+            return null;
+        }
+
+        $lastBranch = end($this->sortedBranches);
 
         assert($lastBranch instanceof BranchName);
 
         $targetBranchKey = array_search($targetBranch, $this->sortedBranches, true);
 
-        return is_int($targetBranchKey)
+        $branch = is_int($targetBranchKey)
             ? ($this->sortedBranches[$targetBranchKey + 1] ?? $lastBranch)
             : $lastBranch;
+
+        // If the target branch and the merge-up branch are the same, no merge-up is needed
+        return $branch === $targetBranch
+            ? null
+            : $branch;
     }
 }
