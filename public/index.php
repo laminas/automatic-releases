@@ -135,7 +135,7 @@ use function uniqid;
             ->getOutput()
         );
 
-        $pushedRef = $alias !== null ? $commitRef . ':' . $alias : $symbol;
+        $pushedRef = $alias !== null ? $commitRef . ':refs/heads/' . $alias : $symbol;
 
         (new Process(['git', 'push', 'origin', $pushedRef], $repositoryDirectory))
             ->mustRun();
