@@ -69,3 +69,14 @@ Feature: Automated releases
     When I close milestone "1.1.1"
     Then tag "1.1.1" should have been created on branch "1.1.x"
     And a new pull request from branch "1.1.x" to "1.2.x" should have been created
+
+  Scenario: If a minor release branch doesn't exist, the tool refuses to create it if a newer one exists
+    Given following existing branches:
+      | name   |
+      | 1.2.x  |
+      | master |
+    And following open milestones:
+      | name  |
+      | 1.1.0 |
+    When I close milestone "1.1.0"
+    Then the tool should have halted with an error

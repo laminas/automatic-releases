@@ -6,6 +6,7 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
 use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
+use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
 
 final class BranchNameTest extends TestCase
@@ -83,5 +84,66 @@ final class BranchNameTest extends TestCase
         self::assertFalse(BranchName::fromName('foo')->equals(BranchName::fromName('bar')));
         self::assertFalse(BranchName::fromName('bar')->equals(BranchName::fromName('foo')));
         self::assertTrue(BranchName::fromName('foo')->equals(BranchName::fromName('foo')));
+    }
+
+    /**
+     * @dataProvider versionEqualityProvider
+     */
+    public function testIsForVersion(string $milestoneName, string $branchName, bool $expected) : void
+    {
+        self::assertSame(
+            $expected,
+            BranchName::fromName($branchName)
+                ->isForVersion(SemVerVersion::fromMilestoneName($milestoneName))
+        );
+    }
+
+    /**
+     * @return array<int, array<int, bool|string>>
+     *
+     * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
+     */
+    public function versionEqualityProvider() : array
+    {
+        return [
+            ['1.0.0', '1.0.x', true],
+            ['1.0.0', '1.1.x', false],
+            ['1.0.0', '0.9.x', false],
+            ['2.0.0', '1.0.x', false],
+            ['2.0.0', '2.0.x', true],
+            ['2.0.0', '2.0', true],
+            ['2.0.0', '2.1', false],
+        ];
+    }
+
+    /**
+     * @dataProvider newerVersionComparisonProvider
+     */
+    public function testIsForNewerVersionThan(string $milestoneName, string $branchName, bool $expected) : void
+    {
+        self::assertSame(
+            $expected,
+            BranchName::fromName($branchName)
+                ->isForNewerVersionThan(SemVerVersion::fromMilestoneName($milestoneName))
+        );
+    }
+
+    /**
+     * @return array<int, array<int, bool|string>>
+     *
+     * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
+     */
+    public function newerVersionComparisonProvider() : array
+    {
+        return [
+            ['1.0.0', '1.0.x', false],
+            ['1.0.0', '1.1.x', true],
+            ['1.0.0', '0.9.x', false],
+            ['2.0.0', '1.0.x', false],
+            ['2.0.0', '2.0.x', false],
+            ['2.0.0', '2.0', false],
+            ['2.0.0', '2.1', true],
+            ['2.0.0', '1.9', false],
+        ];
     }
 }

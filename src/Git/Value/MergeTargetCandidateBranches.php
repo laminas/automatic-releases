@@ -7,7 +7,6 @@ namespace Doctrine\AutomaticReleases\Git\Value;
 use Assert\Assert;
 use function array_filter;
 use function array_search;
-use function array_values;
 use function assert;
 use function end;
 use function is_int;
@@ -53,23 +52,21 @@ final class MergeTargetCandidateBranches
 
     public function targetBranchFor(SemVerVersion $version) : ?BranchName
     {
-        return array_values(array_filter(
-            $this->sortedBranches,
-            static function (BranchName $branch) use ($version) : bool {
-                    return ! $branch->isNextMajor()
-                        && $branch->majorAndMinor() === [$version->major(), $version->minor()];
+        foreach ($this->sortedBranches as $branch) {
+            if ($branch->isNextMajor()) {
+                return $branch;
             }
-        ))[0] ?? $this->nextMajorBranch();
-    }
 
-    private function nextMajorBranch() : ?BranchName
-    {
-        return array_values(array_filter(
-            $this->sortedBranches,
-            static function (BranchName $branch) : bool {
-                return $branch->isNextMajor();
+            if ($branch->isForNewerVersionThan($version)) {
+                return null;
             }
-        ))[0] ?? null;
+
+            if ($branch->isForVersion($version)) {
+                return $branch;
+            }
+        }
+
+        return null;
     }
 
     public function branchToMergeUp(SemVerVersion $version) : ?BranchName

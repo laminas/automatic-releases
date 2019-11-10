@@ -69,4 +69,18 @@ final class BranchName
     {
         return $other->name === $this->name;
     }
+
+    public function isForVersion(SemVerVersion $version) : bool
+    {
+        return $this->majorAndMinor() === [$version->major(), $version->minor()];
+    }
+
+    public function isForNewerVersionThan(SemVerVersion $version) : bool
+    {
+        [$major, $minor]      = $this->majorAndMinor();
+        $comparedMajorVersion = $version->major();
+
+        return $major > $comparedMajorVersion
+            || ($comparedMajorVersion === $major && $minor > $version->minor());
+    }
 }

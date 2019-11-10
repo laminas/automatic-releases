@@ -134,4 +134,18 @@ final class MergeTargetCandidateBranchesTest extends TestCase
             '2.0.0 won\'t be merged up, since there\'s no further branches to merge to'
         );
     }
+
+    /** @link https://github.com/doctrine/automatic-releases/pull/23#discussion_r344499867 */
+    public function testWillNotPickTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist() : void
+    {
+        $branches = MergeTargetCandidateBranches::fromAllBranches(
+            BranchName::fromName('1.2.x'),
+            BranchName::fromName('master')
+        );
+
+        self::assertNull(
+            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.1.0')),
+            '1.1.0 can\'t have a target branch, since 1.2.x already exists'
+        );
+    }
 }
