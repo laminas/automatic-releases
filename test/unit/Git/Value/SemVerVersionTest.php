@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
 use Assert\AssertionFailedException;
+use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
 
@@ -64,6 +65,57 @@ final class SemVerVersionTest extends TestCase
             ['potato'],
             ['1.2.'],
             ['1.2'],
+        ];
+    }
+
+    /**
+     * @dataProvider releaseBranchNames
+     */
+    public function testReleaseBranchNames(string $milestoneName, string $expectedTargetBranch) : void
+    {
+        self::assertEquals(
+            BranchName::fromName($expectedTargetBranch),
+            SemVerVersion::fromMilestoneName($milestoneName)
+                ->targetReleaseBranchName()
+        );
+    }
+
+    /** @return array<int, array<int, string>> */
+    public function releaseBranchNames() : array
+    {
+        return [
+            ['1.2.3', '1.2.x'],
+            ['2.0.0', '2.0.x'],
+            ['99.99.99', '99.99.x'],
+        ];
+    }
+
+    /**
+     * @dataProvider newMinorReleasesProvider
+     */
+    public function testIsNewMinorRelease(string $milestoneName, bool $expected) : void
+    {
+        self::assertSame(
+            $expected,
+            SemVerVersion::fromMilestoneName($milestoneName)
+                ->isNewMinorRelease()
+        );
+    }
+
+    /**
+     * @return array<int, array<int, string|bool>>
+     *
+     * @psalm-return array<int, array{0: string, 1: bool}>
+     */
+    public function newMinorReleasesProvider() : array
+    {
+        return [
+            ['1.0.0', true],
+            ['1.1.0', true],
+            ['1.1.1', false],
+            ['1.1.2', false],
+            ['1.1.90', false],
+            ['0.9.0', true],
         ];
     }
 }
