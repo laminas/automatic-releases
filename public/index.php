@@ -48,7 +48,7 @@ use function uniqid;
     require_once __DIR__ . '/../vendor/autoload.php';
 
     set_error_handler(
-        static function ($errorCode, $message = '', $file = '', $line = 0) : void {
+        static function ($errorCode, $message = '', $file = '', $line = 0) : bool {
             throw new ErrorException($message, 0, $errorCode, $file, $line);
         },
         E_STRICT | E_NOTICE | E_WARNING
