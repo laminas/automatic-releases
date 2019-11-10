@@ -148,4 +148,18 @@ final class MergeTargetCandidateBranchesTest extends TestCase
             '1.1.0 can\'t have a target branch, since 1.2.x already exists'
         );
     }
+
+    /** @link https://github.com/doctrine/automatic-releases/pull/23#discussion_r344499867 */
+    public function testWillNotPickPatchTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist() : void
+    {
+        $branches = MergeTargetCandidateBranches::fromAllBranches(
+            BranchName::fromName('1.0.x'),
+            BranchName::fromName('master')
+        );
+
+        self::assertNull(
+            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.1.1')),
+            '1.1.1 can\'t have a target branch, since 1.1.x doesn\'t exist, but patches require a release branch'
+        );
+    }
 }

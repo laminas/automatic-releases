@@ -89,4 +89,33 @@ final class SemVerVersionTest extends TestCase
             ['99.99.99', '99.99.x'],
         ];
     }
+
+    /**
+     * @dataProvider newMinorReleasesProvider
+     */
+    public function testIsNewMinorRelease(string $milestoneName, bool $expected) : void
+    {
+        self::assertSame(
+            $expected,
+            SemVerVersion::fromMilestoneName($milestoneName)
+                ->isNewMinorRelease()
+        );
+    }
+
+    /**
+     * @return array<int, array<int, string|bool>>
+     *
+     * @psalm-return array<int, array{0: string, 1: bool}>
+     */
+    public function newMinorReleasesProvider() : array
+    {
+        return [
+            ['1.0.0', true],
+            ['1.1.0', true],
+            ['1.1.1', false],
+            ['1.1.2', false],
+            ['1.1.90', false],
+            ['0.9.0', true],
+        ];
+    }
 }

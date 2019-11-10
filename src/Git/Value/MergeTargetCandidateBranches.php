@@ -54,6 +54,10 @@ final class MergeTargetCandidateBranches
     {
         foreach ($this->sortedBranches as $branch) {
             if ($branch->isNextMajor()) {
+                if (! $version->isNewMinorRelease()) {
+                    return null;
+                }
+
                 return $branch;
             }
 

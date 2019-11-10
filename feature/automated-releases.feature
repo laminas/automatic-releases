@@ -80,3 +80,13 @@ Feature: Automated releases
       | 1.1.0 |
     When I close milestone "1.1.0"
     Then the tool should have halted with an error
+
+  Scenario: If a minor release branch doesn't exist, the tool refuses to create a patch release
+    Given following existing branches:
+      | name   |
+      | master |
+    And following open milestones:
+      | name  |
+      | 1.1.1 |
+    When I close milestone "1.1.1"
+    Then the tool should have halted with an error

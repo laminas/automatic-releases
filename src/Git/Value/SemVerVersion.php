@@ -61,4 +61,9 @@ final class SemVerVersion
     {
         return BranchName::fromName($this->major . '.' . $this->minor . '.x');
     }
+
+    public function isNewMinorRelease() : bool
+    {
+        return $this->patch === 0;
+    }
 }
