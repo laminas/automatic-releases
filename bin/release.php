@@ -10,10 +10,10 @@ use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
-use Doctrine\AutomaticReleases\Github\Api\Hook\VerifyRequestSignature;
 use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
 use Doctrine\AutomaticReleases\Github\Api\V3\CreateRelease;
 use Doctrine\AutomaticReleases\Github\CreateChangelogText;
+use Doctrine\AutomaticReleases\Github\Event\LoadCurrentGithubEventFromGithubActionPath;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Doctrine\AutomaticReleases\Github\JwageGenerateChangelog;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
@@ -24,7 +24,6 @@ use Psr\Http\Message\UriInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 use Tideways\Profiler;
-use Zend\Diactoros\ServerRequestFactory;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
@@ -44,6 +43,7 @@ use function sys_get_temp_dir;
 use function trim;
 use function uniqid;
 
+// @TODO probably best to turn this into a symfony/console app
 (static function () : void {
     require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -164,29 +164,14 @@ use function uniqid;
         return SecretKeyId::fromBase16String($matches[1]);
     };
 
-    $request = ServerRequestFactory::fromGlobals();
-
     $environment = Variables::fromEnvironment();
 
-    (new VerifyRequestSignature())->__invoke($request, $environment->githubHookSecret());
+    $milestone = (new LoadCurrentGithubEventFromGithubActionPath($environment))
+        ->__invoke();
 
-    if (! MilestoneClosedEvent::appliesToRequest($request)) {
-        echo 'Event does not apply.';
+    Assert::that($milestone)
+        ->isInstanceOf(MilestoneClosedEvent::class, 'Provided github event is not of type "milestone closed"');
 
-        return;
-    }
-
-    $postData = $request->getParsedBody();
-
-    assert(is_array($postData));
-
-    Assert::that($postData)
-          ->keyExists('payload');
-
-    Assert::that($postData['payload'])
-        ->isJsonString();
-
-    $milestone      = MilestoneClosedEvent::fromEventJson($postData['payload']);
     $repositoryName = $milestone->repository();
 
     if (class_exists(Profiler::class, false)) {

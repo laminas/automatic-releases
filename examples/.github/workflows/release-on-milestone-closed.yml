@@ -1,0 +1,40 @@
+{
+  "name": "doctrine/automatic-releases",
+  "on": {
+    "milestone": {
+      "types": ["closed"]
+    }
+  },
+  "jobs": {
+    "release": {
+      "name": "GIT tag, release & create merge-up PR",
+      "runs-on": "ubuntu-18.04",
+      "steps": [
+        {
+          "uses": "actions/checkout@master"
+        },
+        {
+          "name": "Release",
+          "uses": "docker://doctrine/automatic-releases",
+          "with": {
+            "args": "doctrine:automatic-releases:release"
+          }
+        },
+        {
+          "name": "Release",
+          "uses": "docker://doctrine/automatic-releases",
+          "with": {
+            "args": "doctrine:automatic-releases:push-release-branch"
+          }
+        },
+        {
+          "name": "Release",
+          "uses": "docker://doctrine/automatic-releases",
+          "with": {
+            "args": "doctrine:automatic-releases:create-merge-up-pull-request"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -58,14 +58,12 @@ final class VariablesTest extends TestCase
 
     public function testReadsEnvironmentVariables() : void
     {
-        $githubHookSecret   = uniqid('githubHookSecret', true);
         $signingSecretKey   = uniqid('signingSecretKey', true);
         $githubToken        = uniqid('githubToken', true);
         $githubOrganisation = uniqid('githubOrganisation', true);
         $gitAuthorName      = uniqid('gitAuthorName', true);
         $gitAuthorEmail     = uniqid('gitAuthorEmail', true);
 
-        putenv('GITHUB_HOOK_SECRET=' . $githubHookSecret);
         putenv('GITHUB_TOKEN=' . $githubToken);
         putenv('SIGNING_SECRET_KEY=' . $signingSecretKey);
         putenv('GITHUB_ORGANISATION=' . $githubOrganisation);
@@ -74,7 +72,6 @@ final class VariablesTest extends TestCase
 
         $variables = Variables::fromEnvironment();
 
-        self::assertSame($githubHookSecret, $variables->githubHookSecret());
         self::assertSame($signingSecretKey, $variables->signingSecretKey());
         self::assertSame($githubToken, $variables->githubToken());
         self::assertSame($githubOrganisation, $variables->githubOrganisation());

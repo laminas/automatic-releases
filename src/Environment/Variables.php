@@ -21,13 +21,13 @@ final class Variables
     private $signingSecretKey;
 
     /** @var string */
-    private $githubHookSecret;
-
-    /** @var string */
     private $gitAuthorName;
 
     /** @var string */
     private $gitAuthorEmail;
+
+    /** @var string */
+    private $githubEventPath;
 
     private function __construct()
     {
@@ -40,9 +40,9 @@ final class Variables
         $instance->githubOrganisation = self::getenv('GITHUB_ORGANISATION');
         $instance->githubToken        = self::getenv('GITHUB_TOKEN');
         $instance->signingSecretKey   = self::getenv('SIGNING_SECRET_KEY');
-        $instance->githubHookSecret   = self::getenv('GITHUB_HOOK_SECRET');
         $instance->gitAuthorName      = self::getenv('GIT_AUTHOR_NAME');
         $instance->gitAuthorEmail     = self::getenv('GIT_AUTHOR_EMAIL');
+        $instance->githubEventPath    = self::getenv('GITHUB_EVENT_PATH');
 
         return $instance;
     }
@@ -78,11 +78,6 @@ final class Variables
         return $this->signingSecretKey;
     }
 
-    public function githubHookSecret() : string
-    {
-        return $this->githubHookSecret;
-    }
-
     public function gitAuthorName() : string
     {
         return $this->gitAuthorName;
@@ -91,5 +86,11 @@ final class Variables
     public function gitAuthorEmail() : string
     {
         return $this->gitAuthorEmail;
+    }
+
+    public function githubEventPath() : string
+    {
+        // @TODO test me
+        return $this->githubEventPath;
     }
 }
