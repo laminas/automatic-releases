@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8977c491d4389dbeb435b9ef77a883f3",
+    "content-hash": "c8078a33030d4665ddc7d64523940a7a",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -115,16 +115,16 @@
         },
         {
             "name": "jwage/changelog-generator",
-            "version": "1.0.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jwage/changelog-generator.git",
-                "reference": "a9ae8f5304f4de6fe62f8938b9737dd8c9147c6a"
+                "reference": "5897452c312466211ea7de6f000f279ed62e557b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jwage/changelog-generator/zipball/a9ae8f5304f4de6fe62f8938b9737dd8c9147c6a",
-                "reference": "a9ae8f5304f4de6fe62f8938b9737dd8c9147c6a",
+                "url": "https://api.github.com/repos/jwage/changelog-generator/zipball/5897452c312466211ea7de6f000f279ed62e557b",
+                "reference": "5897452c312466211ea7de6f000f279ed62e557b",
                 "shasum": ""
             },
             "require": {
@@ -178,7 +178,7 @@
                 "changelog",
                 "github"
             ],
-            "time": "2019-04-10T02:29:11+00:00"
+            "time": "2019-04-25T00:14:05+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -688,16 +688,16 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "378bfe27931ecc54ff824a20d6f6bfc303bbd04c"
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/378bfe27931ecc54ff824a20d6f6bfc303bbd04c",
-                "reference": "378bfe27931ecc54ff824a20d6f6bfc303bbd04c",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
+                "reference": "12ac7fcd07e5b077433f5f2bee95b3a771bf61be",
                 "shasum": ""
             },
             "require": {
@@ -736,7 +736,7 @@
                 "request",
                 "response"
             ],
-            "time": "2018-07-30T21:54:04+00:00"
+            "time": "2019-04-30T12:38:16+00:00"
         },
         {
             "name": "psr/http-message",
