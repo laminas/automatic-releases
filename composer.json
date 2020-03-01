@@ -13,7 +13,7 @@
         "beberlei/assert": "^3.2",
         "jwage/changelog-generator": "^1.2",
         "php-http/curl-client": "^2.1",
-        "php-http/discovery": "^1.6",
+        "php-http/discovery": "^1.7",
         "php-http/httplug": "^2.1",
         "psr/http-client": "^1.0",
         "psr/http-message": "^1.0",
