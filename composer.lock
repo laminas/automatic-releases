@@ -3883,16 +3883,16 @@
         },
         {
             "name": "roave/no-leaks",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/no-leaks.git",
-                "reference": "4f26a4d30afbd32a65f4089cb20279f76bb58220"
+                "reference": "ec6aa10e424bd160166f5e71e1b0d5333899ff18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/no-leaks/zipball/4f26a4d30afbd32a65f4089cb20279f76bb58220",
-                "reference": "4f26a4d30afbd32a65f4089cb20279f76bb58220",
+                "url": "https://api.github.com/repos/Roave/no-leaks/zipball/ec6aa10e424bd160166f5e71e1b0d5333899ff18",
+                "reference": "ec6aa10e424bd160166f5e71e1b0d5333899ff18",
                 "shasum": ""
             },
             "require": {
@@ -3923,7 +3923,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2019-03-22T13:30:10+00:00"
+            "time": "2019-04-17T11:01:38+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
