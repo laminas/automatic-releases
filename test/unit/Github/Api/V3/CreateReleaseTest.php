@@ -82,6 +82,7 @@ JSON
 {
     "tag_name": "1.2.3",
     "name": "1.2.3",
+    "target_commitish": "1.2.x",
     "body": "the-body"
 }
 JSON
