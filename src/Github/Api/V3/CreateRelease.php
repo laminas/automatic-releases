@@ -60,10 +60,9 @@ final class CreateRelease
         $request
             ->getBody()
             ->write(json_encode([
-                'tag_name'         => $version->fullReleaseName(),
-                'name'             => $version->fullReleaseName(),
-                'target_commitish' => $version->targetReleaseBranchName()->name(),
-                'body'             => $releaseNotes,
+                'tag_name' => $version->fullReleaseName(),
+                'name'     => $version->fullReleaseName(),
+                'body'     => $releaseNotes,
             ]));
 
         $response = $this->client->sendRequest($request);
