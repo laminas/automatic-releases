@@ -17,7 +17,7 @@
         "php-http/httplug": "^2.1",
         "psr/http-client": "^1.0",
         "psr/http-message": "^1.0",
-        "symfony/process": "^5.0",
+        "symfony/process": "^5.1",
         "thecodingmachine/safe": "^0.1.16",
         "zendframework/zend-diactoros": "^2.2",
         "ext-tideways": "@stable"
