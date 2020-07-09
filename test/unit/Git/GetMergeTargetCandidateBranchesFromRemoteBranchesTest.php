@@ -43,6 +43,10 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
 
         (new Process(['git', 'init'], $this->source))
             ->mustRun();
+        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->source))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->source))
+            ->mustRun();
         (new Process(['git', 'remote', 'add', 'origin', $this->destination], $this->source))
             ->mustRun();
         (new Process(['git', 'commit', '--allow-empty', '-m', 'a commit'], $this->source))

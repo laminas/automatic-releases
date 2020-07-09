@@ -36,8 +36,11 @@ final class CreateTagViaConsoleTest extends TestCase
         unlink($this->repository);
         mkdir($this->repository);
 
-        // @TODO check if we need to set the git author and email here (will likely fail in CI)
         (new Process(['git', 'init'], $this->repository))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->repository))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->repository))
             ->mustRun();
         (new Process(['git', 'checkout', '-b', 'tag-branch'], $this->repository))
             ->mustRun();

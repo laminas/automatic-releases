@@ -47,8 +47,11 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
         unlink($this->destination);
         mkdir($this->source);
 
-        // @TODO check if we need to set the git author and email here (will likely fail in CI)
         (new Process(['git', 'init'], $this->source))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->source))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->source))
             ->mustRun();
         (new Process(['git', 'remote', 'add', 'origin', $this->destination], $this->source))
             ->mustRun();
