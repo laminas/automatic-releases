@@ -1,0 +1,16 @@
+# Definition of the github action
+# as per https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+
+name: 'Laminas\AutomaticReleases'
+description: 'Automates automatic releases for semver-compliant repositories'
+
+inputs:
+  command-name:
+    description: 'Command to execute: one of "laminas:automatic-releases:release" or "laminas:automatic-releases:create-merge-up-pull-request"'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command-name }}
