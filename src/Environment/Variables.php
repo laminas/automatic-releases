@@ -10,9 +10,6 @@ use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 interface Variables
 {
     /** @psalm-return non-empty-string */
-    public function githubOrganisation(): string;
-
-    /** @psalm-return non-empty-string */
     public function githubToken(): string;
 
     public function signingSecretKey(): SecretKeyId;

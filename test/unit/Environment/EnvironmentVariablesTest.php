@@ -93,7 +93,6 @@ final class EnvironmentVariablesTest extends TestCase
 
         self::assertEquals($signingSecretKeyId, $variables->signingSecretKey());
         self::assertSame($githubToken, $variables->githubToken());
-        self::assertSame($githubOrganisation, $variables->githubOrganisation());
         self::assertSame($gitAuthorName, $variables->gitAuthorName());
         self::assertSame($gitAuthorEmail, $variables->gitAuthorEmail());
         self::assertSame($githubEventPath, $variables->githubEventPath());

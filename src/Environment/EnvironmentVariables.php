@@ -11,14 +11,9 @@ use Webmozart\Assert\Assert;
 use function getenv;
 use function sprintf;
 
-/**
- * @TODO move to interface - mocking/stubbing to be done later
- * @psalm-immutable
- */
+/** @psalm-immutable */
 class EnvironmentVariables implements Variables
 {
-    /** @psalm-var non-empty-string */
-    private string $githubOrganisation;
     /** @psalm-var non-empty-string */
     private string $githubToken;
     private SecretKeyId $signingSecretKey;
@@ -32,7 +27,6 @@ class EnvironmentVariables implements Variables
     private string $workspacePath;
 
     /**
-     * @psalm-param non-empty-string $githubOrganisation
      * @psalm-param non-empty-string $githubToken
      * @psalm-param non-empty-string $gitAuthorName
      * @psalm-param non-empty-string $gitAuthorEmail
@@ -40,7 +34,6 @@ class EnvironmentVariables implements Variables
      * @psalm-param non-empty-string $workspacePath
      */
     private function __construct(
-        string $githubOrganisation,
         string $githubToken,
         SecretKeyId $signingSecretKey,
         string $gitAuthorName,
@@ -48,19 +41,17 @@ class EnvironmentVariables implements Variables
         string $githubEventPath,
         string $workspacePath
     ) {
-        $this->githubOrganisation = $githubOrganisation;
-        $this->githubToken        = $githubToken;
-        $this->signingSecretKey   = $signingSecretKey;
-        $this->gitAuthorName      = $gitAuthorName;
-        $this->gitAuthorEmail     = $gitAuthorEmail;
-        $this->githubEventPath    = $githubEventPath;
-        $this->workspacePath      = $workspacePath;
+        $this->githubToken      = $githubToken;
+        $this->signingSecretKey = $signingSecretKey;
+        $this->gitAuthorName    = $gitAuthorName;
+        $this->gitAuthorEmail   = $gitAuthorEmail;
+        $this->githubEventPath  = $githubEventPath;
+        $this->workspacePath    = $workspacePath;
     }
 
     public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
     {
         return new self(
-            self::getenv('GITHUB_ORGANISATION'),
             self::getenv('GITHUB_TOKEN'),
             $importKey->__invoke(self::getenv('SIGNING_SECRET_KEY')),
             self::getenv('GIT_AUTHOR_NAME'),
@@ -81,11 +72,6 @@ class EnvironmentVariables implements Variables
         Assert::stringNotEmpty($value, sprintf('Could not find a value for environment variable "%s"', $key));
 
         return $value;
-    }
-
-    public function githubOrganisation(): string
-    {
-        return $this->githubOrganisation;
     }
 
     public function githubToken(): string
