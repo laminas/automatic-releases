@@ -18,6 +18,7 @@ WORKDIR /app
 RUN apt update \
     && apt install -y \
         git \
+        gnupg \
         libzip-dev \
         zip \
     && docker-php-ext-install zip \
