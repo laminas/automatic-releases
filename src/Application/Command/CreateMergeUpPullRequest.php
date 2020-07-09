@@ -52,12 +52,11 @@ final class CreateMergeUpPullRequest extends Command
         $this->createPullRequest = $createPullRequest;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output) : int
     {
         $event          = $this->loadGithubEvent->__invoke();
         $repositoryPath = $this->variables->githubWorkspacePath();
 
-        Assert::stringNotEmpty($repositoryPath);
         Assert::directory($repositoryPath . '/.git');
 
         $this->fetch->__invoke(
@@ -78,7 +77,7 @@ final class CreateMergeUpPullRequest extends Command
                 $releaseVersion->fullReleaseName()
             ));
 
-            return null;
+            return 0;
         }
 
         Assert::notNull(

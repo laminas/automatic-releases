@@ -4,48 +4,53 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Value;
 
-use Assert\Assert;
 use Psr\Http\Message\UriInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
 use function explode;
 use function strtolower;
 
+/** @psalm-immutable */
 final class RepositoryName
 {
-    /** @var string */
-    private $owner;
+    /** @psalm-var non-empty-string */
+    private string $owner;
 
-    /** @var string */
-    private $name;
+    /** @psalm-var non-empty-string */
+    private string $name;
 
-    private function __construct()
+    /**
+     * @psalm-param non-empty-string $owner
+     * @psalm-param non-empty-string $name
+     */
+    private function __construct(string $owner, string $name)
     {
+        $this->owner = $owner;
+        $this->name = $name;
     }
 
+    /** @psalm-pure */
     public static function fromFullName(string $fullName) : self
     {
-        Assert::that($fullName)
-            ->notEmpty()
-            ->regex('~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~');
+        Assert::stringNotEmpty($fullName);
+        Assert::regex($fullName, '~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~');
 
-        $instance = new self();
+        [$owner, $name] = explode('/', $fullName);
 
-        [$instance->owner, $instance->name] = explode('/', $fullName);
+        Assert::notEmpty($owner);
+        Assert::notEmpty($name);
 
-        return $instance;
+        return new self($owner, $name);
     }
 
     public function assertMatchesOwner(string $owner) : void
     {
-        Assert::that(strtolower($this->owner))
-            ->same(strtolower($owner));
+        Assert::same(strtolower($owner), strtolower($this->owner));
     }
 
+    /** @psalm-param non-empty-string $token */
     public function uriWithTokenAuthentication(string $token) : UriInterface
     {
-        Assert::that($token)
-            ->notEmpty();
-
         return new Uri('https://' . $token . ':x-oauth-basic@github.com/' . $this->owner . '/' . $this->name . '.git');
     }
 

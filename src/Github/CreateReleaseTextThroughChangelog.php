@@ -8,6 +8,7 @@ use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\UriInterface;
+use Webmozart\Assert\Assert;
 use function array_keys;
 use function str_replace;
 
@@ -37,18 +38,22 @@ MARKDOWN;
     ) : string {
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
-            '%description%'  => $milestone->description(),
+            '%description%'  => (string) $milestone->description(),
             '%changelogText%' => $this->generateChangelog->__invoke(
                 $repositoryName,
                 $semVerVersion
             ),
         ];
 
-        return str_replace(
+        $text = str_replace(
             array_keys($replacements),
             $replacements,
             self::TEMPLATE
         );
+
+        Assert::stringNotEmpty($text);
+
+        return $text;
     }
 
     private function markdownLink(string $text, UriInterface $uri) : string

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Gpg;
 
-use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class SecretKeyIdTest extends TestCase
@@ -15,7 +15,7 @@ final class SecretKeyIdTest extends TestCase
      */
     public function testRejectsInvalidKeyIds(string $invalid) : void
     {
-        $this->expectException(AssertionFailedException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         SecretKeyId::fromBase16String($invalid);
     }

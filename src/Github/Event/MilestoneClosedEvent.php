@@ -4,96 +4,70 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Event;
 
-use Assert\Assert;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\ServerRequestInterface;
+use Webmozart\Assert\Assert;
 use function array_key_exists;
 use function assert;
 use function is_array;
 use function Safe\json_decode;
 
+/** @psalm-immutable */
 final class MilestoneClosedEvent
 {
-    /** @var SemVerVersion */
-    private $version;
+    private SemVerVersion $version;
+    private RepositoryName  $repository;
+    private int $milestoneNumber;
 
-    /** @var RepositoryName */
-    private $repository;
-
-    /** @var int */
-    private $milestoneNumber;
-
-    private function __construct()
-    {
+    private function __construct(
+        SemVerVersion $version,
+        RepositoryName $repository,
+        int $milestoneNumber
+    ) {
+        $this->version         = $version;
+        $this->repository      = $repository;
+        $this->milestoneNumber = $milestoneNumber;
     }
 
-    public static function appliesToRequest(ServerRequestInterface $request) : bool
-    {
-        if ($request->getHeaderLine('X-Github-Event') !== 'milestone') {
-            return false;
-        }
-
-        $body = $request->getParsedBody();
-
-        assert(is_array($body));
-
-        if (! array_key_exists('payload', $body)) {
-            return false;
-        }
-
-        $event = json_decode($body['payload'], true);
-
-        return $event['action'] === 'closed';
-    }
-
-    public static function fromEventJson(string $json) : self
+    /** @psalm-suppress ImpureMethodCall {@see \Safe\json_encode()} is pure */
+    public static function fromEventJson(string $json): self
     {
         $event = json_decode($json, true);
 
-        Assert::that($event)
-            ->keyExists('milestone')
-            ->keyExists('repository')
-            ->keyExists('action');
+        Assert::isMap($event);
+        Assert::keyExists($event, 'milestone');
+        Assert::keyExists($event, 'repository');
+        Assert::keyExists($event, 'action');
+        Assert::same($event['action'], 'closed');
+        Assert::isMap($event['milestone']);
+        Assert::keyExists($event['milestone'], 'title');
+        Assert::keyExists($event['milestone'], 'number');
+        Assert::stringNotEmpty($event['milestone']['title']);
+        Assert::integer($event['milestone']['number']);
+        Assert::greaterThan($event['milestone']['number'], 0);
+        Assert::isMap($event['repository']);
+        Assert::keyExists($event['repository'], 'full_name');
+        Assert::stringNotEmpty($event['repository']['full_name']);
 
-        Assert::that($event['action'])
-            ->same('closed');
-
-        Assert::that($event['milestone'])
-            ->keyExists('title')
-            ->keyExists('number');
-
-        Assert::that($event['milestone']['title'])
-            ->string()
-            ->notEmpty();
-
-        Assert::that($event['milestone']['number'])
-            ->integer()
-            ->greaterThan(0);
-
-        Assert::that($event['repository'])
-            ->keyExists('full_name');
-
-        $instance = new self();
-
-        $instance->repository      = RepositoryName::fromFullName($event['repository']['full_name']);
-        $instance->milestoneNumber = $event['milestone']['number'];
-        $instance->version         = SemVerVersion::fromMilestoneName($event['milestone']['title']);
-
-        return $instance;
+        return new self(
+            SemVerVersion::fromMilestoneName($event['milestone']['title']),
+            RepositoryName::fromFullName($event['repository']['full_name']),
+            $event['milestone']['number']
+        );
     }
 
-    public function repository() : RepositoryName
+    public function repository(): RepositoryName
     {
         return $this->repository;
     }
 
-    public function milestoneNumber() : int
+    public function milestoneNumber(): int
     {
         return $this->milestoneNumber;
     }
 
-    public function version() : SemVerVersion
+    public function version(): SemVerVersion
     {
         return $this->version;
     }

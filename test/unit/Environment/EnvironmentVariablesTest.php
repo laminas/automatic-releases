@@ -44,7 +44,9 @@ final class EnvironmentVariablesTest extends TestCase
 
     protected function tearDown() : void
     {
-        array_walk($this->originalValues, static function ($value, string $key) : void {
+        array_walk($this->originalValues,
+            /** @param string|false $value */
+            static function ($value, string $key) : void {
             if ($value === false) {
                 putenv($key . '=');
 

@@ -10,6 +10,7 @@ use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 
 interface CreateReleaseText
 {
+    /** @psalm-return non-empty-string */
     public function __invoke(
         Milestone $milestone,
         RepositoryName $repositoryName,

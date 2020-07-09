@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use function uniqid;
@@ -20,31 +21,32 @@ final class CreateReleaseTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
     private $httpClient;
-
     /** @var RequestFactoryInterface&MockObject */
     private $messageFactory;
-
-    /** @var string */
-    private $apiToken;
-
+    /** @psalm-var non-empty-string */
+    private string $apiToken;
     /** @var CreateReleaseThroughApiCall */
     private $createRelease;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $this->apiToken       = uniqid('apiToken', true);
-        $this->createRelease  = new CreateReleaseThroughApiCall(
+        $apiToken             = uniqid('apiToken', true);
+
+        Assert::notEmpty($apiToken);
+
+        $this->apiToken      = $apiToken;
+        $this->createRelease = new CreateReleaseThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken
         );
     }
 
-    public function testSuccessfulRequest() : void
+    public function testSuccessfulRequest(): void
     {
         $this
             ->messageFactory
@@ -66,7 +68,7 @@ JSON
             ->httpClient
             ->expects(self::once())
             ->method('sendRequest')
-            ->with(self::callback(function (RequestInterface $request) : bool {
+            ->with(self::callback(function (RequestInterface $request): bool {
                 self::assertSame(
                     [
                         'Host'          => ['the-domain.com'],

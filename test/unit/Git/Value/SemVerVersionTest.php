@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
 
-use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class SemVerVersionTest extends TestCase
@@ -47,7 +47,7 @@ final class SemVerVersionTest extends TestCase
      */
     public function testRejectsInvalidReleaseStrings(string $invalid) : void
     {
-        $this->expectException(AssertionFailedException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         SemVerVersion::fromMilestoneName($invalid);
     }

@@ -4,113 +4,119 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
-use Assert\Assert;
 use Psr\Http\Message\UriInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
 use function array_map;
 use function array_values;
 
+/** @psalm-immutable */
 final class IssueOrPullRequest
 {
-    /** @var int */
-    private $number;
+    private int $number;
+    /** @psalm-var non-empty-string */
+    private string $title;
+    private Author $author;
+    /**
+     * @var array<int, Label>
+     *
+     * @psalm-var list<Label>
+     */
+    private array $labels;
+    private bool $closed;
+    private UriInterface $url;
 
-    /** @var string */
-    private $title;
-
-    /** @var Author */
-    private $author;
-
-    /** @var array<int, Label> */
-    private $labels;
-
-    /** @var bool */
-    private $closed;
-
-    /** @var UriInterface */
-    private $url;
-
-    private function __construct()
-    {
+    /**
+     * @psalm-param non-empty-string $title
+     * @psalm-param list<Label> $labels
+     *
+     * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
+     */
+    private function __construct(
+        int $number,
+        string $title,
+        Author $author,
+        array $labels,
+        bool $closed,
+        UriInterface $url
+    ) {
+        $this->number = $number;
+        $this->title  = $title;
+        $this->author = $author;
+        $this->labels = $labels;
+        $this->closed = $closed;
+        $this->url    = $url;
     }
 
-    /** @param array<string, mixed> $payload */
-    public static function fromPayload(array $payload) : self
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @psalm-pure
+     *
+     * @psalm-suppress ImpureMethodCall the {@see UriInterface} API is pure by design
+     */
+    public static function fromPayload(array $payload): self
     {
-        Assert::that($payload)
-              ->keyExists('number')
-              ->keyExists('title')
-              ->keyExists('author')
-              ->keyExists('url')
-              ->keyExists('closed')
-              ->keyExists('labels');
+        Assert::keyExists($payload, 'number');
+        Assert::keyExists($payload, 'title');
+        Assert::keyExists($payload, 'author');
+        Assert::keyExists($payload, 'url');
+        Assert::keyExists($payload, 'closed');
+        Assert::keyExists($payload, 'labels');
+        Assert::integer($payload['number']);
+        Assert::greaterThan($payload['number'], 0);
+        Assert::stringNotEmpty($payload['title']);
+        Assert::isMap($payload['author']);
+        Assert::isMap($payload['labels']);
+        Assert::keyExists($payload['labels'], 'nodes');
+        Assert::isList($payload['labels']['nodes']);
+        Assert::stringNotEmpty($payload['url']);
+        Assert::boolean($payload['closed']);
 
-        Assert::that($payload['number'])
-              ->integer()
-              ->greaterThan(0);
-
-        Assert::that($payload['title'])
-              ->string()
-              ->notEmpty();
-
-        Assert::that($payload['author'])
-              ->isArray();
-
-        Assert::that($payload['labels'])
-              ->isArray()
-              ->keyExists('nodes');
-
-        Assert::that($payload['labels']['nodes'])
-              ->isArray();
-
-        Assert::that($payload['url'])
-              ->string()
-              ->notEmpty();
-
-        Assert::that($payload['closed'])
-              ->boolean();
-
-        $instance = new self();
-
-        $instance->number = $payload['number'];
-        $instance->title  = $payload['title'];
-        $instance->author = Author::fromPayload($payload['author']);
-        $instance->labels = array_values(array_map([Label::class, 'fromPayload'], $payload['labels']['nodes']));
-        $instance->url    = new Uri($payload['url']);
-        $instance->closed = isset($payload['merged'])
-            ? (bool) $payload['merged'] || $payload['closed']
-            : $payload['closed'];
-
-        return $instance;
+        return new self(
+            $payload['number'],
+            $payload['title'],
+            Author::fromPayload($payload['author']),
+            array_values(array_map([Label::class, 'fromPayload'], $payload['labels']['nodes'])),
+            isset($payload['merged'])
+                ? (bool) $payload['merged'] || $payload['closed']
+                : $payload['closed'],
+            new Uri($payload['url'])
+        );
     }
 
-    public function number() : int
+    public function number(): int
     {
         return $this->number;
     }
 
-    public function title() : string
+    /** @psalm-return non-empty-string */
+    public function title(): string
     {
         return $this->title;
     }
 
-    public function author() : Author
+    public function author(): Author
     {
         return $this->author;
     }
 
-    /** @return array<int, Label> */
-    public function labels() : array
+    /**
+     * @return array<int, Label>
+     *
+     * @psalm-return list<Label>
+     */
+    public function labels(): array
     {
         return $this->labels;
     }
 
-    public function closed() : bool
+    public function closed(): bool
     {
         return $this->closed;
     }
 
-    public function url() : UriInterface
+    public function url(): UriInterface
     {
         return $this->url;
     }

@@ -10,6 +10,7 @@ use Psr\Http\Message\UriInterface;
 
 interface CreateRelease
 {
+    /** @psalm-param non-empty-string $releaseNotes */
     public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version,

@@ -10,12 +10,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
+use Webmozart\Assert\Assert;
+use function Safe\tempnam;
 use function trim;
 
 /** @covers \Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends TestCase
 {
+    /** @psalm-var non-empty-string */
     private string $source;
+    /** @psalm-var non-empty-string */
     private string $destination;
     /** @var EnvironmentVariables&MockObject */
     private EnvironmentVariables $variables;
@@ -25,8 +29,15 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
         parent::setUp();
 
         $this->variables   = $this->createMock(EnvironmentVariables::class);
-        $this->source      = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestSource');
-        $this->destination = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestDestination');
+
+        $source      = tempnam(sys_get_temp_dir(), 'FetchSource');
+        $destination = tempnam(sys_get_temp_dir(), 'FetchDestination');
+
+        Assert::notEmpty($source);
+        Assert::notEmpty($destination);
+
+        $this->source      = $source;
+        $this->destination = $destination;
 
         unlink($this->source);
         unlink($this->destination);

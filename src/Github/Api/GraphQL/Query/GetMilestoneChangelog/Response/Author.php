@@ -4,43 +4,33 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
-use Assert\Assert;
 use Psr\Http\Message\UriInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
 
 final class Author
 {
-    /** @var string */
-    private $name;
+    /** @psalm-var non-empty-string */
+    private string $name;
+    private UriInterface $url;
 
-    /** @var Uri */
-    private $url;
-
-    private function __construct()
+    /** @psalm-param non-empty-string $name */
+    private function __construct(string $name, UriInterface $url)
     {
+        $this->name = $name;
+        $this->url = $url;
     }
 
     /** @param array<string, mixed> $payload */
     public static function fromPayload(array $payload) : self
     {
-        Assert::that($payload)
-              ->keyExists('login')
-              ->keyExists('url');
+        Assert::isMap($payload);
+        Assert::keyExists($payload, 'login');
+        Assert::keyExists($payload, 'url');
+        Assert::stringNotEmpty($payload['login']);
+        Assert::stringNotEmpty($payload['url']);
 
-        Assert::that($payload['login'])
-              ->string()
-              ->notEmpty();
-
-        Assert::that($payload['url'])
-              ->string()
-              ->notEmpty();
-
-        $instance = new self();
-
-        $instance->name = $payload['login'];
-        $instance->url  = new Uri($payload['url']);
-
-        return $instance;
+        return new self($payload['login'], new Uri($payload['url']));
     }
 
     public function name() : string

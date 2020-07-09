@@ -18,6 +18,9 @@
           "uses": "docker://doctrine/automatic-releases",
           "with": {
             "args": "doctrine:automatic-releases:release"
+          },
+          "env": {
+            "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
           }
         },
         {
@@ -25,6 +28,9 @@
           "uses": "docker://doctrine/automatic-releases",
           "with": {
             "args": "doctrine:automatic-releases:push-release-branch"
+          },
+          "env": {
+            "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
           }
         },
         {
@@ -32,6 +38,9 @@
           "uses": "docker://doctrine/automatic-releases",
           "with": {
             "args": "doctrine:automatic-releases:create-merge-up-pull-request"
+          },
+          "env": {
+            "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
           }
         }
       ]

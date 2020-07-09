@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Api\V3;
 
-use Assert\Assert;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Webmozart\Assert\Assert;
 use function Safe\json_decode;
 use function Safe\json_encode;
 
@@ -25,14 +25,12 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
     /** @var string */
     private $apiToken;
 
+    /** @psalm-param non-empty-string $apiToken */
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
         string $apiToken
     ) {
-        Assert::that($apiToken)
-            ->notEmpty();
-
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
         $this->apiToken       = $apiToken;
@@ -45,9 +43,6 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
         string $title,
         string $body
     ) : void {
-        Assert::that($title)
-            ->notEmpty();
-
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
@@ -74,15 +69,12 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
             ->getBody()
             ->__toString();
 
-        Assert::that($response->getStatusCode())
-              ->between(200, 299, $responseBody);
-
-        Assert::that($responseBody)
-              ->isJsonString();
+        Assert::greaterThanEq($response->getStatusCode(), 200);
+        Assert::lessThanEq($response->getStatusCode(), 299);
 
         $responseData = json_decode($responseBody, true);
 
-        Assert::that($responseData)
-              ->keyExists('url', $responseBody);
+        Assert::isMap($responseData);
+        Assert::keyExists($responseData, 'url');
     }
 }

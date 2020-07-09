@@ -4,44 +4,41 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Git\Value;
 
-use Assert\Assert;
-use function array_map;
-use function assert;
-use function is_array;
+use Webmozart\Assert\Assert;
 use function Safe\preg_match;
 
+/** @psalm-immutable */
 final class SemVerVersion
 {
-    /** @var int */
-    private $major;
+    private int $major;
+    private int $minor;
+    private int $patch;
 
-    /** @var int */
-    private $minor;
-
-    /** @var int */
-    private $patch;
-
-    private function __construct()
+    private function __construct(int $major, int $minor, int $patch)
     {
+        $this->major = $major;
+        $this->minor = $minor;
+        $this->patch = $patch;
     }
 
+    /**
+     * @psalm-pure
+     *
+     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
+     */
     public static function fromMilestoneName(string $name) : self
     {
-        Assert::that($name)
-            ->notEmpty()
-            ->regex('/^(v)?\\d+\\.\\d+\\.\\d+$/');
+        Assert::notEmpty($name);
+        Assert::regex($name, '/^(v)?\\d+\\.\\d+\\.\\d+$/');
 
         preg_match('/(\\d+)\\.(\\d+)\\.(\\d+)/', $name, $matches);
 
-        assert(is_array($matches));
+        Assert::isList($matches);
 
-        $instance = new self();
-
-        [, $instance->major, $instance->minor, $instance->patch] = array_map('intval', $matches);
-
-        return $instance;
+        return new self((int) $matches[1], (int) $matches[2], (int) $matches[3]);
     }
 
+    /** @psalm-return non-empty-string */
     public function fullReleaseName() : string
     {
         return $this->major . '.' . $this->minor . '.' . $this->patch;

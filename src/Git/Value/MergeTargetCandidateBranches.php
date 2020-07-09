@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Git\Value;
 
-use Assert\Assert;
+use Webmozart\Assert\Assert;
 use function array_filter;
 use function array_search;
+use function array_values;
 use function assert;
 use function end;
 use function is_int;
@@ -17,8 +18,13 @@ final class MergeTargetCandidateBranches
     /** @var BranchName[] */
     private $sortedBranches;
 
-    private function __construct()
+    /**
+     * @param BranchName[] $sortedBranches
+     * @psalm-param non-empty-list<BranchName> $sortedBranches
+     */
+    private function __construct(array $sortedBranches)
     {
+        $this->sortedBranches = $sortedBranches;
     }
 
     public static function fromAllBranches(BranchName ...$branches) : self
@@ -28,8 +34,7 @@ final class MergeTargetCandidateBranches
                 || $branch->isNextMajor();
         });
 
-        Assert::that($mergeTargetBranches)
-              ->notEmpty();
+        Assert::notEmpty($mergeTargetBranches);
 
         usort($mergeTargetBranches, static function (BranchName $a, BranchName $b) : int {
             if ($a->isNextMajor()) {
@@ -43,11 +48,7 @@ final class MergeTargetCandidateBranches
             return $a->majorAndMinor() <=> $b->majorAndMinor();
         });
 
-        $instance = new self();
-
-        $instance->sortedBranches = $mergeTargetBranches;
-
-        return $instance;
+        return new self(array_values($mergeTargetBranches));
     }
 
     public function targetBranchFor(SemVerVersion $version) : ?BranchName

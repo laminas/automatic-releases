@@ -4,29 +4,30 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Gpg;
 
-use Assert\Assert;
+use Webmozart\Assert\Assert;
 
+/** @psalm-immutable */
 final class SecretKeyId
 {
-    /** @var string */
-    private $id;
+    /** @psalm-var non-empty-string */
+    private string $id;
 
-    private function __construct()
+    /** @psalm-param non-empty-string $id */
+    private function __construct(string $id)
     {
+        $this->id = $id;
     }
 
+    /** @psalm-pure */
     public static function fromBase16String(string $keyId) : self
     {
-        Assert::that($keyId)
-            ->regex('/^[A-F0-9]+$/i');
+        Assert::notEmpty($keyId);
+        Assert::regex($keyId, '/^[A-F0-9]+$/i');
 
-        $instance = new self();
-
-        $instance->id = $keyId;
-
-        return $instance;
+        return new self($keyId);
     }
 
+    /** @psalm-return non-empty-string */
     public function id() : string
     {
         return $this->id;

@@ -6,7 +6,7 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name="public"/>
+        <directory name="bin"/>
         <directory name="src"/>
         <directory name="test"/>
         <ignoreFiles>
@@ -15,48 +15,17 @@
     </projectFiles>
 
     <issueHandlers>
-        <LessSpecificReturnType errorLevel="info"/>
-
-        <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-
-        <DeprecatedMethod errorLevel="info"/>
-        <DeprecatedProperty errorLevel="info"/>
-        <DeprecatedClass errorLevel="info"/>
-        <DeprecatedConstant errorLevel="info"/>
-        <DeprecatedInterface errorLevel="info"/>
-        <DeprecatedTrait errorLevel="info"/>
-
-        <InternalMethod errorLevel="suppress"/>
-        <InternalProperty errorLevel="info"/>
-        <InternalClass errorLevel="suppress"/>
-
-        <MissingClosureReturnType errorLevel="info"/>
-        <MissingReturnType errorLevel="info"/>
-        <MissingPropertyType errorLevel="info"/>
-        <InvalidDocblock errorLevel="info"/>
-        <MisplacedRequiredParam errorLevel="info"/>
-
-        <PropertyNotSetInConstructor errorLevel="info"/>
-        <MissingConstructor errorLevel="info"/>
-        <MissingClosureParamType errorLevel="info"/>
-        <MissingParamType errorLevel="info"/>
-
-        <RedundantCondition errorLevel="info"/>
-
-        <DocblockTypeContradiction errorLevel="info"/>
-        <RedundantConditionGivenDocblockType errorLevel="info"/>
-
-        <UnresolvableInclude errorLevel="info"/>
-
-        <RawObjectIteration errorLevel="info"/>
-
-        <InvalidStringClass errorLevel="info"/>
-
-        <UndefinedClass>
+        <InternalMethod>
             <errorLevel type="suppress">
-                <referencedClass name="Tideways\Profiler" />
+                <referencedMethod name="PHPUnit\Framework\MockObject\Builder\InvocationMocker::method"/>
             </errorLevel>
-        </UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedMethod name="PHPUnit\Framework\MockObject\Builder\InvocationMocker::willReturn"/>
+            </errorLevel>
+            <errorLevel type="suppress">
+                <referencedMethod name="PHPUnit\Framework\MockObject\Builder\InvocationMocker::with"/>
+            </errorLevel>
+        </InternalMethod>
     </issueHandlers>
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>

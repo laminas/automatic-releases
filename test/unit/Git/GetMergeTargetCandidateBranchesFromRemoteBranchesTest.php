@@ -14,20 +14,30 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
+use Webmozart\Assert\Assert;
+use function Safe\tempnam;
 use function trim;
 
 /** @covers \Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
 {
+    /** @psalm-var non-empty-string */
     private string $source;
+    /** @psalm-var non-empty-string */
     private string $destination;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->source      = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestSource');
-        $this->destination = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestDestination');
+        $source      = tempnam(sys_get_temp_dir(), 'GetMergeTargetSource');
+        $destination = tempnam(sys_get_temp_dir(), 'GetMergeTargetDestination');
+
+        Assert::notEmpty($source);
+        Assert::notEmpty($destination);
+
+        $this->source      = $source;
+        $this->destination = $destination;
 
         unlink($this->source);
         unlink($this->destination);

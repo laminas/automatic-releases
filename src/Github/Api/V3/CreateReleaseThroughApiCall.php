@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Github\Api\V3;
 
-use Assert\Assert;
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
 use function Safe\json_decode;
 use function Safe\json_encode;
@@ -24,17 +24,15 @@ final class CreateReleaseThroughApiCall implements CreateRelease
     /** @var ClientInterface */
     private $client;
 
-    /** @var string */
-    private $apiToken;
+    /** @psalm-var non-empty-string */
+    private string $apiToken;
 
+    /** @psalm-param non-empty-string $apiToken */
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
         string $apiToken
     ) {
-        Assert::that($apiToken)
-            ->notEmpty();
-
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
         $this->apiToken       = $apiToken;
@@ -45,9 +43,6 @@ final class CreateReleaseThroughApiCall implements CreateRelease
         SemVerVersion $version,
         string $releaseNotes
     ) : UriInterface {
-        Assert::that($releaseNotes)
-              ->notEmpty();
-
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
@@ -71,16 +66,14 @@ final class CreateReleaseThroughApiCall implements CreateRelease
             ->getBody()
             ->__toString();
 
-        Assert::that($response->getStatusCode())
-            ->between(200, 299, $responseBody);
-
-        Assert::that($responseBody)
-              ->isJsonString();
+        Assert::greaterThanEq($response->getStatusCode(), 200);
+        Assert::lessThanEq($response->getStatusCode(), 299);
 
         $responseData = json_decode($responseBody, true);
 
-        Assert::that($responseData)
-              ->keyExists('html_url', $responseBody);
+        Assert::isMap($responseData);
+        Assert::keyExists($responseData, 'html_url');
+        Assert::stringNotEmpty($responseData['html_url']);
 
         return new Uri($responseData['html_url']);
     }

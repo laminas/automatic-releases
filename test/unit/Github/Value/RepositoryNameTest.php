@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Value;
 
-use Assert\AssertionFailedException;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class RepositoryNameTest extends TestCase
@@ -25,7 +25,7 @@ final class RepositoryNameTest extends TestCase
 
         $repositoryName->assertMatchesOwner('foo');
 
-        $this->expectException(AssertionFailedException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $repositoryName->assertMatchesOwner('potato');
     }

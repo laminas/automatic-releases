@@ -55,14 +55,13 @@ final class ReleaseCommand extends Command
         $this->createRelease       = $createRelease;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output) : int
     {
         $milestoneClosedEvent = ($this->loadEvent)();
         $repositoryName       = $milestoneClosedEvent->repository();
         $repositoryCloneUri   = $repositoryName->uriWithTokenAuthentication($this->environment->githubToken());
         $repositoryPath       = $this->environment->githubWorkspacePath();
 
-        Assert::stringNotEmpty($repositoryPath);
         Assert::directory($repositoryPath . '/.git');
 
         ($this->fetch)($repositoryCloneUri, $repositoryPath);

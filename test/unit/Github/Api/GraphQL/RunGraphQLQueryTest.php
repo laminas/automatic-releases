@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Webmozart\Assert\Assert;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use function uniqid;
@@ -17,16 +18,15 @@ use function uniqid;
 final class RunGraphQLQueryTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
-    private $httpClient;
+    private ClientInterface $httpClient;
 
     /** @var RequestFactoryInterface&MockObject */
-    private $messageFactory;
+    private RequestFactoryInterface $messageFactory;
 
-    /** @var string */
-    private $apiToken;
+    /** @psalm-var non-empty-string */
+    private string $apiToken;
 
-    /** @var RunGraphQLQuery */
-    private $runQuery;
+    private RunGraphQLQuery $runQuery;
 
     protected function setUp() : void
     {
@@ -34,7 +34,11 @@ final class RunGraphQLQueryTest extends TestCase
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $this->apiToken       = uniqid('apiToken', true);
+        $apiToken       = uniqid('apiToken', true);
+
+        Assert::notEmpty($apiToken);
+
+        $this->apiToken       = $apiToken;
         $this->runQuery       = new RunGraphQLQuery(
             $this->messageFactory,
             $this->httpClient,

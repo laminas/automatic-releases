@@ -4,38 +4,41 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Git\Value;
 
-use Assert\Assert;
+use Webmozart\Assert\Assert;
 use function array_map;
 use function assert;
 use function is_array;
 use function Safe\preg_match;
 
+/** @psalm-immutable */
 final class BranchName
 {
-    /** @var string */
-    private $name;
+    /** @psalm-var non-empty-string */
+    private string $name;
 
-    private function __construct()
+    /** @psalm-param non-empty-string $name */
+    private function __construct(string $name)
     {
+        $this->name = $name;
     }
 
+    /** @psalm-pure */
     public static function fromName(string $name) : self
     {
-        Assert::that($name)
-            ->notEmpty();
+        Assert::stringNotEmpty($name);
 
-        $instance = new self();
-
-        $instance->name = $name;
-
-        return $instance;
+        return new self($name);
     }
 
+    /** @psalm-return non-empty-string */
     public function name() : string
     {
         return $this->name;
     }
 
+    /**
+     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
+     */
     public function isReleaseBranch() : bool
     {
         return preg_match('/^(v)?\d+\\.\d+(\\.x)?$/', $this->name) === 1;
@@ -50,11 +53,12 @@ final class BranchName
      * @return array<int, int>
      *
      * @psalm-return array{0: int, 1: int}
+     *
+     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
      */
     public function majorAndMinor() : array
     {
-        Assert::that($this->name)
-            ->regex('/^(v)?\d+\\.\d+(\\.x)?$/');
+        Assert::regex($this->name, '/^(v)?\d+\\.\d+(\\.x)?$/');
 
         preg_match('/^(?:v)?(\d+)\\.(\d+)(?:\\.x)?$/', $this->name, $matches);
 

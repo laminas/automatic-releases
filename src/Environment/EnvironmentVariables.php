@@ -19,47 +19,69 @@ use function sprintf;
  */
 class EnvironmentVariables implements Variables
 {
-    /** @var string */
-    private $githubOrganisation;
-    /** @var string */
-    private $githubToken;
-    /** @var string */
-    private $signingSecretKey;
-    /** @var string */
-    private $gitAuthorName;
-    /** @var string */
-    private $gitAuthorEmail;
-    /** @var string */
-    private $githubEventPath;
+    /** @psalm-var non-empty-string */
+    private string $githubOrganisation;
+    /** @psalm-var non-empty-string */
+    private string $githubToken;
+    private SecretKeyId $signingSecretKey;
+    /** @psalm-var non-empty-string */
+    private string $gitAuthorName;
+    /** @psalm-var non-empty-string */
+    private string $gitAuthorEmail;
+    /** @psalm-var non-empty-string */
+    private string $githubEventPath;
+    /** @psalm-var non-empty-string */
     private string $workspacePath;
 
-    private function __construct()
-    {
+    /**
+     * @psalm-param non-empty-string $githubOrganisation
+     * @psalm-param non-empty-string $githubToken
+     * @psalm-param non-empty-string $gitAuthorName
+     * @psalm-param non-empty-string $gitAuthorEmail
+     * @psalm-param non-empty-string $githubEventPath
+     * @psalm-param non-empty-string $workspacePath
+     */
+    private function __construct(
+        string $githubOrganisation,
+        string $githubToken,
+        SecretKeyId $signingSecretKey,
+        string $gitAuthorName,
+        string $gitAuthorEmail,
+        string $githubEventPath,
+        string $workspacePath
+    ) {
+        $this->githubOrganisation = $githubOrganisation;
+        $this->githubToken        = $githubToken;
+        $this->signingSecretKey   = $signingSecretKey;
+        $this->gitAuthorName      = $gitAuthorName;
+        $this->gitAuthorEmail     = $gitAuthorEmail;
+        $this->githubEventPath    = $githubEventPath;
+        $this->workspacePath      = $workspacePath;
     }
 
     public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
     {
-        $instance = new self();
-
-        $instance->githubOrganisation = self::getenv('GITHUB_ORGANISATION'); // @TODO drop me
-        $instance->githubToken        = self::getenv('GITHUB_TOKEN');
-        $instance->signingSecretKey   = $importKey->__invoke(self::getenv('SIGNING_SECRET_KEY'));
-        $instance->gitAuthorName      = self::getenv('GIT_AUTHOR_NAME');
-        $instance->gitAuthorEmail     = self::getenv('GIT_AUTHOR_EMAIL');
-        $instance->githubEventPath    = self::getenv('GITHUB_EVENT_PATH');
-        $instance->workspacePath      = self::getenv('GITHUB_WORKSPACE');
-
-        return $instance;
+        return new self(
+            self::getenv('GITHUB_ORGANISATION'),
+            self::getenv('GITHUB_TOKEN'),
+            $importKey->__invoke(self::getenv('SIGNING_SECRET_KEY')),
+            self::getenv('GIT_AUTHOR_NAME'),
+            self::getenv('GIT_AUTHOR_EMAIL'),
+            self::getenv('GITHUB_EVENT_PATH'),
+            self::getenv('GITHUB_WORKSPACE'),
+        );
     }
 
-    /** @psalm-param non-empty-string $key */
+    /**
+     * @psalm-param  non-empty-string $key
+     *
+     * @psalm-return non-empty-string
+     */
     private static function getenv(string $key): string
     {
         $value = getenv($key);
 
         Assert::stringNotEmpty($value, sprintf('Could not find a value for environment variable "%s"', $key));
-
-        assert(is_string($value));
 
         return $value;
     }

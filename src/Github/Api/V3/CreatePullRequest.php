@@ -9,6 +9,7 @@ use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 
 interface CreatePullRequest
 {
+    /** @psalm-param non-empty-string $title */
     public function __invoke(
         RepositoryName $repository,
         BranchName $head,
