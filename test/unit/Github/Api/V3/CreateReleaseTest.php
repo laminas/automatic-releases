@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\V3;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\V3;
 
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;

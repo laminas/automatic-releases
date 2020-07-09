@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Gpg;
+namespace Laminas\AutomaticReleases\Test\Unit\Gpg;
 
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use InvalidArgumentException;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 
 final class SecretKeyIdTest extends TestCase

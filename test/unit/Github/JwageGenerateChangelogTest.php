@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github;
+namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
 use ChangelogGenerator\ChangelogConfig;
 use ChangelogGenerator\ChangelogGenerator;
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\JwageGenerateChangelog;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 

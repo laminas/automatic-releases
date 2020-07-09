@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Event;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Event;
 
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
 final class MilestoneClosedEventTest extends TestCase

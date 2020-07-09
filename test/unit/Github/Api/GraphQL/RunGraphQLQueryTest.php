@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\GraphQL;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL;
 
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;

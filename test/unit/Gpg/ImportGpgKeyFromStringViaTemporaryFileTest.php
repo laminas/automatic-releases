@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Gpg;
+namespace Laminas\AutomaticReleases\Test\Unit\Gpg;
 
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
 
-/** @covers \Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile */
+/** @covers \Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile */
 final class ImportGpgKeyFromStringViaTemporaryFileTest extends TestCase
 {
     public function testWillImportValidGpgKey(): void

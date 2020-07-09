@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Git;
+namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Git\PushViaConsole;
+use Laminas\AutomaticReleases\Git\PushViaConsole;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
@@ -14,7 +14,7 @@ use function Safe\tempnam;
 use function sys_get_temp_dir;
 use function unlink;
 
-/** @covers \Doctrine\AutomaticReleases\Git\PushViaConsole */
+/** @covers \Laminas\AutomaticReleases\Git\PushViaConsole */
 final class PushViaConsoleTest extends TestCase
 {
     /** @psalm-var non-empty-string */

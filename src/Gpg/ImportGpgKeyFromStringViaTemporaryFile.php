@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Gpg;
+namespace Laminas\AutomaticReleases\Gpg;
 
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;

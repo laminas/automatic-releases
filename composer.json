@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Doctrine\\AutomaticReleases\\": "src"
+            "Laminas\\AutomaticReleases\\": "src"
         }
     },
     "require": {
@@ -23,7 +23,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Doctrine\\AutomaticReleases\\Test\\Unit\\": "test/unit"
+            "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
         }
     },
     "require-dev": {

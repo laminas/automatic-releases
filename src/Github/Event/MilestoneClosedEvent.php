@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Event;
+namespace Laminas\AutomaticReleases\Github\Event;
 
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Webmozart\Assert\Assert;
 
 use function Safe\json_decode;

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Application;
+namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
-use Doctrine\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
-use Doctrine\AutomaticReleases\Environment\Variables;
-use Doctrine\AutomaticReleases\Git\Fetch;
-use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Doctrine\AutomaticReleases\Git\Push;
-use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
-use Doctrine\AutomaticReleases\Github\CreateReleaseText;
-use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
-use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
+use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Git\Fetch;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequest;
+use Laminas\AutomaticReleases\Github\CreateReleaseText;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;

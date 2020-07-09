@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
+namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;

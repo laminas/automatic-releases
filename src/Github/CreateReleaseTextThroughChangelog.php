@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github;
+namespace Laminas\AutomaticReleases\Github;
 
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Git;
+namespace Laminas\AutomaticReleases\Git;
 
-use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 
 interface GetMergeTargetCandidateBranches
 {

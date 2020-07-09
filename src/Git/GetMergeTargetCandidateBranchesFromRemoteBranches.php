@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Git;
+namespace Laminas\AutomaticReleases\Git;
 
-use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Symfony\Component\Process\Process;
 
 use function array_filter;

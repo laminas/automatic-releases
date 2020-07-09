@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Git;
+namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
@@ -18,7 +18,7 @@ use function sys_get_temp_dir;
 use function trim;
 use function unlink;
 
-/** @covers \Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
+/** @covers \Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends TestCase
 {
     /** @psalm-var non-empty-string */

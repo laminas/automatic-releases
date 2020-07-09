@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Application\Command;
+namespace Laminas\AutomaticReleases\Application\Command;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
-use Doctrine\AutomaticReleases\Git\Fetch;
-use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Doctrine\AutomaticReleases\Git\Push;
-use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
-use Doctrine\AutomaticReleases\Github\CreateReleaseText;
-use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Git\Fetch;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
+use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequest;
+use Laminas\AutomaticReleases\Github\CreateReleaseText;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

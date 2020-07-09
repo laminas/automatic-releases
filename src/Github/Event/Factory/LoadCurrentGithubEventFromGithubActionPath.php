@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Event\Factory;
+namespace Laminas\AutomaticReleases\Github\Event\Factory;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Webmozart\Assert\Assert;
 
 use function Safe\file_get_contents;

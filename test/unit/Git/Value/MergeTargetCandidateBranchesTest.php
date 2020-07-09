@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
+namespace Laminas\AutomaticReleases\Test\Unit\Git\Value;
 
-use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
 
 final class MergeTargetCandidateBranchesTest extends TestCase

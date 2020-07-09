@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Environment;
+namespace Laminas\AutomaticReleases\Test\Unit\Environment;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromString;
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use InvalidArgumentException;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 
 use function array_map;

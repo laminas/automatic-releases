@@ -3,26 +3,26 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\WebApplication;
+namespace Laminas\AutomaticReleases\WebApplication;
 
-use Doctrine\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
-use Doctrine\AutomaticReleases\Application\Command\ReleaseCommand;
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Git\CreateTagViaConsole;
-use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
-use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
-use Doctrine\AutomaticReleases\Git\PushViaConsole;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
-use Doctrine\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
-use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
-use Doctrine\AutomaticReleases\Github\JwageGenerateChangelog;
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
+use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
+use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
+use Laminas\AutomaticReleases\Git\PushViaConsole;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
+use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
+use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 

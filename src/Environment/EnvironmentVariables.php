@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Environment;
+namespace Laminas\AutomaticReleases\Environment;
 
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromString;
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Webmozart\Assert\Assert;
 
 use function getenv;

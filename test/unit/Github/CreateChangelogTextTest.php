@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github;
+namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
-use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Doctrine\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
-use Doctrine\AutomaticReleases\Github\GenerateChangelog;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
+use Laminas\AutomaticReleases\Github\GenerateChangelog;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
 final class CreateChangelogTextTest extends TestCase

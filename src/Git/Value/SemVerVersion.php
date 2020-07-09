@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Git\Value;
+namespace Laminas\AutomaticReleases\Git\Value;
 
 use Webmozart\Assert\Assert;
 

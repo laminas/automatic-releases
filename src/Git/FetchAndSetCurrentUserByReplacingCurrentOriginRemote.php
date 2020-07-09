@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Git;
+namespace Laminas\AutomaticReleases\Git;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
 

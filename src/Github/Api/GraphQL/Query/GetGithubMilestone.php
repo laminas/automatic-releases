@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query;
+namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query;
 
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 
 interface GetGithubMilestone
 {

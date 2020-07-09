@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Value;
+namespace Laminas\AutomaticReleases\Github\Value;
 
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Git;
+namespace Laminas\AutomaticReleases\Git;
 
 use Symfony\Component\Process\Process;
 

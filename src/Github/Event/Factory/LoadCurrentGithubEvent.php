@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Github\Event\Factory;
+namespace Laminas\AutomaticReleases\Github\Event\Factory;
 
-use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 
 interface LoadCurrentGithubEvent
 {

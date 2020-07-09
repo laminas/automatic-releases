@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query;
 
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunQuery;
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests */
+/** @covers \Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests */
 final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
 {
     /** @var RunQuery&MockObject */

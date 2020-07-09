@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Value;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Value;
 
-use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use InvalidArgumentException;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
 final class RepositoryNameTest extends TestCase

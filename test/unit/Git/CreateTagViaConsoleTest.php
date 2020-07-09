@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Git;
+namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Git\CreateTagViaConsole;
-use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
-use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
@@ -18,7 +18,7 @@ use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
 
-/** @covers \Doctrine\AutomaticReleases\Git\CreateTagViaConsole */
+/** @covers \Laminas\AutomaticReleases\Git\CreateTagViaConsole */
 final class CreateTagViaConsoleTest extends TestCase
 {
     private string $repository;

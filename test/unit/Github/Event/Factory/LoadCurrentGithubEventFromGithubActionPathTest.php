@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Github\Event\Factory;
+namespace Laminas\AutomaticReleases\Test\Unit\Github\Event\Factory;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
-use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
+use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use PHPUnit\Framework\TestCase;
 
 use function file_put_contents;
 use function sys_get_temp_dir;
 use function tempnam;
 
-/** @covers \Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
+/** @covers \Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
 final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 {
     public function testWillLoadEventFile(): void
