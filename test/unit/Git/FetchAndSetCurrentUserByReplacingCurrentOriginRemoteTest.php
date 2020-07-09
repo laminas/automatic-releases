@@ -81,16 +81,11 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
             )
         );
 
-        $o =
-         (new Process(['git', 'branch', '-r'], $this->destination))
-            ->mustRun()
-            ->getOutput();
-
         $fetchedBranches = (new Process(['git', 'branch', '-r'], $this->destination))
             ->mustRun()
             ->getOutput();
 
-        self::assertStringContainsString('initial-branch', $fetchedBranches);
-        self::assertStringContainsString('new-branch', $fetchedBranches);
+        self::assertStringContainsString('origin/initial-branch', $fetchedBranches);
+        self::assertStringContainsString('origin/new-branch', $fetchedBranches);
     }
 }
