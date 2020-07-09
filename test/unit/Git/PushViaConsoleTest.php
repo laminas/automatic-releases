@@ -60,6 +60,17 @@ final class PushViaConsoleTest extends TestCase
             ->mustRun();
     }
 
+    protected function tearDown(): void
+    {
+        $sourceBranches = (new Process(['git', 'branch'], $this->source))
+            ->mustRun()
+            ->getOutput();
+
+        self::assertStringNotContainsString('temporary-branch', $sourceBranches);
+
+        parent::tearDown();
+    }
+
     public function testPushesSelectedGitRef(): void
     {
         (new PushViaConsole())
@@ -84,6 +95,38 @@ final class PushViaConsoleTest extends TestCase
 
         self::assertStringContainsString('pushed-alias', $destinationBranches);
         self::assertStringNotContainsString('pushed-branch', $destinationBranches);
+        self::assertStringNotContainsString('ignored-branch', $destinationBranches);
+    }
+
+    public function testPushesSelectedTag(): void
+    {
+        (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
+            ->mustRun();
+
+        (new PushViaConsole())
+            ->__invoke($this->source, 'tag-name');
+
+        $destinationBranches = (new Process(['git', 'tag'], $this->destination))
+            ->mustRun()
+            ->getOutput();
+
+        self::assertStringContainsString('tag-name', $destinationBranches);
+    }
+
+    public function testPushesSelectedTagAsAliasBranch(): void
+    {
+        (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
+            ->mustRun();
+
+        (new PushViaConsole())
+            ->__invoke($this->source, 'tag-name', 'pushed-alias');
+
+        $destinationBranches = (new Process(['git', 'branch'], $this->destination))
+            ->mustRun()
+            ->getOutput();
+
+        self::assertStringContainsString('pushed-alias', $destinationBranches);
+        self::assertStringNotContainsString('tag-name', $destinationBranches);
         self::assertStringNotContainsString('ignored-branch', $destinationBranches);
     }
 }
