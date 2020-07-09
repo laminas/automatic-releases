@@ -9,7 +9,12 @@ use function assert;
 use function getenv;
 use function is_string;
 
-final class Variables
+/**
+ * @TODO move to interface - mocking/stubbing to be done later
+ *
+ * @psalm-immutable
+ */
+class Variables
 {
     /** @var string */
     private $githubOrganisation;
@@ -29,6 +34,8 @@ final class Variables
     /** @var string */
     private $githubEventPath;
 
+    private string $workspacePath;
+
     private function __construct()
     {
     }
@@ -37,12 +44,13 @@ final class Variables
     {
         $instance = new self();
 
-        $instance->githubOrganisation = self::getenv('GITHUB_ORGANISATION');
+        $instance->githubOrganisation = self::getenv('GITHUB_ORGANISATION'); // @TODO drop me?
         $instance->githubToken        = self::getenv('GITHUB_TOKEN');
         $instance->signingSecretKey   = self::getenv('SIGNING_SECRET_KEY');
         $instance->gitAuthorName      = self::getenv('GIT_AUTHOR_NAME');
         $instance->gitAuthorEmail     = self::getenv('GIT_AUTHOR_EMAIL');
         $instance->githubEventPath    = self::getenv('GITHUB_EVENT_PATH');
+        $instance->workspacePath      = self::getenv('GITHUB_WORKSPACE');
 
         return $instance;
     }
@@ -92,5 +100,10 @@ final class Variables
     {
         // @TODO test me
         return $this->githubEventPath;
+    }
+
+    public function workspacePath() : string
+    {
+        return $this->workspacePath;
     }
 }
