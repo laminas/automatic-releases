@@ -1,4 +1,3 @@
-#!/bin/sh -l
+#!/usr/bin/env bash
 
-sh -c "/app/bin/console.php $*"
-
+/app/bin/console.php $@
