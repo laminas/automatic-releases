@@ -71,6 +71,11 @@ final class CreateMergeUpPullRequest extends Command
         $releaseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
         $mergeUpTarget = $mergeCandidates->branchToMergeUp($releaseVersion);
 
+        if ($mergeUpTarget === null) {
+            // @TODO message and skip release completely
+            //return;
+        }
+
         Assert::notNull(
             $releaseBranch,
             sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
@@ -95,6 +100,5 @@ final class CreateMergeUpPullRequest extends Command
                 $event->version()
             )
         );
-
     }
 }
