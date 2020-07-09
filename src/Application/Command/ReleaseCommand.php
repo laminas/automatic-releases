@@ -85,8 +85,8 @@ final class ReleaseCommand extends Command
         $tagName = $releaseVersion->fullReleaseName();
 
         ($this->createTag)($repositoryPath, $releaseBranch, $tagName, $changelog, $this->environment->signingSecretKey());
-        ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseBranch->name());
+        ($this->push)($repositoryPath, $tagName);
         ($this->createRelease)($repositoryName, $releaseVersion, $changelog);
 
         return 0;
