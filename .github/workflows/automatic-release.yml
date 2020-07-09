@@ -20,6 +20,8 @@ jobs:
         uses: "./"
         with:
           command-name: "laminas:automatic-releases:release"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Create Merge-Up Pull Request"
         uses: "./"
