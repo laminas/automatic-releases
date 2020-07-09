@@ -10,6 +10,7 @@ on:
 jobs:
   release:
     name: "GIT tag, release & create merge-up PR"
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Checkout"
