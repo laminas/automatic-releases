@@ -22,7 +22,7 @@ jobs:
           command-name: "laminas:automatic-releases:release"
 
       - name: "Create Merge-Up Pull Request"
-        uses: "laminas/automatic-releases@v1"
+        uses: "./"
         with:
           command-name: "laminas:automatic-releases:create-merge-up-pull-request"
         env:
