@@ -11,7 +11,7 @@ use Psr\Http\Message\UriInterface;
 use function array_keys;
 use function str_replace;
 
-final class CreateChangelogText
+final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
 Release %release%

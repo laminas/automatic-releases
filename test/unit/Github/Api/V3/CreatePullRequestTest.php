@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\V3;
 
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequest;
+use Doctrine\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ final class CreatePullRequestTest extends TestCase
     /** @var string */
     private $apiToken;
 
-    /** @var CreatePullRequest */
+    /** @var CreatePullRequestThroughApiCall */
     private $createPullRequest;
 
     protected function setUp() : void
@@ -37,7 +37,7 @@ final class CreatePullRequestTest extends TestCase
         $this->httpClient        = $this->createMock(ClientInterface::class);
         $this->messageFactory    = $this->createMock(RequestFactoryInterface::class);
         $this->apiToken          = uniqid('apiToken', true);
-        $this->createPullRequest = new CreatePullRequest(
+        $this->createPullRequest = new CreatePullRequestThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken

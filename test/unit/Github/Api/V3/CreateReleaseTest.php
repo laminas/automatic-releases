@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\V3;
 
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
-use Doctrine\AutomaticReleases\Github\Api\V3\CreateRelease;
+use Doctrine\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ final class CreateReleaseTest extends TestCase
     /** @var string */
     private $apiToken;
 
-    /** @var CreateRelease */
+    /** @var CreateReleaseThroughApiCall */
     private $createRelease;
 
     protected function setUp() : void
@@ -37,7 +37,7 @@ final class CreateReleaseTest extends TestCase
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
         $this->apiToken       = uniqid('apiToken', true);
-        $this->createRelease  = new CreateRelease(
+        $this->createRelease  = new CreateReleaseThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken

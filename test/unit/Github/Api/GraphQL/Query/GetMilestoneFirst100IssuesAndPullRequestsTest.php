@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query;
 
-use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog;
+use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunQuery;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class GetMilestoneChangelogTest extends TestCase
+/** @covers \Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests */
+final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
 {
     /** @var RunQuery&MockObject */
     private $runQuery;
 
-    /** @var GetMilestoneChangelog */
+    /** @var GetMilestoneFirst100IssuesAndPullRequests */
     private $query;
 
     protected function setUp() : void
@@ -23,7 +24,7 @@ final class GetMilestoneChangelogTest extends TestCase
         parent::setUp();
 
         $this->runQuery = $this->createMock(RunQuery::class);
-        $this->query    = new GetMilestoneChangelog($this->runQuery);
+        $this->query    = new GetMilestoneFirst100IssuesAndPullRequests($this->runQuery);
     }
 
     public function testRetrievesMilestone() : void

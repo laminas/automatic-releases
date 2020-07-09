@@ -8,7 +8,7 @@ use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Re
 use Doctrine\AutomaticReleases\Github\Api\GraphQL\RunQuery;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 
-final class GetMilestoneChangelog // @TODO this is just `GetGithubMilestone`, but certainly not a changelog!
+final class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
 {
     // @TODO this fetches ONLY the first 100 issues!!!
     private const QUERY = <<<'GRAPHQL'
