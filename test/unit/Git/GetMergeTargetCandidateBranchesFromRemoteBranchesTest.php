@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 use Doctrine\AutomaticReleases\Environment\Variables;
 use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
+use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -15,8 +16,8 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
 use function trim;
 
-/** @covers \Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches */
-final class GetMergeTargetCandidateBranchesTest extends TestCase
+/** @covers \Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
+final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
 {
     private string $source;
     private string $destination;
@@ -64,7 +65,7 @@ final class GetMergeTargetCandidateBranchesTest extends TestCase
                 BranchName::fromName('2.1.x'),
                 BranchName::fromName('master'),
             ),
-            (new GetMergeTargetCandidateBranches())
+            (new GetMergeTargetCandidateBranchesFromRemoteBranches())
                 ->__invoke($this->destination)
         );
     }
