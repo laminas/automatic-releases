@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Doctrine\AutomaticReleases\Test\Unit\Git\Value;
+namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
 use Doctrine\AutomaticReleases\Git\PushViaConsole;
 use PHPUnit\Framework\TestCase;
@@ -13,6 +13,7 @@ final class PushViaConsoleTest extends TestCase
 {
     private string $source;
     private string $destination;
+
     protected function setUp(): void
     {
         parent::setUp();
