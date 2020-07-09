@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
-use Zend\Diactoros\Uri;
 
 use function array_map;
 use function array_merge;

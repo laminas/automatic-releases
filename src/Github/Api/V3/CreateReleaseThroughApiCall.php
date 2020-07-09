@@ -6,11 +6,11 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
-use Zend\Diactoros\Uri;
 
 use function Safe\json_decode;
 use function Safe\json_encode;

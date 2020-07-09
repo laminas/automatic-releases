@@ -7,14 +7,14 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\V3;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Webmozart\Assert\Assert;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 
 use function uniqid;
 

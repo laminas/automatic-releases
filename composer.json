@@ -11,6 +11,7 @@
     "require": {
         "php": "^7.4.7",
         "jwage/changelog-generator": "^1.2.1",
+        "laminas/laminas-diactoros": "^2.3.1",
         "php-http/curl-client": "^2.1.0",
         "php-http/discovery": "^1.9.0",
         "php-http/httplug": "^2.1.0",
@@ -19,8 +20,7 @@
         "symfony/console": "^4.4.10 || ^5.1.2",
         "symfony/process": "^5.1.2",
         "thecodingmachine/safe": "^v1.1.2",
-        "webmozart/assert": "^1.9.1",
-        "zendframework/zend-diactoros": "^2.2.1"
+        "webmozart/assert": "^1.9.1"
     },
     "autoload-dev": {
         "psr-4": {

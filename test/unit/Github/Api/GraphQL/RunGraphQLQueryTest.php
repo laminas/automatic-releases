@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL;
 
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Webmozart\Assert\Assert;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response;
 
 use function uniqid;
 

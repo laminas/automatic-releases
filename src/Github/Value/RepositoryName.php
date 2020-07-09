@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github\Value;
 
+use Laminas\Diactoros\Uri;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
-use Zend\Diactoros\Uri;
 
 use function explode;
 use function strtolower;
