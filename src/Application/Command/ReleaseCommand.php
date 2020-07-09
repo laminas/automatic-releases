@@ -43,7 +43,7 @@ final class ReleaseCommand extends Command
         Push $push,
         CreateRelease $createRelease
     ) {
-        parent::__construct('doctrine:automatic-releases:release');
+        parent::__construct('laminas:automatic-releases:release');
 
         $this->environment         = $environment;
         $this->loadEvent           = $loadEvent;

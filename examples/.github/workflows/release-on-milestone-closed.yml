@@ -1,5 +1,5 @@
 {
-  "name": "doctrine/automatic-releases",
+  "name": "laminas/automatic-releases",
   "on": {
     "milestone": {
       "types": ["closed"]
@@ -15,9 +15,9 @@
         },
         {
           "name": "Release",
-          "uses": "docker://doctrine/automatic-releases",
+          "uses": "docker://laminas/automatic-releases",
           "with": {
-            "args": "doctrine:automatic-releases:release"
+            "args": "laminas:automatic-releases:release"
           },
           "env": {
             "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
@@ -25,19 +25,9 @@
         },
         {
           "name": "Release",
-          "uses": "docker://doctrine/automatic-releases",
+          "uses": "docker://laminas/automatic-releases",
           "with": {
-            "args": "doctrine:automatic-releases:push-release-branch"
-          },
-          "env": {
-            "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
-          }
-        },
-        {
-          "name": "Release",
-          "uses": "docker://doctrine/automatic-releases",
-          "with": {
-            "args": "doctrine:automatic-releases:create-merge-up-pull-request"
+            "args": "laminas:automatic-releases:create-merge-up-pull-request"
           },
           "env": {
             "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}

@@ -42,7 +42,7 @@ final class CreateMergeUpPullRequest extends Command
         Push $push,
         CreatePullRequest $createPullRequest
     ) {
-        parent::__construct('doctrine:automatic-releases:create-merge-up-pull-request');
+        parent::__construct('laminas:automatic-releases:create-merge-up-pull-request');
 
         $this->variables          = $variables;
         $this->loadGithubEvent    = $loadGithubEvent;

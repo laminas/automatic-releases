@@ -126,7 +126,7 @@ JSON
 
     public function testCommandName(): void
     {
-        self::assertSame('doctrine:automatic-releases:create-merge-up-pull-request', $this->command->getName());
+        self::assertSame('laminas:automatic-releases:create-merge-up-pull-request', $this->command->getName());
     }
 
     public function testWillCreateMergeUpPullRequest(): void

@@ -130,7 +130,7 @@ JSON
 
     public function testCommandName(): void
     {
-        self::assertSame('doctrine:automatic-releases:release', $this->command->getName());
+        self::assertSame('laminas:automatic-releases:release', $this->command->getName());
     }
 
     public function testWillRelease(): void

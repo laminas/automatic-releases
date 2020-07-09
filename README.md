@@ -1,4 +1,4 @@
-# Release automation for `doctrine/*` packages
+# Release automation for `laminas/*` packages
 
 Please read the [`feature/`](./feature) specification to understand how
 this tool behaves.

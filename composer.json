@@ -1,7 +1,7 @@
 {
-    "name": "doctrine/automatic-releases",
+    "name": "laminas/automatic-releases",
     "type": "project",
-    "description": "Application that eases release management in the Doctrine organisation through GitHub hooks",
+    "description": "Application that eases release management in the Laminas organisation through GitHub actions",
     "license": "MIT",
     "autoload": {
         "psr-4": {

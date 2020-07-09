@@ -17,7 +17,7 @@ final class JwageGenerateChangelogTest extends TestCase
     public function testGenerateChangelog(): void
     {
         $config = (new ChangelogConfig())
-            ->setUser('doctrine')
+            ->setUser('laminas')
             ->setRepository('repository-name')
             ->setMilestone('1.0.0');
 
@@ -29,7 +29,7 @@ final class JwageGenerateChangelogTest extends TestCase
             ->method('generate')
             ->with($config, $output);
 
-        $repositoryName = RepositoryName::fromFullName('doctrine/repository-name');
+        $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
         $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');
 
         (new JwageGenerateChangelog($changelogGenerator))

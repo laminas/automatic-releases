@@ -7,7 +7,7 @@
     failOnRisky="true"
 >
     <testsuites>
-        <testsuite name="doctrine/automatic-releases unit tests">
+        <testsuite name="laminas/automatic-releases unit tests">
             <directory>./test/unit</directory>
         </testsuite>
     </testsuites>

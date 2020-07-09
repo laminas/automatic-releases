@@ -17,7 +17,7 @@ final class CreateChangelogTextTest extends TestCase
     {
         $generateChangelog = $this->createMock(GenerateChangelog::class);
 
-        $repositoryName = RepositoryName::fromFullName('doctrine/repository-name');
+        $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
         $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');
 
         $generateChangelog->expects(self::once())

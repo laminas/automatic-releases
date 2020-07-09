@@ -65,7 +65,7 @@ use const E_WARNING;
         $githubToken
     );
 
-    $application = new Application('doctrine/automatic-releases', Versions::getVersion('doctrine/automatic-releases'));
+    $application = new Application('laminas/automatic-releases', Versions::getVersion('laminas/automatic-releases'));
 
     $application->addCommands([
         new ReleaseCommand(
