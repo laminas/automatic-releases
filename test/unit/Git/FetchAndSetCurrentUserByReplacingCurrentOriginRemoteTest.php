@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
+use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,14 +17,14 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 {
     private string $source;
     private string $destination;
-    /** @var Variables&MockObject */
-    private Variables $variables;
+    /** @var EnvironmentVariables&MockObject */
+    private EnvironmentVariables $variables;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->variables   = $this->createMock(Variables::class);
+        $this->variables   = $this->createMock(EnvironmentVariables::class);
         $this->source      = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestSource');
         $this->destination = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestDestination');
 

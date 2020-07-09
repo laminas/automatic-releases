@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Github\Event\Factory;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
+use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 {
     public function testWillLoadEventFile(): void
     {
-        $variables = $this->createMock(Variables::class);
+        $variables = $this->createMock(EnvironmentVariables::class);
 
         $eventData = <<<'JSON'
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
+use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Git\CreateTagViaConsole;
 use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
@@ -20,8 +20,8 @@ use function file_get_contents;
 final class CreateTagViaConsoleTest extends TestCase
 {
     private string $repository;
-    /** @var Variables&MockObject */
-    private Variables $variables;
+    /** @var EnvironmentVariables&MockObject */
+    private EnvironmentVariables $variables;
     private SecretKeyId $key;
 
     protected function setUp(): void
@@ -31,7 +31,7 @@ final class CreateTagViaConsoleTest extends TestCase
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
             ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
-        $this->variables  = $this->createMock(Variables::class);
+        $this->variables  = $this->createMock(EnvironmentVariables::class);
         $this->repository = tempnam(sys_get_temp_dir(), 'CreateTagViaConsoleRepository');
 
         unlink($this->repository);

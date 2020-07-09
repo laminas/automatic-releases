@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
+use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;

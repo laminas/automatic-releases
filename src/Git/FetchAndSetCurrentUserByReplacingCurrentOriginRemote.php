@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Git;
 
-use Doctrine\AutomaticReleases\Environment\Variables;
+use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
 
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
-    private Variables $variables;
+    private EnvironmentVariables $variables;
 
-    public function __construct(Variables $variables)
+    public function __construct(EnvironmentVariables $variables)
     {
         $this->variables = $variables;
     }
