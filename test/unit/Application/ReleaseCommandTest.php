@@ -186,6 +186,6 @@ JSON
                 'text of the changelog'
             );
 
-        $this->command->run(new ArrayInput([]), new NullOutput());
+        self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
     }
 }

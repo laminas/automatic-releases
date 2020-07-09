@@ -17,6 +17,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
+use function sprintf;
 
 final class CreateMergeUpPullRequest extends Command
 {
@@ -72,8 +73,12 @@ final class CreateMergeUpPullRequest extends Command
         $mergeUpTarget = $mergeCandidates->branchToMergeUp($releaseVersion);
 
         if ($mergeUpTarget === null) {
-            // @TODO message and skip release completely
-            //return;
+            $output->writeln(sprintf(
+                'No merge-up candidate for release %s - skipping pull request creation',
+                $releaseVersion->fullReleaseName()
+            ));
+
+            return null;
         }
 
         Assert::notNull(
@@ -100,5 +105,7 @@ final class CreateMergeUpPullRequest extends Command
                 $event->version()
             )
         );
+
+        return 0;
     }
 }

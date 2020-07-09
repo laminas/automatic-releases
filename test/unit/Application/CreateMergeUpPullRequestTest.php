@@ -23,6 +23,7 @@ use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -125,7 +126,7 @@ JSON
         self::assertSame('doctrine:automatic-releases:create-merge-up-pull-request', $this->command->getName());
     }
 
-    public function testWillRelease(): void
+    public function testWillCreateMergeUpPullRequest(): void
     {
         $workspace = tempnam(sys_get_temp_dir(), 'workspace');
 
@@ -181,6 +182,57 @@ JSON
                 'text of the changelog'
             );
 
-        $this->command->run(new ArrayInput([]), new NullOutput());
+        self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
+    }
+
+    public function testWillSkipMergeUpPullRequestOnNoMergeUpCandidate(): void
+    {
+        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+
+        unlink($workspace);
+        mkdir($workspace);
+        mkdir($workspace . '/.git');
+
+        $this->variables->method('githubWorkspacePath')
+            ->willReturn($workspace);
+
+        $this->loadEvent->method('__invoke')
+            ->willReturn($this->event);
+
+        $this->fetch->expects(self::once())
+            ->method('__invoke')
+            ->with('https://github-auth-token:x-oauth-basic@github.com/foo/bar.git', $workspace);
+
+        $this->getMergeTargets->method('__invoke')
+            ->with($workspace)
+            ->willReturn(MergeTargetCandidateBranches::fromAllBranches(
+                BranchName::fromName('1.1.x'),
+                BranchName::fromName('1.2.x'),
+            ));
+
+        $this->getMilestone->method('__invoke')
+            ->willReturn($this->milestone);
+
+        $this->createReleaseText->method('__invoke')
+            ->willReturn('text of the changelog');
+
+        $this->push->expects(self::never())
+            ->method('__invoke');
+
+        $this->createPullRequest->expects(self::never())
+            ->method('__invoke');
+
+        $output = new BufferedOutput();
+
+        self::assertSame(0, $this->command->run(new ArrayInput([]), $output));
+
+        self::assertSame(
+            <<<OUTPUT
+No merge-up candidate for release 1.2.3 - skipping pull request creation
+
+OUTPUT
+            ,
+            $output->fetch()
+        );
     }
 }
