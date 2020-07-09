@@ -76,11 +76,17 @@ final class Milestone
 
         Assert::isMap($payload['issues']);
         Assert::keyExists($payload['issues'], 'nodes');
-        Assert::isList($payload['issues']['nodes']);
 
         Assert::isMap($payload['pullRequests']);
         Assert::keyExists($payload['pullRequests'], 'nodes');
-        Assert::isList($payload['pullRequests']['nodes']);
+
+        $issues       = $payload['issues']['nodes'];
+        $pullRequests = $payload['pullRequests']['nodes'];
+
+        Assert::isList($issues);
+        Assert::isList($pullRequests);
+        Assert::allIsMap($issues);
+        Assert::allIsMap($pullRequests);
 
         return new self(
             $payload['number'],
@@ -88,8 +94,8 @@ final class Milestone
             $payload['title'],
             $payload['description'],
             array_merge(
-                array_map([IssueOrPullRequest::class, 'fromPayload'], $payload['issues']['nodes']),
-                array_map([IssueOrPullRequest::class, 'fromPayload'], $payload['pullRequests']['nodes'])
+                array_map([IssueOrPullRequest::class, 'fromPayload'], $issues),
+                array_map([IssueOrPullRequest::class, 'fromPayload'], $pullRequests)
             ),
             new Uri($payload['url'])
         );

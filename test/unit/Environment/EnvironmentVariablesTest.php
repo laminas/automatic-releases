@@ -10,9 +10,9 @@ use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 
+use function array_combine;
 use function array_map;
 use function array_walk;
-use function Safe\array_combine;
 use function Safe\putenv;
 use function uniqid;
 
@@ -45,8 +45,10 @@ final class EnvironmentVariablesTest extends TestCase
 
     protected function tearDown(): void
     {
+        $originalValues = $this->originalValues;
+
         array_walk(
-            $this->originalValues,
+            $originalValues,
             /** @param string|false $value */
             static function ($value, string $key): void {
                 if ($value === false) {

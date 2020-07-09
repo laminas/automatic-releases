@@ -68,15 +68,19 @@ final class IssueOrPullRequest
         Assert::isMap($payload['author']);
         Assert::isMap($payload['labels']);
         Assert::keyExists($payload['labels'], 'nodes');
-        Assert::isList($payload['labels']['nodes']);
         Assert::stringNotEmpty($payload['url']);
         Assert::boolean($payload['closed']);
+
+        $labels = $payload['labels']['nodes'];
+
+        Assert::isList($labels);
+        Assert::allIsMap($labels);
 
         return new self(
             $payload['number'],
             $payload['title'],
             Author::fromPayload($payload['author']),
-            array_values(array_map([Label::class, 'fromPayload'], $payload['labels']['nodes'])),
+            array_values(array_map([Label::class, 'fromPayload'], $labels)),
             isset($payload['merged'])
                 ? (bool) $payload['merged'] || $payload['closed']
                 : $payload['closed'],

@@ -50,6 +50,7 @@ final class MergeTargetCandidateBranches
             return $a->majorAndMinor() <=> $b->majorAndMinor();
         });
 
+        /** @psalm-var non-empty-list<BranchName> $mergeTargetBranches */
         return new self(array_values($mergeTargetBranches));
     }
 

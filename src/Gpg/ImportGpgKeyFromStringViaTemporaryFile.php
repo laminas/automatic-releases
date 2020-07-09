@@ -29,8 +29,10 @@ final class ImportGpgKeyFromStringViaTemporaryFile implements ImportGpgKeyFromSt
 
         preg_match('/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im', $output, $matches);
 
-        Assert::isList($matches);
         unlink($keyFileName);
+
+        Assert::isList($matches);
+        Assert::allString($matches);
 
         return SecretKeyId::fromBase16String($matches[1]);
     }
