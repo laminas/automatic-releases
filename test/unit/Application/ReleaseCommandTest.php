@@ -174,9 +174,9 @@ JSON
                 self::equalTo($this->signingKey)
             );
 
-        $this->push->expects(self::once())
+        $this->push->expects(self::exactly(2))
             ->method('__invoke')
-            ->with($workspace, '1.2.3');
+            ->with($workspace, '1.2.3', self::logicalOr(null, '1.2.x'));
 
         $this->createRelease->expects(self::once())
             ->method('__invoke')
