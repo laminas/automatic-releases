@@ -11,8 +11,12 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
+
+use function mkdir;
 use function Safe\tempnam;
+use function sys_get_temp_dir;
 use function trim;
+use function unlink;
 
 /** @covers \Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends TestCase
@@ -28,7 +32,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
     {
         parent::setUp();
 
-        $this->variables   = $this->createMock(EnvironmentVariables::class);
+        $this->variables = $this->createMock(EnvironmentVariables::class);
 
         $source      = tempnam(sys_get_temp_dir(), 'FetchSource');
         $destination = tempnam(sys_get_temp_dir(), 'FetchDestination');

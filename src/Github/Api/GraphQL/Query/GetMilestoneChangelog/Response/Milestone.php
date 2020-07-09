@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChange
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
+
 use function array_map;
 use function array_merge;
 use function Safe\array_combine;
@@ -21,16 +22,16 @@ final class Milestone
     private ?string $description;
     /**
      * @var array<int, IssueOrPullRequest>
-     *
      * @psalm-var list<IssueOrPullRequest>
      */
     private array $entries;
-    /** @var UriInterface */
     private UriInterface $url;
 
     /**
-     * @psalm-param non-empty-string $title
+     * @param array<int, IssueOrPullRequest> $entries
      *
+     * @psalm-param non-empty-string $title
+     * @psalm-param list<IssueOrPullRequest> $entries
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(

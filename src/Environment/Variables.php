@@ -10,22 +10,22 @@ use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 interface Variables
 {
     /** @psalm-return non-empty-string */
-    public function githubOrganisation() : string;
+    public function githubOrganisation(): string;
 
     /** @psalm-return non-empty-string */
-    public function githubToken() : string;
+    public function githubToken(): string;
 
-    public function signingSecretKey() : SecretKeyId;
-
-    /** @psalm-return non-empty-string */
-    public function gitAuthorName() : string;
+    public function signingSecretKey(): SecretKeyId;
 
     /** @psalm-return non-empty-string */
-    public function gitAuthorEmail() : string;
+    public function gitAuthorName(): string;
 
     /** @psalm-return non-empty-string */
-    public function githubEventPath() : string;
+    public function gitAuthorEmail(): string;
 
     /** @psalm-return non-empty-string */
-    public function githubWorkspacePath() : string;
+    public function githubEventPath(): string;
+
+    /** @psalm-return non-empty-string */
+    public function githubWorkspacePath(): string;
 }

@@ -16,10 +16,9 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
     /** @var RunQuery&MockObject */
     private $runQuery;
 
-    /** @var GetMilestoneFirst100IssuesAndPullRequests */
-    private $query;
+    private GetMilestoneFirst100IssuesAndPullRequests $query;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -27,7 +26,7 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
         $this->query    = new GetMilestoneFirst100IssuesAndPullRequests($this->runQuery);
     }
 
-    public function testRetrievesMilestone() : void
+    public function testRetrievesMilestone(): void
     {
         $this->runQuery
             ->expects(self::once())

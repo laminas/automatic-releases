@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 final class JwageGenerateChangelogTest extends TestCase
 {
-    public function testGenerateChangelog() : void
+    public function testGenerateChangelog(): void
     {
         $config = (new ChangelogConfig())
             ->setUser('doctrine')

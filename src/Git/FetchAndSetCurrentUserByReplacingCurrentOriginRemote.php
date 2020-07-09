@@ -20,8 +20,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetc
     public function __invoke(
         UriInterface $repositoryUri,
         string $repositoryRootDirectory
-    ) : void
-    {
+    ): void {
         (new Process(['git', 'remote', 'rm', 'origin'], $repositoryRootDirectory))
             ->run();
 

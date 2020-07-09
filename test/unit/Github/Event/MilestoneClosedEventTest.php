@@ -8,11 +8,10 @@ use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ServerRequestInterface;
 
 final class MilestoneClosedEventTest extends TestCase
 {
-    public function testFromEventJson() : void
+    public function testFromEventJson(): void
     {
         $json = <<<'JSON'
 {

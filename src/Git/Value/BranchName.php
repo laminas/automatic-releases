@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Webmozart\Assert\Assert;
+
 use function array_map;
 use function assert;
 use function is_array;
@@ -23,7 +24,7 @@ final class BranchName
     }
 
     /** @psalm-pure */
-    public static function fromName(string $name) : self
+    public static function fromName(string $name): self
     {
         Assert::stringNotEmpty($name);
 
@@ -31,7 +32,7 @@ final class BranchName
     }
 
     /** @psalm-return non-empty-string */
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
@@ -39,12 +40,12 @@ final class BranchName
     /**
      * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
      */
-    public function isReleaseBranch() : bool
+    public function isReleaseBranch(): bool
     {
         return preg_match('/^(v)?\d+\\.\d+(\\.x)?$/', $this->name) === 1;
     }
 
-    public function isNextMajor() : bool
+    public function isNextMajor(): bool
     {
         return $this->name === 'master';
     }
@@ -56,7 +57,7 @@ final class BranchName
      *
      * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
      */
-    public function majorAndMinor() : array
+    public function majorAndMinor(): array
     {
         Assert::regex($this->name, '/^(v)?\d+\\.\d+(\\.x)?$/');
 
@@ -69,17 +70,17 @@ final class BranchName
         return [$major, $minor];
     }
 
-    public function equals(self $other) : bool
+    public function equals(self $other): bool
     {
         return $other->name === $this->name;
     }
 
-    public function isForVersion(SemVerVersion $version) : bool
+    public function isForVersion(SemVerVersion $version): bool
     {
         return $this->majorAndMinor() === [$version->major(), $version->minor()];
     }
 
-    public function isForNewerVersionThan(SemVerVersion $version) : bool
+    public function isForNewerVersionThan(SemVerVersion $version): bool
     {
         [$major, $minor]      = $this->majorAndMinor();
         $comparedMajorVersion = $version->major();

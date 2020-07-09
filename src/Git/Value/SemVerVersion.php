@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Webmozart\Assert\Assert;
+
 use function Safe\preg_match;
 
 /** @psalm-immutable */
@@ -23,10 +24,9 @@ final class SemVerVersion
 
     /**
      * @psalm-pure
-     *
      * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
      */
-    public static function fromMilestoneName(string $name) : self
+    public static function fromMilestoneName(string $name): self
     {
         Assert::notEmpty($name);
         Assert::regex($name, '/^(v)?\\d+\\.\\d+\\.\\d+$/');
@@ -39,27 +39,27 @@ final class SemVerVersion
     }
 
     /** @psalm-return non-empty-string */
-    public function fullReleaseName() : string
+    public function fullReleaseName(): string
     {
         return $this->major . '.' . $this->minor . '.' . $this->patch;
     }
 
-    public function major() : int
+    public function major(): int
     {
         return $this->major;
     }
 
-    public function minor() : int
+    public function minor(): int
     {
         return $this->minor;
     }
 
-    public function targetReleaseBranchName() : BranchName
+    public function targetReleaseBranchName(): BranchName
     {
         return BranchName::fromName($this->major . '.' . $this->minor . '.x');
     }
 
-    public function isNewMinorRelease() : bool
+    public function isNewMinorRelease(): bool
     {
         return $this->patch === 0;
     }

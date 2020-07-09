@@ -17,7 +17,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
+
 use function sprintf;
+use function uniqid;
 
 final class CreateMergeUpPullRequest extends Command
 {
@@ -42,17 +44,17 @@ final class CreateMergeUpPullRequest extends Command
     ) {
         parent::__construct('doctrine:automatic-releases:create-merge-up-pull-request');
 
-        $this->variables = $variables;
-        $this->loadGithubEvent = $loadGithubEvent;
-        $this->fetch = $fetch;
+        $this->variables          = $variables;
+        $this->loadGithubEvent    = $loadGithubEvent;
+        $this->fetch              = $fetch;
         $this->getMergeCandidates = $getMergeCandidates;
-        $this->getMilestone = $getMilestone;
-        $this->createReleaseText = $createReleaseText;
-        $this->push = $push;
-        $this->createPullRequest = $createPullRequest;
+        $this->getMilestone       = $getMilestone;
+        $this->createReleaseText  = $createReleaseText;
+        $this->push               = $push;
+        $this->createPullRequest  = $createPullRequest;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) : int
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $event          = $this->loadGithubEvent->__invoke();
         $repositoryPath = $this->variables->githubWorkspacePath();
@@ -68,8 +70,8 @@ final class CreateMergeUpPullRequest extends Command
         $mergeCandidates = $this->getMergeCandidates->__invoke($repositoryPath);
 
         $releaseVersion = $event->version();
-        $releaseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
-        $mergeUpTarget = $mergeCandidates->branchToMergeUp($releaseVersion);
+        $releaseBranch  = $mergeCandidates->targetBranchFor($releaseVersion);
+        $mergeUpTarget  = $mergeCandidates->branchToMergeUp($releaseVersion);
 
         if ($mergeUpTarget === null) {
             $output->writeln(sprintf(

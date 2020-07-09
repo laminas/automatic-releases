@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CreateChangelogTextTest extends TestCase
 {
-    public function testGeneratedReleaseText() : void
+    public function testGeneratedReleaseText(): void
     {
         $generateChangelog = $this->createMock(GenerateChangelog::class);
 

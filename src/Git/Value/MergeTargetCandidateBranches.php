@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Doctrine\AutomaticReleases\Git\Value;
 
 use Webmozart\Assert\Assert;
+
 use function array_filter;
 use function array_search;
 use function array_values;
@@ -16,10 +17,11 @@ use function Safe\usort;
 final class MergeTargetCandidateBranches
 {
     /** @var BranchName[] */
-    private $sortedBranches;
+    private array $sortedBranches;
 
     /**
      * @param BranchName[] $sortedBranches
+     *
      * @psalm-param non-empty-list<BranchName> $sortedBranches
      */
     private function __construct(array $sortedBranches)
@@ -27,16 +29,16 @@ final class MergeTargetCandidateBranches
         $this->sortedBranches = $sortedBranches;
     }
 
-    public static function fromAllBranches(BranchName ...$branches) : self
+    public static function fromAllBranches(BranchName ...$branches): self
     {
-        $mergeTargetBranches = array_filter($branches, static function (BranchName $branch) : bool {
+        $mergeTargetBranches = array_filter($branches, static function (BranchName $branch): bool {
             return $branch->isReleaseBranch()
                 || $branch->isNextMajor();
         });
 
         Assert::notEmpty($mergeTargetBranches);
 
-        usort($mergeTargetBranches, static function (BranchName $a, BranchName $b) : int {
+        usort($mergeTargetBranches, static function (BranchName $a, BranchName $b): int {
             if ($a->isNextMajor()) {
                 return 1;
             }
@@ -51,7 +53,7 @@ final class MergeTargetCandidateBranches
         return new self(array_values($mergeTargetBranches));
     }
 
-    public function targetBranchFor(SemVerVersion $version) : ?BranchName
+    public function targetBranchFor(SemVerVersion $version): ?BranchName
     {
         foreach ($this->sortedBranches as $branch) {
             if ($branch->isNextMajor()) {
@@ -74,7 +76,7 @@ final class MergeTargetCandidateBranches
         return null;
     }
 
-    public function branchToMergeUp(SemVerVersion $version) : ?BranchName
+    public function branchToMergeUp(SemVerVersion $version): ?BranchName
     {
         $targetBranch = $this->targetBranchFor($version);
 

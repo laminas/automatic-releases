@@ -19,8 +19,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 final class JwageGenerateChangelog implements GenerateChangelog
 {
-    /** @var ChangelogGenerator */
-    private $changelogGenerator;
+    private ChangelogGenerator $changelogGenerator;
 
     public function __construct(ChangelogGenerator $changelogGenerator)
     {
@@ -30,7 +29,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
     public static function create(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client
-    ) : self {
+    ): self {
         $issueClient     = new IssueClient($messageFactory, $client);
         $issueFactory    = new IssueFactory();
         $issueFetcher    = new IssueFetcher($issueClient);
@@ -43,7 +42,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
     public function __invoke(
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion
-    ) : string {
+    ): string {
         $config = (new ChangelogConfig())
             ->setUser($repositoryName->owner())
             ->setRepository($repositoryName->name())

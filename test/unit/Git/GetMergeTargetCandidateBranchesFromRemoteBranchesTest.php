@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
-use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
-use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
+
+use function mkdir;
 use function Safe\tempnam;
-use function trim;
+use function sys_get_temp_dir;
+use function unlink;
 
 /** @covers \Doctrine\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase

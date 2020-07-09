@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Webmozart\Assert\Assert;
+
 use function Safe\json_decode;
 use function Safe\json_encode;
 
@@ -14,14 +15,11 @@ final class RunGraphQLQuery implements RunQuery
 {
     private const ENDPOINT = 'https://api.github.com/graphql';
 
-    /** @var RequestFactoryInterface */
-    private $messageFactory;
+    private RequestFactoryInterface $messageFactory;
 
-    /** @var ClientInterface */
-    private $client;
+    private ClientInterface $client;
 
-    /** @var string */
-    private $apiToken;
+    private string $apiToken;
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
@@ -38,7 +36,7 @@ final class RunGraphQLQuery implements RunQuery
     public function __invoke(
         string $query,
         array $variables = []
-    ) : array {
+    ): array {
         $request = $this->messageFactory
             ->createRequest('POST', self::ENDPOINT)
             ->withAddedHeader('Content-Type', 'application/json')

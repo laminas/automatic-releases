@@ -8,7 +8,11 @@ use Doctrine\AutomaticReleases\Git\PushViaConsole;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
+
+use function mkdir;
 use function Safe\tempnam;
+use function sys_get_temp_dir;
+use function unlink;
 
 /** @covers \Doctrine\AutomaticReleases\Git\PushViaConsole */
 final class PushViaConsoleTest extends TestCase
@@ -50,7 +54,6 @@ final class PushViaConsoleTest extends TestCase
             ->mustRun();
         (new Process(['git', 'checkout', '-b', 'ignored-branch'], $this->source))
             ->mustRun();
-
     }
 
     public function testPushesSelectedGitRef(): void

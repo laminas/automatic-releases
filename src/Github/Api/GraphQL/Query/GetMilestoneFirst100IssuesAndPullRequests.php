@@ -65,8 +65,7 @@ query GetStuff($owner: String!, $repositoryName: String!, $milestoneNumber: Int!
 }
 GRAPHQL;
 
-    /** @var RunQuery */
-    private $runQuery;
+    private RunQuery $runQuery;
 
     public function __construct(RunQuery $runQuery)
     {
@@ -76,7 +75,7 @@ GRAPHQL;
     public function __invoke(
         RepositoryName $repositoryName,
         int $milestoneNumber
-    ) : Milestone {
+    ): Milestone {
         return Milestone::fromPayload($this->runQuery->__invoke(
             self::QUERY,
             [

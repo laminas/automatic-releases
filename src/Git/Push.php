@@ -15,5 +15,5 @@ interface Push
         string $repositoryDirectory,
         string $symbol,
         ?string $alias = null
-    ) : void;
+    ): void;
 }

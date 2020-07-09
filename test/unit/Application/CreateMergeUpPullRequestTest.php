@@ -25,8 +25,11 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
+
+use function mkdir;
 use function sys_get_temp_dir;
 use function tempnam;
+use function unlink;
 
 final class CreateMergeUpPullRequestTest extends TestCase
 {
@@ -64,7 +67,7 @@ final class CreateMergeUpPullRequestTest extends TestCase
         $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
         $this->createReleaseText = $this->createMock(CreateReleaseText::class);
         $this->push              = $this->createMock(Push::class);
-        $this->createPullRequest     = $this->createMock(CreatePullRequest::class);
+        $this->createPullRequest = $this->createMock(CreatePullRequest::class);
 
         $this->command = new CreateMergeUpPullRequest(
             $this->variables,
@@ -113,7 +116,7 @@ JSON
         ]);
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');
-        $this->signingKey = SecretKeyId::fromBase16String('aabbccddeeff');
+        $this->signingKey     = SecretKeyId::fromBase16String('aabbccddeeff');
 
         $this->variables->method('signingSecretKey')
             ->willReturn($this->signingKey);

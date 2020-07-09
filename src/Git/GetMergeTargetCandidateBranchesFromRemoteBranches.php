@@ -7,7 +7,14 @@ namespace Doctrine\AutomaticReleases\Git;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Symfony\Component\Process\Process;
+
+use function array_filter;
+use function array_map;
+use function assert;
+use function explode;
+use function is_string;
 use function Safe\preg_replace;
+use function trim;
 
 final class GetMergeTargetCandidateBranchesFromRemoteBranches implements GetMergeTargetCandidateBranches
 {
@@ -21,12 +28,12 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranches implements GetMerg
         ));
 
         return MergeTargetCandidateBranches::fromAllBranches(...array_map(static function (string $branch): BranchName {
-            /** @var string $sanitizedBranch */
             $sanitizedBranch = preg_replace(
                 '~^(?:remotes/)?origin/~',
                 '',
                 trim($branch, "* \t\n\r\0\x0B")
             );
+            assert(is_string($sanitizedBranch));
 
             return BranchName::fromName($sanitizedBranch);
         }, $branches));

@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChange
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
+
 use function array_map;
 use function array_values;
 
@@ -19,7 +20,6 @@ final class IssueOrPullRequest
     private Author $author;
     /**
      * @var array<int, Label>
-     *
      * @psalm-var list<Label>
      */
     private array $labels;
@@ -29,7 +29,6 @@ final class IssueOrPullRequest
     /**
      * @psalm-param non-empty-string $title
      * @psalm-param list<Label> $labels
-     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(

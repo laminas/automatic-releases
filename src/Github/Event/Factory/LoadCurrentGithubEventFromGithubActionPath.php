@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Event\Factory;
 use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Webmozart\Assert\Assert;
+
 use function Safe\file_get_contents;
 
 final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
@@ -18,7 +19,7 @@ final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGit
         $this->variables = $variables;
     }
 
-    public function __invoke() : MilestoneClosedEvent
+    public function __invoke(): MilestoneClosedEvent
     {
         $path = $this->variables->githubEventPath();
 

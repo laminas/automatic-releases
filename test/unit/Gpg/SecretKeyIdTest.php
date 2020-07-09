@@ -13,7 +13,7 @@ final class SecretKeyIdTest extends TestCase
     /**
      * @dataProvider invalidKeys
      */
-    public function testRejectsInvalidKeyIds(string $invalid) : void
+    public function testRejectsInvalidKeyIds(string $invalid): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -21,7 +21,7 @@ final class SecretKeyIdTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public function invalidKeys() : array
+    public function invalidKeys(): array
     {
         return [
             [''],
@@ -35,7 +35,7 @@ final class SecretKeyIdTest extends TestCase
     /**
      * @dataProvider validKeys
      */
-    public function testAcceptsValidKeyIds(string $valid) : void
+    public function testAcceptsValidKeyIds(string $valid): void
     {
         self::assertSame(
             $valid,
@@ -45,7 +45,7 @@ final class SecretKeyIdTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public function validKeys() : array
+    public function validKeys(): array
     {
         return [
             ['123'],

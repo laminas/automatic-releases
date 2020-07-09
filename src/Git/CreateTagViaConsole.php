@@ -7,8 +7,10 @@ namespace Doctrine\AutomaticReleases\Git;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use Symfony\Component\Process\Process;
+
 use function Safe\file_put_contents;
 use function Safe\tempnam;
+use function sys_get_temp_dir;
 
 final class CreateTagViaConsole implements CreateTag
 {
@@ -18,7 +20,7 @@ final class CreateTagViaConsole implements CreateTag
         string $tagName,
         string $changelog,
         SecretKeyId $keyId
-    ) : void {
+    ): void {
         $tagFileName = tempnam(sys_get_temp_dir(), 'created_tag');
 
         file_put_contents($tagFileName, $changelog);

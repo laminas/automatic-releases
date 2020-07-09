@@ -17,6 +17,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
+
 use function sprintf;
 
 final class ReleaseCommand extends Command
@@ -55,7 +56,7 @@ final class ReleaseCommand extends Command
         $this->createRelease       = $createRelease;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output) : int
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $milestoneClosedEvent = ($this->loadEvent)();
         $repositoryName       = $milestoneClosedEvent->repository();

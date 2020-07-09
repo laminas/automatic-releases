@@ -6,13 +6,16 @@ namespace Doctrine\AutomaticReleases\Gpg;
 
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
+
 use function Safe\file_put_contents;
 use function Safe\preg_match;
 use function Safe\tempnam;
+use function sys_get_temp_dir;
+use function unlink;
 
 final class ImportGpgKeyFromStringViaTemporaryFile implements ImportGpgKeyFromString
 {
-    public function __invoke(string $keyContents) : SecretKeyId
+    public function __invoke(string $keyContents): SecretKeyId
     {
         $keyFileName = tempnam(sys_get_temp_dir(), 'imported-key');
 

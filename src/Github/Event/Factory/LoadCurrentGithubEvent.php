@@ -8,5 +8,5 @@ use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 
 interface LoadCurrentGithubEvent
 {
-    public function __invoke() : MilestoneClosedEvent;
+    public function __invoke(): MilestoneClosedEvent;
 }

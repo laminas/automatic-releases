@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 final class LabelTest extends TestCase
 {
-    public function test() : void
+    public function test(): void
     {
         $label = Label::fromPayload([
             'name'  => 'BC Break',

@@ -9,6 +9,7 @@ use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Re
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
+
 use function array_keys;
 use function str_replace;
 
@@ -23,8 +24,7 @@ Release %release%
 
 MARKDOWN;
 
-    /** @var GenerateChangelog */
-    private $generateChangelog;
+    private GenerateChangelog $generateChangelog;
 
     public function __construct(GenerateChangelog $generateChangelog)
     {
@@ -35,7 +35,7 @@ MARKDOWN;
         Milestone $milestone,
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion
-    ) : string {
+    ): string {
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
@@ -56,7 +56,7 @@ MARKDOWN;
         return $text;
     }
 
-    private function markdownLink(string $text, UriInterface $uri) : string
+    private function markdownLink(string $text, UriInterface $uri): string
     {
         return '[' . $text . '](' . $uri->__toString() . ')';
     }

@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Github\Value;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
+
 use function explode;
 use function strtolower;
 
@@ -26,11 +27,11 @@ final class RepositoryName
     private function __construct(string $owner, string $name)
     {
         $this->owner = $owner;
-        $this->name = $name;
+        $this->name  = $name;
     }
 
     /** @psalm-pure */
-    public static function fromFullName(string $fullName) : self
+    public static function fromFullName(string $fullName): self
     {
         Assert::stringNotEmpty($fullName);
         Assert::regex($fullName, '~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~');
@@ -43,23 +44,23 @@ final class RepositoryName
         return new self($owner, $name);
     }
 
-    public function assertMatchesOwner(string $owner) : void
+    public function assertMatchesOwner(string $owner): void
     {
         Assert::same(strtolower($owner), strtolower($this->owner));
     }
 
     /** @psalm-param non-empty-string $token */
-    public function uriWithTokenAuthentication(string $token) : UriInterface
+    public function uriWithTokenAuthentication(string $token): UriInterface
     {
         return new Uri('https://' . $token . ':x-oauth-basic@github.com/' . $this->owner . '/' . $this->name . '.git');
     }
 
-    public function owner() : string
+    public function owner(): string
     {
         return $this->owner;
     }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }

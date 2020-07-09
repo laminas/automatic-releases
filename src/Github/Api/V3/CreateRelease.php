@@ -15,5 +15,5 @@ interface CreateRelease
         RepositoryName $repository,
         SemVerVersion $version,
         string $releaseNotes
-    ) : UriInterface;
+    ): UriInterface;
 }

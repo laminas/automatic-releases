@@ -11,6 +11,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Uri;
+
 use function Safe\json_decode;
 use function Safe\json_encode;
 
@@ -18,11 +19,9 @@ final class CreateReleaseThroughApiCall implements CreateRelease
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    /** @var RequestFactoryInterface */
-    private $messageFactory;
+    private RequestFactoryInterface $messageFactory;
 
-    /** @var ClientInterface */
-    private $client;
+    private ClientInterface $client;
 
     /** @psalm-var non-empty-string */
     private string $apiToken;
@@ -42,7 +41,7 @@ final class CreateReleaseThroughApiCall implements CreateRelease
         RepositoryName $repository,
         SemVerVersion $version,
         string $releaseNotes
-    ) : UriInterface {
+    ): UriInterface {
         $request = $this->messageFactory
             ->createRequest(
                 'POST',

@@ -20,7 +20,6 @@ final class Label
     /**
      * @psalm-param non-empty-string $colour
      * @psalm-param non-empty-string $name
-     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(

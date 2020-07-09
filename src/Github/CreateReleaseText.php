@@ -15,5 +15,5 @@ interface CreateReleaseText
         Milestone $milestone,
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion
-    ) : string;
+    ): string;
 }

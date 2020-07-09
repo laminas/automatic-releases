@@ -4,19 +4,16 @@
     xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
     name="doctrine/automatic-releases CS rules"
 >
-    <arg name="basepath" value="."/>
-    <arg name="extensions" value="php"/>
-    <arg name="parallel" value="80"/>
+    <arg value="p"/>
+    <arg value="s"/>
     <arg name="colors"/>
 
     <!-- Ignore warnings and show progress of the run -->
     <arg value="np"/>
 
-    <file>./public</file>
-    <file>./src</file>
-    <file>./test</file>
+    <file>bin</file>
+    <file>src</file>
+    <file>test</file>
 
-    <rule ref="Doctrine">
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.IncorrectReturnTypeHint"/>
-    </rule>
+    <rule ref="Doctrine"/>
 </ruleset>

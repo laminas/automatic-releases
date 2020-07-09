@@ -15,6 +15,7 @@ use Psr\Http\Message\RequestInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+
 use function uniqid;
 
 final class CreateReleaseTest extends TestCase
@@ -25,8 +26,7 @@ final class CreateReleaseTest extends TestCase
     private $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
-    /** @var CreateReleaseThroughApiCall */
-    private $createRelease;
+    private CreateReleaseThroughApiCall $createRelease;
 
     protected function setUp(): void
     {

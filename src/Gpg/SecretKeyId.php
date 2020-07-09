@@ -19,7 +19,7 @@ final class SecretKeyId
     }
 
     /** @psalm-pure */
-    public static function fromBase16String(string $keyId) : self
+    public static function fromBase16String(string $keyId): self
     {
         Assert::notEmpty($keyId);
         Assert::regex($keyId, '/^[A-F0-9]+$/i');
@@ -28,7 +28,7 @@ final class SecretKeyId
     }
 
     /** @psalm-return non-empty-string */
-    public function id() : string
+    public function id(): string
     {
         return $this->id;
     }

@@ -25,7 +25,9 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
+
 use function set_error_handler;
+
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;

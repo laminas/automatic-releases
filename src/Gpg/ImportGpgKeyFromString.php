@@ -6,5 +6,5 @@ namespace Doctrine\AutomaticReleases\Gpg;
 
 interface ImportGpgKeyFromString
 {
-    public function __invoke(string $keyContents) : SecretKeyId;
+    public function __invoke(string $keyContents): SecretKeyId;
 }

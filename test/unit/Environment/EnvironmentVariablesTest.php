@@ -7,10 +7,11 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Environment;
 use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+
 use function array_map;
 use function array_walk;
-use function getenv;
 use function Safe\array_combine;
 use function Safe\putenv;
 use function uniqid;
@@ -30,9 +31,9 @@ final class EnvironmentVariablesTest extends TestCase
     ];
 
     /** @var array<string, string|false> */
-    private $originalValues = [];
+    private array $originalValues = [];
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -42,24 +43,26 @@ final class EnvironmentVariablesTest extends TestCase
         );
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
-        array_walk($this->originalValues,
+        array_walk(
+            $this->originalValues,
             /** @param string|false $value */
-            static function ($value, string $key) : void {
-            if ($value === false) {
-                putenv($key . '=');
+            static function ($value, string $key): void {
+                if ($value === false) {
+                    putenv($key . '=');
 
-                return;
+                    return;
+                }
+
+                putenv($key . '=' . $value);
             }
-
-            putenv($key . '=' . $value);
-        });
+        );
 
         parent::tearDown();
     }
 
-    public function testReadsEnvironmentVariables() : void
+    public function testReadsEnvironmentVariables(): void
     {
         $signingSecretKey   = uniqid('signingSecretKey', true);
         $signingSecretKeyId = SecretKeyId::fromBase16String('aabbccdd');
@@ -95,7 +98,7 @@ final class EnvironmentVariablesTest extends TestCase
         self::assertSame($githubWorkspace, $variables->githubWorkspacePath());
     }
 
-    public function testFailsOnMissingEnvironmentVariables() : void
+    public function testFailsOnMissingEnvironmentVariables(): void
     {
         putenv('GITHUB_TOKEN=');
         putenv('SIGNING_SECRET_KEY=aaa');
@@ -110,7 +113,7 @@ final class EnvironmentVariablesTest extends TestCase
         $importKey->method('__invoke')
             ->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find a value for environment variable "GITHUB_TOKEN"');
 
         EnvironmentVariables::fromEnvironment($importKey);

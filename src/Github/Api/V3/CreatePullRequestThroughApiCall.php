@@ -9,6 +9,7 @@ use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Webmozart\Assert\Assert;
+
 use function Safe\json_decode;
 use function Safe\json_encode;
 
@@ -16,14 +17,11 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    /** @var RequestFactoryInterface */
-    private $messageFactory;
+    private RequestFactoryInterface $messageFactory;
 
-    /** @var ClientInterface */
-    private $client;
+    private ClientInterface $client;
 
-    /** @var string */
-    private $apiToken;
+    private string $apiToken;
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
@@ -42,7 +40,7 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
         BranchName $target,
         string $title,
         string $body
-    ) : void {
+    ): void {
         $request = $this->messageFactory
             ->createRequest(
                 'POST',

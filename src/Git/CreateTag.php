@@ -15,5 +15,5 @@ interface CreateTag
         string $tagName,
         string $changelog,
         SecretKeyId $keyId
-    ) : void;
+    ): void;
 }

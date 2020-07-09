@@ -8,6 +8,7 @@ use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Doctrine\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use PHPUnit\Framework\TestCase;
+
 use function file_put_contents;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -31,7 +32,7 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
     "action": "closed"
 }
 JSON;
-        $event = tempnam(sys_get_temp_dir(), 'github_event');
+        $event     = tempnam(sys_get_temp_dir(), 'github_event');
 
         file_put_contents($event, $eventData);
 

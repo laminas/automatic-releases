@@ -13,6 +13,7 @@ use Psr\Http\Message\RequestInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+
 use function uniqid;
 
 final class RunGraphQLQueryTest extends TestCase
@@ -28,18 +29,18 @@ final class RunGraphQLQueryTest extends TestCase
 
     private RunGraphQLQuery $runQuery;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $apiToken       = uniqid('apiToken', true);
+        $apiToken             = uniqid('apiToken', true);
 
         Assert::notEmpty($apiToken);
 
-        $this->apiToken       = $apiToken;
-        $this->runQuery       = new RunGraphQLQuery(
+        $this->apiToken = $apiToken;
+        $this->runQuery = new RunGraphQLQuery(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken
@@ -53,7 +54,7 @@ final class RunGraphQLQueryTest extends TestCase
             ->willReturn(new Request('https://the-domain.com/the-path'));
     }
 
-    public function testSuccessfulRequest() : void
+    public function testSuccessfulRequest(): void
     {
         $validResponse = new Response();
 
@@ -68,7 +69,7 @@ JSON
             ->httpClient
             ->expects(self::once())
             ->method('sendRequest')
-            ->with(self::callback(function (RequestInterface $request) : bool {
+            ->with(self::callback(function (RequestInterface $request): bool {
                 self::assertSame(
                     [
                         'Host'          => ['the-domain.com'],

@@ -7,6 +7,7 @@ namespace Doctrine\AutomaticReleases\Test\Unit\Gpg;
 use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
+
 use function file_get_contents;
 
 /** @covers \Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile */

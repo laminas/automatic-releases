@@ -15,6 +15,7 @@ use Psr\Http\Message\RequestInterface;
 use Webmozart\Assert\Assert;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
+
 use function uniqid;
 
 final class CreatePullRequestTest extends TestCase
@@ -28,16 +29,15 @@ final class CreatePullRequestTest extends TestCase
     /** @psalm-var non-empty-string */
     private string $apiToken;
 
-    /** @var CreatePullRequestThroughApiCall */
-    private $createPullRequest;
+    private CreatePullRequestThroughApiCall $createPullRequest;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->httpClient        = $this->createMock(ClientInterface::class);
-        $this->messageFactory    = $this->createMock(RequestFactoryInterface::class);
-        $apiToken          = uniqid('apiToken', true);
+        $this->httpClient     = $this->createMock(ClientInterface::class);
+        $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
+        $apiToken             = uniqid('apiToken', true);
 
         Assert::notEmpty($apiToken);
 
@@ -49,7 +49,7 @@ final class CreatePullRequestTest extends TestCase
         );
     }
 
-    public function testSuccessfulRequest() : void
+    public function testSuccessfulRequest(): void
     {
         $this
             ->messageFactory
@@ -70,7 +70,7 @@ JSON
             ->httpClient
             ->expects(self::once())
             ->method('sendRequest')
-            ->with(self::callback(function (RequestInterface $request) : bool {
+            ->with(self::callback(function (RequestInterface $request): bool {
                 self::assertSame(
                     [
                         'Host'          => ['the-domain.com'],

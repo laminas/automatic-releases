@@ -6,18 +6,15 @@ namespace Doctrine\AutomaticReleases\Github\Event;
 
 use Doctrine\AutomaticReleases\Git\Value\SemVerVersion;
 use Doctrine\AutomaticReleases\Github\Value\RepositoryName;
-use Psr\Http\Message\ServerRequestInterface;
 use Webmozart\Assert\Assert;
-use function array_key_exists;
-use function assert;
-use function is_array;
+
 use function Safe\json_decode;
 
 /** @psalm-immutable */
 final class MilestoneClosedEvent
 {
     private SemVerVersion $version;
-    private RepositoryName  $repository;
+    private RepositoryName $repository;
     private int $milestoneNumber;
 
     private function __construct(

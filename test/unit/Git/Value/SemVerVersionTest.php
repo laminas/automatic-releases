@@ -19,7 +19,7 @@ final class SemVerVersionTest extends TestCase
         int $expectedMajor,
         int $expectedMinor,
         string $expectedVersionName
-    ) : void {
+    ): void {
         $version = SemVerVersion::fromMilestoneName($milestoneName);
 
         self::assertSame($expectedMajor, $version->major());
@@ -32,7 +32,7 @@ final class SemVerVersionTest extends TestCase
      *
      * @psalm-return array<int, array{0: string, 1: int, 2: int, 3: string}>
      */
-    public function detectableReleases() : array
+    public function detectableReleases(): array
     {
         return [
             ['1.2.3', 1, 2, '1.2.3'],
@@ -45,7 +45,7 @@ final class SemVerVersionTest extends TestCase
     /**
      * @dataProvider invalidReleases
      */
-    public function testRejectsInvalidReleaseStrings(string $invalid) : void
+    public function testRejectsInvalidReleaseStrings(string $invalid): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -53,7 +53,7 @@ final class SemVerVersionTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public function invalidReleases() : array
+    public function invalidReleases(): array
     {
         return [
             ['1.2.3.4'],
@@ -71,7 +71,7 @@ final class SemVerVersionTest extends TestCase
     /**
      * @dataProvider releaseBranchNames
      */
-    public function testReleaseBranchNames(string $milestoneName, string $expectedTargetBranch) : void
+    public function testReleaseBranchNames(string $milestoneName, string $expectedTargetBranch): void
     {
         self::assertEquals(
             BranchName::fromName($expectedTargetBranch),
@@ -81,7 +81,7 @@ final class SemVerVersionTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public function releaseBranchNames() : array
+    public function releaseBranchNames(): array
     {
         return [
             ['1.2.3', '1.2.x'],
@@ -93,7 +93,7 @@ final class SemVerVersionTest extends TestCase
     /**
      * @dataProvider newMinorReleasesProvider
      */
-    public function testIsNewMinorRelease(string $milestoneName, bool $expected) : void
+    public function testIsNewMinorRelease(string $milestoneName, bool $expected): void
     {
         self::assertSame(
             $expected,
@@ -107,7 +107,7 @@ final class SemVerVersionTest extends TestCase
      *
      * @psalm-return array<int, array{0: string, 1: bool}>
      */
-    public function newMinorReleasesProvider() : array
+    public function newMinorReleasesProvider(): array
     {
         return [
             ['1.0.0', true],

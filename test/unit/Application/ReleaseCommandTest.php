@@ -25,8 +25,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+
+use function mkdir;
 use function sys_get_temp_dir;
 use function tempnam;
+use function unlink;
 
 final class ReleaseCommandTest extends TestCase
 {
@@ -117,7 +120,7 @@ JSON
         ]);
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');
-        $this->signingKey = SecretKeyId::fromBase16String('aabbccddeeff');
+        $this->signingKey     = SecretKeyId::fromBase16String('aabbccddeeff');
 
         $this->variables->method('signingSecretKey')
             ->willReturn($this->signingKey);

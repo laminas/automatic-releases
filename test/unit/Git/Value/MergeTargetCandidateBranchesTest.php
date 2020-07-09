@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MergeTargetCandidateBranchesTest extends TestCase
 {
-    public function test() : void
+    public function test(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1'),
@@ -67,7 +67,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
         );
     }
 
-    public function testCannotGetNextMajorBranchIfNoneExists() : void
+    public function testCannotGetNextMajorBranchIfNoneExists(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1'),
@@ -97,7 +97,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
         );
     }
 
-    public function testWillPickNewMajorReleaseBranchIfNoCurrentReleaseBranchExists() : void
+    public function testWillPickNewMajorReleaseBranchIfNoCurrentReleaseBranchExists(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1'),
@@ -136,7 +136,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
     }
 
     /** @link https://github.com/doctrine/automatic-releases/pull/23#discussion_r344499867 */
-    public function testWillNotPickTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist() : void
+    public function testWillNotPickTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.2.x'),
@@ -150,7 +150,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
     }
 
     /** @link https://github.com/doctrine/automatic-releases/pull/23#discussion_r344499867 */
-    public function testWillNotPickPatchTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist() : void
+    public function testWillNotPickPatchTargetIfNoMatchingReleaseBranchAndNewerReleaseBranchesExist(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.0.x'),

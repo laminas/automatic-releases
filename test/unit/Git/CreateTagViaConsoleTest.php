@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Doctrine\AutomaticReleases\Test\Unit\Git;
 
-use Doctrine\AutomaticReleases\Environment\EnvironmentVariables;
 use Doctrine\AutomaticReleases\Git\CreateTagViaConsole;
-use Doctrine\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Doctrine\AutomaticReleases\Git\Value\BranchName;
 use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\Process\Process;
+
 use function file_get_contents;
+use function mkdir;
+use function sys_get_temp_dir;
+use function tempnam;
+use function unlink;
 
 /** @covers \Doctrine\AutomaticReleases\Git\CreateTagViaConsole */
 final class CreateTagViaConsoleTest extends TestCase
 {
     private string $repository;
-    /** @var EnvironmentVariables&MockObject */
-    private EnvironmentVariables $variables;
     private SecretKeyId $key;
 
     protected function setUp(): void
@@ -31,7 +31,6 @@ final class CreateTagViaConsoleTest extends TestCase
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
             ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
-        $this->variables  = $this->createMock(EnvironmentVariables::class);
         $this->repository = tempnam(sys_get_temp_dir(), 'CreateTagViaConsoleRepository');
 
         unlink($this->repository);

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 final class AuthorTest extends TestCase
 {
-    public function test() : void
+    public function test(): void
     {
         $author = Author::fromPayload([
             'login' => 'Magoo',

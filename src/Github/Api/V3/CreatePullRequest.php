@@ -16,5 +16,5 @@ interface CreatePullRequest
         BranchName $target,
         string $title,
         string $body
-    ) : void;
+    ): void;
 }

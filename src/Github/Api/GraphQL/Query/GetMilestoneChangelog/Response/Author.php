@@ -18,11 +18,11 @@ final class Author
     private function __construct(string $name, UriInterface $url)
     {
         $this->name = $name;
-        $this->url = $url;
+        $this->url  = $url;
     }
 
     /** @param array<string, mixed> $payload */
-    public static function fromPayload(array $payload) : self
+    public static function fromPayload(array $payload): self
     {
         Assert::isMap($payload);
         Assert::keyExists($payload, 'login');
@@ -33,12 +33,12 @@ final class Author
         return new self($payload['login'], new Uri($payload['url']));
     }
 
-    public function name() : string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function url() : UriInterface
+    public function url(): UriInterface
     {
         return $this->url;
     }

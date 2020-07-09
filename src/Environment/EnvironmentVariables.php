@@ -7,14 +7,12 @@ namespace Doctrine\AutomaticReleases\Environment;
 use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Doctrine\AutomaticReleases\Gpg\SecretKeyId;
 use Webmozart\Assert\Assert;
-use function assert;
+
 use function getenv;
-use function is_string;
 use function sprintf;
 
 /**
  * @TODO move to interface - mocking/stubbing to be done later
- *
  * @psalm-immutable
  */
 class EnvironmentVariables implements Variables
@@ -74,7 +72,6 @@ class EnvironmentVariables implements Variables
 
     /**
      * @psalm-param  non-empty-string $key
-     *
      * @psalm-return non-empty-string
      */
     private static function getenv(string $key): string

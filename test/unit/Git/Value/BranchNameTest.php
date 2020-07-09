@@ -14,7 +14,7 @@ final class BranchNameTest extends TestCase
     /**
      * @dataProvider genericBranchNames
      */
-    public function testAllowsAnyBranchName(string $inputName) : void
+    public function testAllowsAnyBranchName(string $inputName): void
     {
         $branch = BranchName::fromName($inputName);
 
@@ -24,7 +24,7 @@ final class BranchNameTest extends TestCase
     }
 
     /** @return array<int, array<int, string>> */
-    public function genericBranchNames() : array
+    public function genericBranchNames(): array
     {
         return [
             ['foo'],
@@ -38,14 +38,14 @@ final class BranchNameTest extends TestCase
         ];
     }
 
-    public function testDisallowsEmptyBranchName() : void
+    public function testDisallowsEmptyBranchName(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         BranchName::fromName('');
     }
 
-    public function testMasterIsNextMajorRelease() : void
+    public function testMasterIsNextMajorRelease(): void
     {
         $branch = BranchName::fromName('master');
 
@@ -56,7 +56,7 @@ final class BranchNameTest extends TestCase
     /**
      * @dataProvider releaseBranches
      */
-    public function testDetectsReleaseBranchVersions(string $inputName, int $major, int $minor) : void
+    public function testDetectsReleaseBranchVersions(string $inputName, int $major, int $minor): void
     {
         $branch = BranchName::fromName($inputName);
 
@@ -70,7 +70,7 @@ final class BranchNameTest extends TestCase
      *
      * @psalm-return array<int, array{0: string, 1: int, 2: int}>
      */
-    public function releaseBranches() : array
+    public function releaseBranches(): array
     {
         return [
             ['1.2', 1, 2],
@@ -79,7 +79,7 @@ final class BranchNameTest extends TestCase
         ];
     }
 
-    public function testEquals() : void
+    public function testEquals(): void
     {
         self::assertFalse(BranchName::fromName('foo')->equals(BranchName::fromName('bar')));
         self::assertFalse(BranchName::fromName('bar')->equals(BranchName::fromName('foo')));
@@ -89,7 +89,7 @@ final class BranchNameTest extends TestCase
     /**
      * @dataProvider versionEqualityProvider
      */
-    public function testIsForVersion(string $milestoneName, string $branchName, bool $expected) : void
+    public function testIsForVersion(string $milestoneName, string $branchName, bool $expected): void
     {
         self::assertSame(
             $expected,
@@ -103,7 +103,7 @@ final class BranchNameTest extends TestCase
      *
      * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
      */
-    public function versionEqualityProvider() : array
+    public function versionEqualityProvider(): array
     {
         return [
             ['1.0.0', '1.0.x', true],
@@ -119,7 +119,7 @@ final class BranchNameTest extends TestCase
     /**
      * @dataProvider newerVersionComparisonProvider
      */
-    public function testIsForNewerVersionThan(string $milestoneName, string $branchName, bool $expected) : void
+    public function testIsForNewerVersionThan(string $milestoneName, string $branchName, bool $expected): void
     {
         self::assertSame(
             $expected,
@@ -133,7 +133,7 @@ final class BranchNameTest extends TestCase
      *
      * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
      */
-    public function newerVersionComparisonProvider() : array
+    public function newerVersionComparisonProvider(): array
     {
         return [
             ['1.0.0', '1.0.x', false],
