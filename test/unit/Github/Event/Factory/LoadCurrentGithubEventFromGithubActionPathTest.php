@@ -12,7 +12,7 @@ use function file_put_contents;
 use function sys_get_temp_dir;
 use function tempnam;
 
-/** @covers \Doctrine\AutomaticReleases\Github\Event\LoadCurrentGithubEventFromGithubActionPath */
+/** @covers \Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
 final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 {
     public function testWillLoadEventFile(): void
