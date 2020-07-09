@@ -13,11 +13,11 @@ use Doctrine\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Doctrine\AutomaticReleases\Github\Api\V3\CreateRelease;
 use Doctrine\AutomaticReleases\Github\CreateReleaseText;
 use Doctrine\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
-use Doctrine\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Assert\Assert;
+use function sprintf;
 
 final class ReleaseCommand extends Command
 {
@@ -75,7 +75,10 @@ final class ReleaseCommand extends Command
 
         $releaseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
 
-        Assert::notNull($releaseBranch);
+        Assert::notNull(
+            $releaseBranch,
+            sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
+        );
 
         $changelog = ($this->createChangelogText)($milestone, $milestoneClosedEvent->repository(), $releaseVersion);
 
