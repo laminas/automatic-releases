@@ -92,4 +92,25 @@ final class EnvironmentVariablesTest extends TestCase
         self::assertSame($githubEventPath, $variables->githubEventPath());
         self::assertSame($githubWorkspace, $variables->githubWorkspacePath());
     }
+
+    public function testFailsOnMissingEnvironmentVariables() : void
+    {
+        putenv('GITHUB_TOKEN=');
+        putenv('SIGNING_SECRET_KEY=aaa');
+        putenv('GITHUB_ORGANISATION=bbb');
+        putenv('GIT_AUTHOR_NAME=ccc');
+        putenv('GIT_AUTHOR_EMAIL=ddd@eee.ff');
+        putenv('GITHUB_EVENT_PATH=/tmp/event');
+        putenv('GITHUB_WORKSPACE=/tmp');
+
+        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+
+        $importKey->method('__invoke')
+            ->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not find a value for environment variable "GITHUB_TOKEN"');
+
+        EnvironmentVariables::fromEnvironment($importKey);
+    }
 }
