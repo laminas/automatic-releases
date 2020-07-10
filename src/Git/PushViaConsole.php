@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Git;
 
 use Symfony\Component\Process\Process;
+
 use function uniqid;
 
 final class PushViaConsole implements Push
