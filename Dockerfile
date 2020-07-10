@@ -30,7 +30,6 @@ ADD composer.lock /app/composer.lock
 
 RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --no-autoloader
 
-ADD .git /app/.git
 ADD bin /app/bin
 ADD src /app/src
 
