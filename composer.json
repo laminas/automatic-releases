@@ -2,7 +2,7 @@
     "name": "laminas/automatic-releases",
     "type": "project",
     "description": "Application that eases release management in the Laminas organisation through GitHub actions",
-    "license": "MIT",
+    "license": "BSD-3-Clause",
     "autoload": {
         "psr-4": {
             "Laminas\\AutomaticReleases\\": "src"
