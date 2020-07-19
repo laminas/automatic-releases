@@ -30,7 +30,9 @@ ADD composer.lock /app/composer.lock
 
 RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --no-autoloader
 
-ADD .git /app/.git
+# @TODO https://github.com/laminas/automatic-releases/issues/8 we skip `.git` for now, as it isn't available in the build environment
+# @TODO https://github.com/laminas/automatic-releases/issues/9 we skip `.git` for now, as it isn't available in the build environment
+#ADD .git /app/.git
 ADD bin /app/bin
 ADD src /app/src
 
