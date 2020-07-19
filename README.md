@@ -41,6 +41,8 @@ this action will perform all following steps (or stop with an error):
  5. create a tag named `x.y.z` on the selected branch, with the generated changelog
  6. publish a release named `x.y.z`, with the generated tag and changelog
  7. create (if applicable), a pull request from the selected branch to the next release branch
+ 8. create (if necessary) a "next minor" release branch `x.y+1.z`
+ 9. switch default repository branch to newest release branch
 
 Please read the [`feature/`](./feature) specification for more detailed scenarios on how the tool is supposed
 to operate.

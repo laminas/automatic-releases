@@ -7,6 +7,7 @@ namespace Laminas\AutomaticReleases\Git\Value;
 use Webmozart\Assert\Assert;
 
 use function array_filter;
+use function array_reverse;
 use function array_search;
 use function array_values;
 use function assert;
@@ -16,7 +17,7 @@ use function Safe\usort;
 
 final class MergeTargetCandidateBranches
 {
-    /** @var BranchName[] */
+    /** @var BranchName[] branches that can be used for releases, sorted in ascending version number */
     private array $sortedBranches;
 
     /**
@@ -100,5 +101,42 @@ final class MergeTargetCandidateBranches
         return $branch === $targetBranch
             ? null
             : $branch;
+    }
+
+    /** @TODO move `master` exclusion into ctor - `master` is no longer a valid release branch */
+    public function newestReleaseBranch(): ?BranchName
+    {
+        return array_values(array_filter(
+            array_reverse($this->sortedBranches),
+            static fn (BranchName $branch): bool => $branch->name() !== 'master'
+        ))[0] ?? null;
+    }
+
+    /** @TODO move `master` exclusion into ctor - `master` is no longer a valid release branch */
+    public function newestFutureReleaseBranchAfter(SemVerVersion $version): BranchName
+    {
+        $nextMinor = $version->nextMinor();
+
+        foreach (array_reverse($this->sortedBranches) as $branch) {
+            if ($branch->name() === 'master') {
+                continue; // For now, we skip `master` here - no longer a valid release branch for us
+            }
+
+            if ($nextMinor->lessThanEqual($branch->targetVersion())) {
+                return $branch;
+            }
+
+            break;
+        }
+
+        return $nextMinor->targetReleaseBranchName();
+    }
+
+    public function contains(BranchName $needle): bool
+    {
+        return (bool) array_filter(
+            $this->sortedBranches,
+            static fn (BranchName $branch): bool => $needle->equals($branch)
+        );
     }
 }

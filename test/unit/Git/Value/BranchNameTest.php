@@ -146,4 +146,31 @@ final class BranchNameTest extends TestCase
             ['2.0.0', '1.9', false],
         ];
     }
+
+    /**
+     * @dataProvider targetVersionProvider
+     */
+    public function testTargetVersion(string $branchName, string $expectedVersion): void
+    {
+        self::assertEquals(
+            SemVerVersion::fromMilestoneName($expectedVersion),
+            BranchName::fromName($branchName)
+                ->targetVersion()
+        );
+    }
+
+    /**
+     * @return string[][]
+     *
+     * @psalm-return list<array{0: string, 1: string}>
+     */
+    public function targetVersionProvider(): array
+    {
+        return [
+            ['2.0', '2.0.0'],
+            ['2.0.x', '2.0.0'],
+            ['2.1.x', '2.1.0'],
+            ['1.99.x', '1.99.0'],
+        ];
+    }
 }

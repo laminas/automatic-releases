@@ -10,6 +10,7 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
+use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
 use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
@@ -19,6 +20,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100Issue
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
+use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
@@ -88,6 +90,18 @@ use const E_WARNING;
             $createReleaseText,
             $push,
             new CreatePullRequestThroughApiCall(
+                $makeRequests,
+                $httpClient,
+                $githubToken
+            )
+        ),
+        new SwitchDefaultBranchToNextMinor(
+            $variables,
+            $loadEvent,
+            $fetch,
+            $getCandidateBranches,
+            $push,
+            new SetDefaultBranchThroughApiCall(
                 $makeRequests,
                 $httpClient,
                 $githubToken

@@ -70,6 +70,13 @@ final class BranchName
         return [$major, $minor];
     }
 
+    public function targetVersion(): SemVerVersion
+    {
+        [$major, $minor] = $this->majorAndMinor();
+
+        return SemVerVersion::fromMilestoneName($major . '.' . $minor . '.0');
+    }
+
     public function equals(self $other): bool
     {
         return $other->name === $this->name;
