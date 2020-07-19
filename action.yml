@@ -1,7 +1,7 @@
 # Definition of the github action
 # as per https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
 
-name: 'Laminas\AutomaticReleases'
+name: 'laminas/automatic-releases'
 description: 'Automates automatic releases for semver-compliant repositories'
 
 inputs:
