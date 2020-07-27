@@ -25,6 +25,11 @@ to your project or organisation:
  * `GIT_AUTHOR_EMAIL` - email address of the author of your releases: can be an email address of a bot account.
  * `SIGNING_SECRET_KEY` - a **password-less** private GPG key in ASCII format, to be used for signing your releases:
    please use a dedicated GPG subkey for this purpose. Unsigned releases are not supported, and won't be supported.
+ * `ORGANIZATION_ADMIN_TOKEN` - if you use the file from [`examples/.github/workflows/release-on-milestone-closed.yml`](examples/.github/workflows/release-on-milestone-closed.yml),
+   then you have to provide a `ORGANIZATION_ADMIN_TOKEN`, which is a github token with administrative rights over
+   your organisation. This is required for the `laminas:automatic-releases:switch-default-branch-to-next-minor`
+   command, because [changing default branch of a repository currently requires administrative token rights](https://developer.github.com/v3/repos/#update-a-repository).
+   You can generate a token from your [personal access tokens page](https://github.com/settings/tokens/new).
 
 ## Usage
 
