@@ -65,7 +65,7 @@ Feature: Automated releases
     Then tag "1.1.0" should have been created on branch "1.1.x"
     And a new pull request from branch "1.1.x" to "1.2.x" should have been created
 
-  Scenario: If a no newer release branch exists, the tool will not create a pull request against it
+  Scenario: If no newer release branch exists, the tool will not create any pull requests
     Given following existing branches:
       | name    |
       | 1.1.x   |
