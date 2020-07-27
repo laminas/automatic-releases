@@ -3,8 +3,10 @@ Feature: Automated releases
 
   Scenario: If no major release branch exists, the tool should not create a new major release
     Given following existing branches:
-      | name  |
-      | 1.0.x |
+      | name    |
+      | 1.0.x   |
+      | master  |
+      | develop |
     And following open milestones:
       | name  |
       | 2.0.0 |
@@ -13,8 +15,10 @@ Feature: Automated releases
 
   Scenario: If no major release branch exists, the tool should not create a new minor release
     Given following existing branches:
-      | name  |
-      | 1.0.x |
+      | name    |
+      | 1.0.x   |
+      | master  |
+      | develop |
     And following open milestones:
       | name  |
       | 1.1.0 |
@@ -23,9 +27,11 @@ Feature: Automated releases
 
   Scenario: If a major release branch exists, the tool creates a major release from there
     Given following existing branches:
-      | name   |
-      | 1.0.x  |
-      | master |
+      | name    |
+      | 1.0.x   |
+      | 2.0.x   |
+      | master  |
+      | develop |
     And following open milestones:
       | name  |
       | 2.0.0 |
@@ -33,29 +39,44 @@ Feature: Automated releases
     Then tag "2.0.0" should have been created on branch "master"
     And branch "2.0.x" should have been created from "master"
 
-  Scenario: If a major release branch exists, the tool creates a new minor release from there
+  Scenario: If a new major release branch exists, the tool does not create a new minor release
     Given following existing branches:
-      | name   |
-      | 1.0.x  |
-      | master |
+      | name    |
+      | 1.0.x   |
+      | 2.0.x   |
+      | master  |
+      | develop |
     And following open milestones:
       | name  |
       | 1.1.0 |
     When I close milestone "1.1.0"
-    Then tag "1.1.0" should have been created on branch "master"
-    And branch "1.1.x" should have been created from "master"
+    Then the tool should have halted with an error
 
   Scenario: If a minor release branch exists, the tool creates a new minor release from there
     Given following existing branches:
       | name   |
       | 1.1.x  |
+      | 1.2.x  |
       | master |
     And following open milestones:
       | name  |
       | 1.1.0 |
     When I close milestone "1.1.0"
     Then tag "1.1.0" should have been created on branch "1.1.x"
-    And a new pull request from branch "1.1.x" to "master" should have been created
+    And a new pull request from branch "1.1.x" to "1.2.x" should have been created
+
+  Scenario: If a no newer release branch exists, the tool will not create a pull request against it
+    Given following existing branches:
+      | name    |
+      | 1.1.x   |
+      | master  |
+      | develop |
+    And following open milestones:
+      | name  |
+      | 1.1.0 |
+    When I close milestone "1.1.0"
+    Then tag "1.1.0" should have been created on branch "1.1.x"
+    And no new pull request should have been created
 
   Scenario: If a minor release branch exists, the tool creates a new patch release from there
     Given following existing branches:
