@@ -20,7 +20,7 @@ Feature: Default branch switching
       | 1.3.x  |
     And the default branch should be "1.3.x"
 
-  Scenario: A pre-existing minor release branch is set as default branch on release
+  Scenario: The latest pre-existing minor release branch is set as default branch on a successful release
     Given following existing branches:
       | branch |
       | 1.0.x  |
@@ -81,5 +81,4 @@ Feature: Default branch switching
       | master  |
       | develop |
     And the default branch should be "develop"
-
 
