@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git\Value;
 
-use Webmozart\Assert\Assert;
-
 use function array_filter;
+use function array_reverse;
 use function array_search;
 use function array_values;
 use function assert;
@@ -16,13 +15,16 @@ use function Safe\usort;
 
 final class MergeTargetCandidateBranches
 {
-    /** @var BranchName[] */
+    /**
+     * @var BranchName[] branches that can be used for releases, sorted in ascending version number
+     * @psalm-var list<BranchName>
+     */
     private array $sortedBranches;
 
     /**
      * @param BranchName[] $sortedBranches
      *
-     * @psalm-param non-empty-list<BranchName> $sortedBranches
+     * @psalm-param list<BranchName> $sortedBranches
      */
     private function __construct(array $sortedBranches)
     {
@@ -32,21 +34,10 @@ final class MergeTargetCandidateBranches
     public static function fromAllBranches(BranchName ...$branches): self
     {
         $mergeTargetBranches = array_filter($branches, static function (BranchName $branch): bool {
-            return $branch->isReleaseBranch()
-                || $branch->isNextMajor();
+            return $branch->isReleaseBranch();
         });
 
-        Assert::notEmpty($mergeTargetBranches);
-
         usort($mergeTargetBranches, static function (BranchName $a, BranchName $b): int {
-            if ($a->isNextMajor()) {
-                return 1;
-            }
-
-            if ($b->isNextMajor()) {
-                return -1;
-            }
-
             return $a->majorAndMinor() <=> $b->majorAndMinor();
         });
 
@@ -57,14 +48,6 @@ final class MergeTargetCandidateBranches
     public function targetBranchFor(SemVerVersion $version): ?BranchName
     {
         foreach ($this->sortedBranches as $branch) {
-            if ($branch->isNextMajor()) {
-                if (! $version->isNewMinorRelease()) {
-                    return null;
-                }
-
-                return $branch;
-            }
-
             if ($branch->isForNewerVersionThan($version)) {
                 return null;
             }
@@ -100,5 +83,30 @@ final class MergeTargetCandidateBranches
         return $branch === $targetBranch
             ? null
             : $branch;
+    }
+
+    public function newestReleaseBranch(): ?BranchName
+    {
+        return array_reverse($this->sortedBranches)[0] ?? null;
+    }
+
+    public function newestFutureReleaseBranchAfter(SemVerVersion $version): BranchName
+    {
+        $nextMinor = $version->nextMinor();
+
+        return array_filter(
+            array_reverse($this->sortedBranches),
+            static function (BranchName $branch) use ($nextMinor): bool {
+                return $nextMinor->lessThanEqual($branch->targetMinorReleaseVersion());
+            }
+        )[0] ?? $nextMinor->targetReleaseBranchName();
+    }
+
+    public function contains(BranchName $needle): bool
+    {
+        return (bool) array_filter(
+            $this->sortedBranches,
+            static fn (BranchName $branch): bool => $needle->equals($branch)
+        );
     }
 }

@@ -25,6 +25,12 @@ to your project or organisation:
  * `GIT_AUTHOR_EMAIL` - email address of the author of your releases: can be an email address of a bot account.
  * `SIGNING_SECRET_KEY` - a **password-less** private GPG key in ASCII format, to be used for signing your releases:
    please use a dedicated GPG subkey for this purpose. Unsigned releases are not supported, and won't be supported.
+ * `ORGANIZATION_ADMIN_TOKEN` - if you use the file from [`examples/.github/workflows/release-on-milestone-closed.yml`](examples/.github/workflows/release-on-milestone-closed.yml),
+   then you have to provide a `ORGANIZATION_ADMIN_TOKEN`, which is a github token with administrative rights over
+   your organisation (issued by a user that has administrative rights over your project).
+   This is required for the `laminas:automatic-releases:switch-default-branch-to-next-minor`
+   command, because [changing default branch of a repository currently requires administrative token rights](https://developer.github.com/v3/repos/#update-a-repository).
+   You can generate a token from your [personal access tokens page](https://github.com/settings/tokens/new).
 
 ## Usage
 
@@ -41,6 +47,8 @@ this action will perform all following steps (or stop with an error):
  5. create a tag named `x.y.z` on the selected branch, with the generated changelog
  6. publish a release named `x.y.z`, with the generated tag and changelog
  7. create (if applicable), a pull request from the selected branch to the next release branch
+ 8. create (if necessary) a "next minor" release branch `x.y+1.z`
+ 9. switch default repository branch to newest release branch
 
 Please read the [`feature/`](./feature) specification for more detailed scenarios on how the tool is supposed
 to operate.

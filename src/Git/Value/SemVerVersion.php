@@ -54,6 +54,11 @@ final class SemVerVersion
         return $this->minor;
     }
 
+    public function nextMinor(): self
+    {
+        return new self($this->major, $this->minor + 1, 0);
+    }
+
     public function targetReleaseBranchName(): BranchName
     {
         return BranchName::fromName($this->major . '.' . $this->minor . '.x');
@@ -62,5 +67,10 @@ final class SemVerVersion
     public function isNewMinorRelease(): bool
     {
         return $this->patch === 0;
+    }
+
+    public function lessThanEqual(self $other): bool
+    {
+        return $this->fullReleaseName() <= $other->fullReleaseName();
     }
 }

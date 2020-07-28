@@ -118,4 +118,44 @@ final class SemVerVersionTest extends TestCase
             ['0.9.0', true],
         ];
     }
+
+    /**
+     * @dataProvider lessThanEqualProvider
+     */
+    public function testLessThanEqual(string $a, string $b, bool $expected): void
+    {
+        self::assertEquals(
+            $expected,
+            SemVerVersion::fromMilestoneName($a)
+                ->lessThanEqual(SemVerVersion::fromMilestoneName($b))
+        );
+    }
+
+    /**
+     * @return string[][]|bool[][]
+     *
+     * @psalm-return non-empty-list<array{string, string, bool}>
+     */
+    public function lessThanEqualProvider(): array
+    {
+        return [
+            ['0.0.1', '0.0.1', true],
+            ['0.0.2', '0.0.1', false],
+            ['0.0.1', '0.0.2', true],
+            ['0.0.1', '0.1.0', true],
+            ['0.1.0', '0.0.1', false],
+            ['1.0.0', '0.0.1', false],
+            ['0.0.1', '1.0.0', true],
+            ['1.0.0', '1.0.0', true],
+            ['1.0.1', '1.0.0', false],
+            ['1.0.0', '1.0.1', true],
+            ['0.1.0', '0.1.0', true],
+            ['0.1.1', '0.1.0', false],
+            ['0.1.0', '0.1.1', true],
+            ['0.1.0', '0.1.0', true],
+            ['0.1.1', '0.1.0', false],
+            ['2.0.0', '1.0.0', false],
+            ['1.0.0', '2.0.0', true],
+        ];
+    }
 }
