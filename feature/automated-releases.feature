@@ -51,7 +51,9 @@ Feature: Automated releases
     When I close milestone "1.1.0"
     Then the tool should have halted with an error
 
-  Scenario: If a minor release branch exists, the tool creates a new minor release from there
+  Scenario: If a minor release branch exists, when closing the minor release milestone,
+  the tool tags the minor release from the branch, and creates a pull request
+  against the next newer minor release branch.
     Given following existing branches:
       | name   |
       | 1.1.x  |
