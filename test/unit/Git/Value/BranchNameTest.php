@@ -140,12 +140,12 @@ final class BranchNameTest extends TestCase
     /**
      * @dataProvider targetVersionProvider
      */
-    public function testTargetVersion(string $branchName, string $expectedVersion): void
+    public function testTargetMinorReleaseVersion(string $branchName, string $expectedVersion): void
     {
         self::assertEquals(
             SemVerVersion::fromMilestoneName($expectedVersion),
             BranchName::fromName($branchName)
-                ->targetVersion()
+                ->targetMinorReleaseVersion()
         );
     }
 

@@ -97,7 +97,7 @@ final class MergeTargetCandidateBranches
         return array_filter(
             array_reverse($this->sortedBranches),
             static function (BranchName $branch) use ($nextMinor): bool {
-                return $nextMinor->lessThanEqual($branch->targetVersion());
+                return $nextMinor->lessThanEqual($branch->targetMinorReleaseVersion());
             }
         )[0] ?? $nextMinor->targetReleaseBranchName();
     }

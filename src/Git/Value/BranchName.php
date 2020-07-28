@@ -65,7 +65,7 @@ final class BranchName
         return [$major, $minor];
     }
 
-    public function targetVersion(): SemVerVersion
+    public function targetMinorReleaseVersion(): SemVerVersion
     {
         [$major, $minor] = $this->majorAndMinor();
 
