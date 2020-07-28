@@ -36,8 +36,7 @@ Feature: Automated releases
       | name  |
       | 2.0.0 |
     When I close milestone "2.0.0"
-    Then tag "2.0.0" should have been created on branch "master"
-    And branch "2.0.x" should have been created from "master"
+    Then tag "2.0.0" should have been created on branch "2.0.x"
 
   Scenario: If a new major release branch exists, the tool does not create a new minor release
     Given following existing branches:
