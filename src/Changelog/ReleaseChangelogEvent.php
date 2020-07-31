@@ -33,11 +33,11 @@ final class ReleaseChangelogEvent
         string $author
     ) {
         $this->input               = $input;
-        $this->milestone           = $milestone;
         $this->output              = $output;
-        $this->repositoryDirectory = $repositoryDirectory;
         $this->repositoryName      = $repositoryName;
+        $this->repositoryDirectory = $repositoryDirectory;
         $this->sourceBranch        = $sourceBranch;
+        $this->milestone           = $milestone;
         $this->version             = $version;
         $this->author              = $author;
     }

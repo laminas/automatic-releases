@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogAndFetchContents;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogEvent;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
@@ -43,8 +45,8 @@ final class ReleaseCommandTest extends TestCase
     private GetMergeTargetCandidateBranches $getMergeTargets;
     /** @var GetGithubMilestone&MockObject */
     private GetGithubMilestone $getMilestone;
-    /** @var CreateReleaseText&MockObject */
-    private CreateReleaseText $createReleaseText;
+    /** @var ReleaseChangelogAndFetchContents&MockObject */
+    private ReleaseChangelogAndFetchContents $createReleaseText;
     /** @var CreateTag&MockObject */
     private CreateTag $createTag;
     /** @var Push&MockObject */
@@ -67,7 +69,7 @@ final class ReleaseCommandTest extends TestCase
         $this->fetch             = $this->createMock(Fetch::class);
         $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
         $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
-        $this->createReleaseText = $this->createMock(CreateReleaseText::class);
+        $this->createReleaseText = $this->createMock(ReleaseChangelogAndFetchContents::class);
         $this->createTag         = $this->createMock(CreateTag::class);
         $this->push              = $this->createMock(Push::class);
         $this->createRelease     = $this->createMock(CreateRelease::class);
@@ -126,6 +128,10 @@ JSON
             ->willReturn($this->signingKey);
         $this->variables->method('githubToken')
             ->willReturn('github-auth-token');
+        $this->variables->method('gitAuthorName')
+            ->willReturn('github-author');
+        $this->variables->method('gitAuthorEmail')
+            ->willReturn('github-author@example.com');
     }
 
     public function testCommandName(): void
@@ -159,11 +165,26 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
+        $milestone      = $this->milestone;
+        $releaseVersion = $this->releaseVersion;
         $this->createReleaseText->method('__invoke')
             ->with(
-                self::equalTo($this->milestone),
-                self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                self::equalTo($this->releaseVersion)
+                self::callback(function (
+                    ReleaseChangelogEvent $releaseChangelogEvent
+                ) use (
+                    $milestone,
+                    $releaseVersion,
+                    $workspace
+                ) {
+                    TestCase::assertSame($milestone, $releaseChangelogEvent->milestone);
+                    TestCase::assertEquals(RepositoryName::fromFullName('foo/bar'), $releaseChangelogEvent->repositoryName);
+                    TestCase::assertEquals($releaseVersion, $releaseChangelogEvent->version);
+                    TestCase::assertSame($workspace, $releaseChangelogEvent->repositoryDirectory);
+                    TestCase::assertSame('1.2.x', $releaseChangelogEvent->sourceBranch->name());
+                    TestCase::assertSame('github-author <github-author@example.com>', $releaseChangelogEvent->author);
+
+                    return true;
+                })
             )
             ->willReturn('text of the changelog');
 
