@@ -18,7 +18,6 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
@@ -169,7 +168,7 @@ JSON
         $releaseVersion = $this->releaseVersion;
         $this->createReleaseText->method('__invoke')
             ->with(
-                self::callback(function (
+                self::callback(static function (
                     ReleaseChangelogEvent $releaseChangelogEvent
                 ) use (
                     $milestone,

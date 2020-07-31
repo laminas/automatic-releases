@@ -74,7 +74,7 @@ use const E_WARNING;
                 $makeRequests,
                 $httpClient
             ))
-        )
+        ),
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
         $makeRequests,

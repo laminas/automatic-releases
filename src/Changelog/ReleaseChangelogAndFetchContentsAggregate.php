@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Changelog;
 
+use function sprintf;
+
 class ReleaseChangelogAndFetchContentsAggregate implements ReleaseChangelogAndFetchContents
 {
     /** @var ReleaseChangelogAndFetchContents[] */
@@ -21,7 +23,7 @@ class ReleaseChangelogAndFetchContentsAggregate implements ReleaseChangelogAndFe
     {
         foreach ($this->strategies as $strategy) {
             $changelog = $strategy($releaseChangelogEvent);
-            if (null !== $changelog) {
+            if ($changelog !== null) {
                 return $changelog;
             }
         }

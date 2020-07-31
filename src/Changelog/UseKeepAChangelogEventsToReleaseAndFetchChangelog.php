@@ -8,7 +8,11 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use RuntimeException;
+
+use function assert;
+use function date;
+use function file_exists;
+use function sprintf;
 
 class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
     ReleaseChangelogAndFetchContents
@@ -36,8 +40,6 @@ class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
 
         $version = $releaseChangelogEvent->version->fullReleaseName();
 
-        // Create and dispatch ReadyLatestChangelogEvent
-        /** @var ReadyLatestChangelogEvent $event */
         $event = $this->dispatcher->dispatch(new ReadyLatestChangelogEvent(
             $releaseChangelogEvent->input,
             $releaseChangelogEvent->output,
@@ -45,6 +47,7 @@ class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
             date('Y-M-d'),
             $version
         ));
+        assert($event instanceof ReadyLatestChangelogEvent);
 
         if ($event->failed()) {
             return null;

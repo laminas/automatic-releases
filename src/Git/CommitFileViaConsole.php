@@ -6,6 +6,8 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Symfony\Component\Process\Process;
 
+use function sprintf;
+
 final class CommitFileViaConsole implements CommitFile
 {
     public function __invoke(
