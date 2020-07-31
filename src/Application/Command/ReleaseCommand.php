@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogAndFetchContents;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogEvent;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
@@ -11,7 +13,6 @@ use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +28,7 @@ final class ReleaseCommand extends Command
     private Fetch $fetch;
     private GetMergeTargetCandidateBranches $getMergeTargets;
     private GetGithubMilestone $getMilestone;
-    private CreateReleaseText $createChangelogText;
+    private ReleaseChangelogAndFetchContents $createChangelogText;
     private CreateTag $createTag;
     private Push $push;
     private CreateRelease $createRelease;
@@ -38,7 +39,7 @@ final class ReleaseCommand extends Command
         Fetch $fetch,
         GetMergeTargetCandidateBranches $getMergeTargets,
         GetGithubMilestone $getMilestone,
-        CreateReleaseText $createChangelogText,
+        ReleaseChangelogAndFetchContents $createChangelogText,
         CreateTag $createTag,
         Push $push,
         CreateRelease $createRelease
@@ -80,7 +81,20 @@ final class ReleaseCommand extends Command
             sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
         );
 
-        $changelog = ($this->createChangelogText)($milestone, $milestoneClosedEvent->repository(), $releaseVersion);
+        $changelog = ($this->createChangelogText)(new ReleaseChangelogEvent(
+            $input,
+            $output,
+            $milestoneClosedEvent->repository(),
+            $repositoryPath,
+            $releaseBranch,
+            $milestone,
+            $releaseVersion,
+            sprintf(
+                '%s <%s>',
+                $this->environment->gitAuthorName(),
+                $this->environment->gitAuthorEmail()
+            )
+        ));
 
         $tagName = $releaseVersion->fullReleaseName();
 

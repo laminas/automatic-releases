@@ -11,7 +11,11 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
+use Laminas\AutomaticReleases\Changelog\CreateChangelogViaMilestone;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogAndFetchContentsAggregate;
+use Laminas\AutomaticReleases\Changelog\UseKeepAChangelogEventsToReleaseAndFetchChangelog;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
 use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
@@ -26,6 +30,8 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PackageVersions\Versions;
+use Phly\KeepAChangelog\EventDispatcher;
+use Phly\KeepAChangelog\ListenerProvider;
 use Symfony\Component\Console\Application;
 
 use function set_error_handler;
@@ -56,11 +62,20 @@ use const E_WARNING;
         $httpClient,
         $githubToken
     ));
-    $createReleaseText    = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
-        $makeRequests,
-        $httpClient
-    ));
     $push                 = new PushViaConsole();
+    $createReleaseText    = new ReleaseChangelogAndFetchContentsAggregate([
+        new UseKeepAChangelogEventsToReleaseAndFetchChangelog(
+            new EventDispatcher(new ListenerProvider()),
+            new CommitFileViaConsole(),
+            $push
+        ),
+        new CreateChangelogViaMilestone(
+            new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
+                $makeRequests,
+                $httpClient
+            ))
+        )
+    ]);
     $createRelease        = new CreateReleaseThroughApiCall(
         $makeRequests,
         $httpClient,
