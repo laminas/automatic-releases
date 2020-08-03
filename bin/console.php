@@ -82,6 +82,7 @@ use const E_WARNING;
         $githubToken
     );
 
+    /** @psalm-suppress DeprecatedClass */
     $application = new Application(Versions::ROOT_PACKAGE_NAME, Versions::getVersion('laminas/automatic-releases'));
 
     $application->addCommands([
