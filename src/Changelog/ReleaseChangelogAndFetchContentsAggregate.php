@@ -19,7 +19,7 @@ class ReleaseChangelogAndFetchContentsAggregate implements ReleaseChangelogAndFe
         $this->strategies = $strategies;
     }
 
-    public function __invoke(ReleaseChangelogEvent $releaseChangelogEvent): ?string
+    public function __invoke(ReleaseChangelogEvent $releaseChangelogEvent): string
     {
         foreach ($this->strategies as $strategy) {
             $changelog = $strategy($releaseChangelogEvent);
