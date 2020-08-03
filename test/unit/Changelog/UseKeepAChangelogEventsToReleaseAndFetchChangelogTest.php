@@ -1,0 +1,259 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
+
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogEvent;
+use Laminas\AutomaticReleases\Changelog\UseKeepAChangelogEventsToReleaseAndFetchChangelog;
+use Laminas\AutomaticReleases\Git\CommitFile;
+use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
+use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Phly\KeepAChangelog\Common\ChangelogEntry;
+use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+use function mkdir;
+use function Safe\tempnam;
+use function sprintf;
+use function sys_get_temp_dir;
+use function unlink;
+
+final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCase
+{
+    /** @var CommitFile&MockObject */
+    private CommitFile $commitFile;
+
+    /** @var EventDispatcherInterface&MockObject */
+    private EventDispatcherInterface $dispatcher;
+
+    private ReleaseChangelogEvent $event;
+
+    /** @var InputInterface&MockObject */
+    private InputInterface $input;
+
+    private Milestone $milestone;
+
+    /** @var OutputInterface&MockObject */
+    private OutputInterface $output;
+
+    /** @var Push&MockObject */
+    private Push $push;
+
+    private UseKeepAChangelogEventsToReleaseAndFetchChangelog $releaseChangelog;
+
+    private RepositoryName $repositoryName;
+
+    private BranchName $sourceBranch;
+
+    private SemVerVersion $version;
+
+    protected function setUp(): void
+    {
+        $this->repositoryDirectory = tempnam(sys_get_temp_dir(), 'UseKeepAChangelogToRelease');
+        unlink($this->repositoryDirectory);
+        mkdir($this->repositoryDirectory, 0777, true);
+
+        $this->commitFile = $this->createMock(CommitFile::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->input      = $this->createMock(InputInterface::class);
+        $this->output     = $this->createMock(OutputInterface::class);
+        $this->push       = $this->createMock(Push::class);
+        $this->milestone  = Milestone::fromPayload([
+            'number'       => 1,
+            'closed'       => false,
+            'title'        => '2.0.0',
+            'description'  => null,
+            'issues'       => ['nodes' => []],
+            'pullRequests' => ['nodes' => []],
+            'url'          => 'https://github.com/example/not-a-real-repository/milestones/1',
+        ]);
+
+        $this->repositoryName      = RepositoryName::fromFullName('example/not-a-repo');
+        $this->sourceBranch        = BranchName::fromName('2.0.x');
+        $this->version             = SemVerVersion::fromMilestoneName('2.0.0');
+
+        $this->event = new ReleaseChangelogEvent(
+            $this->input,
+            $this->output,
+            $this->repositoryName,
+            $this->repositoryDirectory,
+            $this->sourceBranch,
+            $this->milestone,
+            $this->version,
+            'Author Name <author@example.com>'
+        );
+
+        $this->releaseChangelog = new UseKeepAChangelogEventsToReleaseAndFetchChangelog(
+            $this->dispatcher,
+            $this->commitFile,
+            $this->push
+        );
+    }
+
+    public function testReturnsNullWhenNoChangelogPresent(): void
+    {
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
+        
+        $this->commitFile
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $this->push
+            ->expects($this->never())
+            ->method('__invoke');
+
+        self::assertNull(
+            $this->releaseChangelog->__invoke($this->event)
+        );
+    }
+
+    public function testReturnsNullIfReadyLatestChangelogEventFails(): void
+    {
+        $changelogFile    = sprintf('%s/CHANGELOG.md', $this->repositoryDirectory);
+        file_put_contents($changelogFile, self::CHANGELOG_TEMPLATE);
+
+        /** @var ReadyLatestChangelogEvent&MockObject */
+        $returnedEvent = $this->createMock(ReadyLatestChangelogEvent::class);
+        $returnedEvent
+            ->expects($this->once())
+            ->method('failed')
+            ->willReturn(true);
+
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(ReadyLatestChangelogEvent::class))
+            ->willReturn($returnedEvent);
+
+        $this->commitFile
+            ->expects($this->never())
+            ->method('__invoke');
+
+        $this->push
+            ->expects($this->never())
+            ->method('__invoke');
+
+        self::assertNull(
+            $this->releaseChangelog->__invoke($this->event)
+        );
+    }
+
+    public function testCommitsAndPushesChangelogWhenSuccesfullySetsDate(): void
+    {
+        $date             = date('Y-m-d');
+        $expectedContents = sprintf(self::EXPECTED_CHANGELOG, $date);
+        $changelogFile    = sprintf('%s/CHANGELOG.md', $this->repositoryDirectory);
+        file_put_contents($changelogFile, self::CHANGELOG_TEMPLATE);
+
+        /** @var ChangelogEntry&MockObject */
+        $changelogEntry = $this->createMock(ChangelogEntry::class);
+        $changelogEntry
+            ->expects($this->once())
+            ->method('contents')
+            ->willReturn($expectedContents);
+
+        /** @var ReadyLatestChangelogEvent&MockObject */
+        $returnedEvent = $this->createMock(ReadyLatestChangelogEvent::class);
+        $returnedEvent
+            ->expects($this->once())
+            ->method('failed')
+            ->willReturn(false);
+        $returnedEvent
+            ->expects($this->once())
+            ->method('changelogEntry')
+            ->willReturn($changelogEntry);
+
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(ReadyLatestChangelogEvent::class))
+            ->willReturn($returnedEvent);
+
+        $this->commitFile
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with(
+                $this->equalTo($this->repositoryDirectory),
+                $this->equalTo('CHANGELOG.md'),
+                $this->equalTo('2.0.0 readiness'),
+                $this->equalTo('Author Name <author@example.com>')
+            );
+
+        $this->push
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with(
+                $this->equalTo($this->repositoryDirectory),
+                '2.0.x'
+            );
+
+        self::assertStringContainsString(
+            $expectedContents,
+            $this->releaseChangelog->__invoke($this->event)
+        );
+    }
+
+    private const CHANGELOG_TEMPLATE = <<< 'END'
+        # Changelog
+        
+        All notable changes to this project will be documented in this file, in reverse chronological order by release.
+        
+        ## 2.0.0 - TBD
+        
+        ### Added
+        
+        - Added some stuff.
+        
+        ### Changed
+        
+        - Broke some stuff.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Removed things.
+        
+        ### Fixed
+        
+        - Nothing.
+
+        END;
+
+    private const EXPECTED_CHANGELOG = <<< 'END'
+        ## 2.0.0 - %s
+        
+        ### Added
+        
+        - Added some stuff.
+        
+        ### Changed
+        
+        - Broke some stuff.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Removed things.
+        
+        ### Fixed
+        
+        - Nothing.
+
+        END;
+}
