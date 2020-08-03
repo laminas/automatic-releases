@@ -11,10 +11,11 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function assert;
 
 final class CreateChangelogViaMilestoneTest extends TestCase
 {
@@ -42,10 +43,11 @@ final class CreateChangelogViaMilestoneTest extends TestCase
 
         $this->version = SemVerVersion::fromMilestoneName('2.0.0');
 
-        /** @var InputInterface&MockObject */
         $input = $this->createMock(InputInterface::class);
-        /** @var OutputInterface&MockObject */
+        assert($input instanceof InputInterface);
+
         $output = $this->createMock(OutputInterface::class);
+        assert($output instanceof OutputInterface);
 
         $this->event = new ReleaseChangelogEvent(
             $input,
@@ -63,8 +65,9 @@ final class CreateChangelogViaMilestoneTest extends TestCase
     {
         $expectedChangelog = 'The changelog';
 
-        /** @var CreateReleaseText&MockObject */
         $generator = $this->createMock(CreateReleaseText::class);
+        assert($generator instanceof CreateReleaseText);
+
         $generator
             ->expects($this->once())
             ->method('__invoke')

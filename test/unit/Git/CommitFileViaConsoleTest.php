@@ -9,7 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
+use function file_put_contents;
 use function Safe\tempnam;
+use function sprintf;
 use function sys_get_temp_dir;
 use function unlink;
 

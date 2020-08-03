@@ -16,16 +16,19 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function assert;
+
 final class ReleaseChangelogAndFetchContentsAggregateTest extends TestCase
 {
     private ReleaseChangelogEvent $event;
 
     public function setUp(): void
     {
-        /** @var InputInterface&MockObject */
         $input = $this->createMock(InputInterface::class);
-        /** @var OutputInterface&MockObject */
+        assert($input instanceof InputInterface);
+
         $output = $this->createMock(OutputInterface::class);
+        assert($output instanceof OutputInterface);
 
         $this->event = new ReleaseChangelogEvent(
             $input,
@@ -49,24 +52,30 @@ final class ReleaseChangelogAndFetchContentsAggregateTest extends TestCase
 
     public function testReturnsChangelogFromFirstStrategyReturningNonNullChangelog(): void
     {
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy1 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy1 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy1 instanceof MockObject);
+
         $strategy1
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->equalTo($this->event))
             ->willReturn(null);
 
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy2 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy2 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy2 instanceof MockObject);
+
         $strategy2
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->equalTo($this->event))
             ->willReturn('# A Changelog');
 
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy3 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy3 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy3 instanceof MockObject);
+
         $strategy3
             ->expects($this->never())
             ->method('__invoke')
@@ -84,24 +93,30 @@ final class ReleaseChangelogAndFetchContentsAggregateTest extends TestCase
 
     public function testProvidesFallbackChangelogIfNoStrategyReturnsAChangelog(): void
     {
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy1 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy1 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy1 instanceof MockObject);
+
         $strategy1
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->equalTo($this->event))
             ->willReturn(null);
 
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy2 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy2 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy2 instanceof MockObject);
+
         $strategy2
             ->expects($this->once())
             ->method('__invoke')
             ->with($this->equalTo($this->event))
             ->willReturn(null);
 
-        /** @var ReleaseChangelogAndFetchContents&MockObject */
         $strategy3 = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        assert($strategy3 instanceof ReleaseChangelogAndFetchContents);
+        assert($strategy3 instanceof MockObject);
+
         $strategy3
             ->expects($this->once())
             ->method('__invoke')

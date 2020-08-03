@@ -20,6 +20,9 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function assert;
+use function date;
+use function file_put_contents;
 use function mkdir;
 use function Safe\tempnam;
 use function sprintf;
@@ -49,6 +52,9 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
 
     private UseKeepAChangelogEventsToReleaseAndFetchChangelog $releaseChangelog;
 
+    /** @psalm-var non-empty-string */
+    private string $repositoryDirectory;
+
     private RepositoryName $repositoryName;
 
     private BranchName $sourceBranch;
@@ -57,9 +63,10 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
 
     protected function setUp(): void
     {
-        $this->repositoryDirectory = tempnam(sys_get_temp_dir(), 'UseKeepAChangelogToRelease');
-        unlink($this->repositoryDirectory);
-        mkdir($this->repositoryDirectory, 0777, true);
+        /** @psalm-var non-empty-string $repositoryDirectory */
+        $repositoryDirectory = tempnam(sys_get_temp_dir(), 'UseKeepAChangelogToRelease');
+        unlink($repositoryDirectory);
+        mkdir($repositoryDirectory, 0777, true);
 
         $this->commitFile = $this->createMock(CommitFile::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -76,6 +83,7 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
             'url'          => 'https://github.com/example/not-a-real-repository/milestones/1',
         ]);
 
+        $this->repositoryDirectory = $repositoryDirectory;
         $this->repositoryName      = RepositoryName::fromFullName('example/not-a-repo');
         $this->sourceBranch        = BranchName::fromName('2.0.x');
         $this->version             = SemVerVersion::fromMilestoneName('2.0.0');
@@ -103,7 +111,7 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
         $this->dispatcher
             ->expects($this->never())
             ->method('dispatch');
-        
+
         $this->commitFile
             ->expects($this->never())
             ->method('__invoke');
@@ -119,11 +127,13 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
 
     public function testReturnsNullIfReadyLatestChangelogEventFails(): void
     {
-        $changelogFile    = sprintf('%s/CHANGELOG.md', $this->repositoryDirectory);
+        $changelogFile = sprintf('%s/CHANGELOG.md', $this->repositoryDirectory);
         file_put_contents($changelogFile, self::CHANGELOG_TEMPLATE);
 
-        /** @var ReadyLatestChangelogEvent&MockObject */
         $returnedEvent = $this->createMock(ReadyLatestChangelogEvent::class);
+        assert($returnedEvent instanceof ReadyLatestChangelogEvent);
+        assert($returnedEvent instanceof MockObject);
+
         $returnedEvent
             ->expects($this->once())
             ->method('failed')
@@ -155,15 +165,19 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
         $changelogFile    = sprintf('%s/CHANGELOG.md', $this->repositoryDirectory);
         file_put_contents($changelogFile, self::CHANGELOG_TEMPLATE);
 
-        /** @var ChangelogEntry&MockObject */
         $changelogEntry = $this->createMock(ChangelogEntry::class);
+        assert($changelogEntry instanceof ChangelogEntry);
+        assert($changelogEntry instanceof MockObject);
+
         $changelogEntry
             ->expects($this->once())
             ->method('contents')
             ->willReturn($expectedContents);
 
-        /** @var ReadyLatestChangelogEvent&MockObject */
         $returnedEvent = $this->createMock(ReadyLatestChangelogEvent::class);
+        assert($returnedEvent instanceof ReadyLatestChangelogEvent);
+        assert($returnedEvent instanceof MockObject);
+
         $returnedEvent
             ->expects($this->once())
             ->method('failed')
@@ -197,10 +211,10 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
                 '2.0.x'
             );
 
-        self::assertStringContainsString(
-            $expectedContents,
-            $this->releaseChangelog->__invoke($this->event)
-        );
+        $changelogContents = $this->releaseChangelog->__invoke($this->event);
+
+        self::assertNotNull($changelogContents);
+        self::assertStringContainsString($expectedContents, $changelogContents);
     }
 
     private const CHANGELOG_TEMPLATE = <<< 'END'

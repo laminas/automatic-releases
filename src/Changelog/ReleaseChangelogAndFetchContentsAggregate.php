@@ -19,6 +19,9 @@ class ReleaseChangelogAndFetchContentsAggregate implements ReleaseChangelogAndFe
         $this->strategies = $strategies;
     }
 
+    /**
+     * @return string
+     */
     public function __invoke(ReleaseChangelogEvent $releaseChangelogEvent): string
     {
         foreach ($this->strategies as $strategy) {
