@@ -68,6 +68,15 @@ class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
         );
 
         // Pull and return changelog entry from event
-        return $event->changelogEntry()->contents;
+        $changelogEntry = $event->changelogEntry();
+
+        return $changelogEntry
+            ? $changelogEntry->contents()
+            : sprintf(
+                '# %s/%s %s',
+                $releaseChangelogEvent->repositoryName->owner(),
+                $releaseChangelogEvent->repositoryName->name(),
+                $releaseChangelogEvent->version->fullReleaseName()
+            );
     }
 }

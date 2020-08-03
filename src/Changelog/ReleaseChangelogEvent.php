@@ -17,11 +17,17 @@ final class ReleaseChangelogEvent
     public InputInterface $input;
     public Milestone $milestone;
     public OutputInterface $output;
+
+    /** @psalm-var non-empty-string */
     public string $repositoryDirectory;
+
     public RepositoryName $repositoryName;
     public BranchName $sourceBranch;
     public SemVerVersion $version;
 
+    /**
+     * @psalm-param non-empty-string $repositoryDirectory
+     */
     public function __construct(
         InputInterface $input,
         OutputInterface $output,

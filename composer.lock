@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b865a985b78d431e469ce38574f7ec27",
+    "content-hash": "531441961098dd40d3c891106938e2de",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -736,16 +736,16 @@
         },
         {
             "name": "phly/keep-a-changelog",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phly/keep-a-changelog.git",
-                "reference": "37783e450ff71c3df2ecee690c71c30337813568"
+                "reference": "80157ca8cd384c6489c7f43555a095092502b8bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phly/keep-a-changelog/zipball/37783e450ff71c3df2ecee690c71c30337813568",
-                "reference": "37783e450ff71c3df2ecee690c71c30337813568",
+                "url": "https://api.github.com/repos/phly/keep-a-changelog/zipball/80157ca8cd384c6489c7f43555a095092502b8bd",
+                "reference": "80157ca8cd384c6489c7f43555a095092502b8bd",
                 "shasum": ""
             },
             "require": {
@@ -782,7 +782,7 @@
             "keywords": [
                 "keepachangelog"
             ],
-            "time": "2020-07-30T21:00:09+00:00"
+            "time": "2020-08-03T15:13:00+00:00"
         },
         {
             "name": "php-http/cache-plugin",

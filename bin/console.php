@@ -63,18 +63,17 @@ use const E_WARNING;
         $githubToken
     ));
     $push                 = new PushViaConsole();
+    $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
+        $makeRequests,
+        $httpClient
+    ));
     $createReleaseText    = new ReleaseChangelogAndFetchContentsAggregate([
         new UseKeepAChangelogEventsToReleaseAndFetchChangelog(
             new EventDispatcher(new ListenerProvider()),
             new CommitFileViaConsole(),
             $push
         ),
-        new CreateChangelogViaMilestone(
-            new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
-                $makeRequests,
-                $httpClient
-            ))
-        ),
+        new CreateChangelogViaMilestone($createCommitText),
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
         $makeRequests,
@@ -103,7 +102,7 @@ use const E_WARNING;
             $fetch,
             $getCandidateBranches,
             $getMilestone,
-            $createReleaseText,
+            $createCommitText,
             $push,
             new CreatePullRequestThroughApiCall(
                 $makeRequests,

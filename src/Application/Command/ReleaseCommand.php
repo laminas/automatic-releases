@@ -81,6 +81,7 @@ final class ReleaseCommand extends Command
             sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
         );
 
+        /** @psalm-var non-empty-string $changelog */
         $changelog = ($this->createChangelogText)(new ReleaseChangelogEvent(
             $input,
             $output,
