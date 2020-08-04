@@ -99,11 +99,11 @@ The fix for that bug should be done based on the branch `1.0.x` and, once merged
 1. Create a branch from the fixed `1.1.x` (`git checkout 1.1.x && git checkout -b merge-up/1.1.x-into-1.2.x`)
 1. Create a PR using `1.2.x` as destination
 
-:warning: when the merge-up can't be merged due to conflicts, we'd need to sync it with the destination branch.
+:warning: when the merge-up can't be merged due to conflicts, it needs to be synced with the destination branch.
 That's done by merging the destination into the merge-up branch and resolving the conflicts locally:
 
-1. Checkout to merge-up branch (`git checkout -b merge-up/1.1.x-into-master`)
-1. Sync merge-up branch (`git merge --no-ff origin/master`)
+1. Checkout to merge-up branch (`git checkout -b merge-up/1.1.x-into-1.2.x`)
+1. Sync merge-up branch (`git merge --no-ff origin/1.2.x`)
 1. Solve conflicts (using `git mergetool` or through an IDE)
 1. Resume merge (`git merge --continue`)
 1. Push (`git push`)
