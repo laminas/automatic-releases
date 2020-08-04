@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
@@ -30,6 +31,21 @@ final class CommitFileViaConsoleTest extends TestCase
 
         (new Process(['git', 'init', $this->checkout]))
             ->mustRun();
+
+        (new Process(
+            ['git', 'symbolic-ref', 'HEAD', 'refs/heads/1.0.x'],
+            $this->checkout
+        ))
+            ->mustRun();
+
+        (new Process(['touch', 'README.md'], $this->checkout))
+            ->mustRun();
+
+        (new Process(['git', 'add', 'README.md'], $this->checkout))
+            ->mustRun();
+
+        (new Process(['git', 'commit', '-m', 'Initial import'], $this->checkout))
+            ->mustRun();
     }
 
     public function testAddsAndCommitsFileProvidedWithAuthorAndCommitMessageProvided(): void
@@ -43,7 +59,7 @@ final class CommitFileViaConsoleTest extends TestCase
         $commitMessage = 'Commit initiated via unit test';
 
         (new CommitFileViaConsole())
-            ->__invoke($this->checkout, 'README.md', $commitMessage);
+            ->__invoke($this->checkout, BranchName::fromName('1.0.x'), 'README.md', $commitMessage);
 
         $commitDetails = (new Process(['git', 'show', '-1'], $this->checkout))
             ->mustRun()
