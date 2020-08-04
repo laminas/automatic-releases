@@ -1,0 +1,66 @@
+\documentclass[preview]{standalone}
+\usepackage{subcaption}
+\usepackage{gitdags}
+\begin{document}
+\begin{figure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tikzpicture}
+      % Commit DAG
+      \gitDAG[grow right sep = 2em]{
+        A -- B -- {
+          G -- H,
+          C -- D -- E -- {
+            I -- H,
+            F -- J -- K
+          }
+        }
+      };
+      % Branch
+      \gittag
+        [v1p0p0]       % node name
+        {1.0.0}       % node text
+        {above=of B} % node placement
+        {B}          % target
+      \gittag
+        [v1p0p1]       % node name
+        {1.0.1}       % node text
+        {above=of H} % node placement
+        {H}          % target
+      \gitbranch
+        {fix-bug}     % node name and text
+        {above=of G} % node placement
+        {G}          % target
+      \gitbranch
+        [1p0px]
+        {1.0.x}     % node name and text
+        {above=of v1p0p1} % node placement
+        {v1p0p1}          % target
+      \gittag
+        [v1p1p0]       % node name
+        {1.1.0}       % node text
+        {above=of E} % node placement
+        {E}          % target
+      \gittag
+        [v1p1p1]       % node name
+        {1.1.1}       % node text
+        {above=of I} % node placement
+        {I}          % target
+      \gitbranch
+        [1p1px]
+        {1.1.x}     % node name and text
+        {above=of v1p1p1} % node placement
+        {v1p1p1}          % target
+      \gitbranch
+        [2p0px]
+        {2.0.x}     % node name and text
+        {above=of K} % node placement
+        {K}          % target
+      % HEAD reference
+      \gitHEAD
+        {above=of 2p0px} % node placement
+        {2p0px}          % target
+    \end{tikzpicture}
+  \end{subfigure}
+\end{figure}
+\end{document}

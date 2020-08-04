@@ -53,3 +53,57 @@ this action will perform all following steps (or stop with an error):
 
 Please read the [`feature/`](./feature) specification for more detailed scenarios on how the tool is supposed
 to operate.
+
+## Branching model
+
+In this model we operate with release branches (e.g. `1.0.x`, `1.1.x`, `1.2.x`).
+This provides a lot of flexibility whilst keeping a single workflow.
+
+![](./docs/branching-model.png)
+
+### Working on new features
+
+The current default release branch should be used. The default branch is always automatically changed
+after a new release is created.
+
+An example is Mezzio that has `3.2.x` as the current default release branch for simple features and
+deprecation notices and `4.0.x` for the next major release.
+
+### Working on bug fixes
+
+Bug fixes should be applied on the version which introduced the issue and then synchronized all way to
+the current default release branch.
+
+### Releasing
+
+When releasing a new version `x.y.z`, a new branch will be created `x.y+1.z` and will be set as the next
+default release branch.
+
+### Synchronizing branches
+
+To keep branches synchronized merge-ups are used.
+
+That consists in getting the changes of a specific released branch merged all the way up to `master`.
+This ensures that all release branches and the `master` branch are up-to-date and will never present a bug which has already been fixed.
+
+**Example**
+
+Let's say we've released the versions `1.0.0` and `1.1.0`.
+New features are being developed on `1.2.x`.
+After a couple weeks, a bug was found on version `1.0.0`.
+
+The fix for that bug should be done based on the branch `1.0.x` and, once merged, the branches should be updated in this way:
+
+1. Create a branch from the fixed `1.0.x` (`git checkout 1.0.x && git checkout -b merge-up/1.0.x-into-1.1.x`)
+1. Create a PR using `1.1.x` as destination
+1. Create a branch from the fixed `1.1.x` (`git checkout 1.1.x && git checkout -b merge-up/1.1.x-into-1.2.x`)
+1. Create a PR using `1.2.x` as destination
+
+:warning: when the merge-up can't be merged due to conflicts, we'd need to sync it with the destination branch.
+That's done by merging the destination into the merge-up branch and resolving the conflicts locally:
+
+1. Checkout to merge-up branch (`git checkout -b merge-up/1.1.x-into-master`)
+1. Sync merge-up branch (`git merge --no-ff origin/master`)
+1. Solve conflicts (using `git mergetool` or through an IDE)
+1. Resume merge (`git merge --continue`)
+1. Push (`git push`)
