@@ -89,12 +89,7 @@ final class ReleaseCommand extends Command
             $repositoryPath,
             $releaseBranch,
             $milestone,
-            $releaseVersion,
-            sprintf(
-                '%s <%s>',
-                $this->environment->gitAuthorName(),
-                $this->environment->gitAuthorEmail()
-            )
+            $releaseVersion
         ));
 
         $tagName = $releaseVersion->fullReleaseName();

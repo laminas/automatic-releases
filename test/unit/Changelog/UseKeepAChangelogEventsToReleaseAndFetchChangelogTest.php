@@ -95,8 +95,7 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
             $this->repositoryDirectory,
             $this->sourceBranch,
             $this->milestone,
-            $this->version,
-            'Author Name <author@example.com>'
+            $this->version
         );
 
         $this->releaseChangelog = new UseKeepAChangelogEventsToReleaseAndFetchChangelog(
@@ -199,8 +198,7 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
             ->with(
                 $this->equalTo($this->repositoryDirectory),
                 $this->equalTo('CHANGELOG.md'),
-                $this->equalTo('2.0.0 readiness'),
-                $this->equalTo('Author Name <author@example.com>')
+                $this->equalTo('2.0.0 readiness')
             );
 
         $this->push

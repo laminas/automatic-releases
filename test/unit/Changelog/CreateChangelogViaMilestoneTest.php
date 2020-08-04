@@ -56,8 +56,7 @@ final class CreateChangelogViaMilestoneTest extends TestCase
             __DIR__,
             BranchName::fromName('2.0.x'),
             $this->milestone,
-            $this->version,
-            'Author Name <author@example.com>'
+            $this->version
         );
     }
 

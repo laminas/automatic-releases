@@ -45,8 +45,7 @@ final class ReleaseChangelogAndFetchContentsAggregateTest extends TestCase
                 'pullRequests' => ['nodes' => []],
                 'url'          => 'https://github.com/example/not-a-repo/milestones/1',
             ]),
-            SemVerVersion::fromMilestoneName('2.0.0'),
-            'Author Name <author@example.com>'
+            SemVerVersion::fromMilestoneName('2.0.0')
         );
     }
 

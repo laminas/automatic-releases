@@ -9,7 +9,6 @@ interface CommitFile
     public function __invoke(
         string $repositoryDirectory,
         string $filename,
-        string $commitMessage,
-        string $author
+        string $commitMessage
     ): void;
 }

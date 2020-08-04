@@ -57,8 +57,7 @@ class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
         ($this->commitFile)(
             $releaseChangelogEvent->repositoryDirectory,
             'CHANGELOG.md',
-            sprintf('%s readiness', $version),
-            $releaseChangelogEvent->author
+            sprintf('%s readiness', $version)
         );
 
         // Push changes

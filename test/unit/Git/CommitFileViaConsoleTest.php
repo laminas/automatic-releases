@@ -41,16 +41,15 @@ final class CommitFileViaConsoleTest extends TestCase
         );
 
         $commitMessage = 'Commit initiated via unit test';
-        $author        = 'Author Name <author@example.com>';
 
         (new CommitFileViaConsole())
-            ->__invoke($this->checkout, 'README.md', $commitMessage, $author);
+            ->__invoke($this->checkout, 'README.md', $commitMessage);
 
         $commitDetails = (new Process(['git', 'show', '-1'], $this->checkout))
             ->mustRun()
             ->getOutput();
 
-        self::assertStringContainsString('Author: Author Name <author@example.com>', $commitDetails);
+        self::assertStringContainsString($commitMessage, $commitDetails);
         self::assertStringContainsString('diff --git a/README.md b/README.md', $commitDetails);
     }
 }

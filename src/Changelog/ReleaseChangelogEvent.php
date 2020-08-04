@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ReleaseChangelogEvent
 {
-    public string $author;
     public InputInterface $input;
     public Milestone $milestone;
     public OutputInterface $output;
@@ -35,8 +34,7 @@ final class ReleaseChangelogEvent
         string $repositoryDirectory,
         BranchName $sourceBranch,
         Milestone $milestone,
-        SemVerVersion $version,
-        string $author
+        SemVerVersion $version
     ) {
         $this->input               = $input;
         $this->output              = $output;
@@ -45,6 +43,5 @@ final class ReleaseChangelogEvent
         $this->sourceBranch        = $sourceBranch;
         $this->milestone           = $milestone;
         $this->version             = $version;
-        $this->author              = $author;
     }
 }

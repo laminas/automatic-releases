@@ -127,10 +127,6 @@ JSON
             ->willReturn($this->signingKey);
         $this->variables->method('githubToken')
             ->willReturn('github-auth-token');
-        $this->variables->method('gitAuthorName')
-            ->willReturn('github-author');
-        $this->variables->method('gitAuthorEmail')
-            ->willReturn('github-author@example.com');
     }
 
     public function testCommandName(): void
@@ -180,7 +176,6 @@ JSON
                     TestCase::assertEquals($releaseVersion, $releaseChangelogEvent->version);
                     TestCase::assertSame($workspace, $releaseChangelogEvent->repositoryDirectory);
                     TestCase::assertSame('1.2.x', $releaseChangelogEvent->sourceBranch->name());
-                    TestCase::assertSame('github-author <github-author@example.com>', $releaseChangelogEvent->author);
 
                     return true;
                 })
