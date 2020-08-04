@@ -103,7 +103,9 @@ final class CreateMergeUpPullRequest extends Command
             $this->createReleaseText->__invoke(
                 $this->getMilestone->__invoke($event->repository(), $event->milestoneNumber()),
                 $event->repository(),
-                $event->version()
+                $event->version(),
+                $releaseBranch,
+                $repositoryPath
             )
         );
 

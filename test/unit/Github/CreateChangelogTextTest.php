@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
+use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
@@ -86,7 +87,75 @@ RELEASE
                         'url'          => 'http://example.com/milestone',
                     ]),
                     $repositoryName,
-                    $semVerVersion
+                    $semVerVersion,
+                    BranchName::fromName('1.0.x'),
+                    __DIR__
+                )
+        );
+    }
+
+    public function testCapableOfGeneratingReleaseTest(): void
+    {
+        $generateChangelog = $this->createMock(GenerateChangelog::class);
+
+        $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
+        $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');
+
+        self::assertTrue(
+            (new CreateReleaseTextThroughChangelog($generateChangelog))
+                ->canCreateReleaseText(
+                    Milestone::fromPayload([
+                        'number'       => 123,
+                        'closed'       => true,
+                        'title'        => 'The title',
+                        'description'  => 'The description',
+                        'issues'       => [
+                            'nodes' => [
+                                [
+                                    'number' => 456,
+                                    'title'  => 'Issue',
+                                    'author' => [
+                                        'login' => 'Magoo',
+                                        'url'   => 'http://example.com/author',
+                                    ],
+                                    'url'    => 'http://example.com/issue',
+                                    'closed' => true,
+                                    'labels' => [
+                                        'nodes' => [],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'pullRequests' => [
+                            'nodes' => [
+                                [
+                                    'number' => 789,
+                                    'title'  => 'PR',
+                                    'author' => [
+                                        'login' => 'Magoo',
+                                        'url'   => 'http://example.com/author',
+                                    ],
+                                    'url'    => 'http://example.com/issue',
+                                    'merged' => true,
+                                    'closed' => false,
+                                    'labels' => [
+                                        'nodes' => [
+                                            [
+                                                'color' => 'aabbcc',
+                                                'name'  => 'A label',
+                                                'url'   => 'http://example.com/a-label',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'url'          => 'http://example.com/milestone',
+                    ]),
+                    $repositoryName,
+                    $semVerVersion,
+                    BranchName::fromName('1.0.x'),
+                    __DIR__
                 )
         );
     }
