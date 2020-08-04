@@ -13,8 +13,6 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function assert;
 
@@ -24,15 +22,7 @@ final class ReleaseChangelogAndFetchContentsAggregateTest extends TestCase
 
     public function setUp(): void
     {
-        $input = $this->createMock(InputInterface::class);
-        assert($input instanceof InputInterface);
-
-        $output = $this->createMock(OutputInterface::class);
-        assert($output instanceof OutputInterface);
-
         $this->event = new ReleaseChangelogEvent(
-            $input,
-            $output,
             RepositoryName::fromFullName('example/not-a-repo'),
             __DIR__,
             BranchName::fromName('2.0.x'),

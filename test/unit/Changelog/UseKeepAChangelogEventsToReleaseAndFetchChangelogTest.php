@@ -17,8 +17,6 @@ use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function assert;
 use function date;
@@ -39,13 +37,7 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
 
     private ReleaseChangelogEvent $event;
 
-    /** @var InputInterface&MockObject */
-    private InputInterface $input;
-
     private Milestone $milestone;
-
-    /** @var OutputInterface&MockObject */
-    private OutputInterface $output;
 
     /** @var Push&MockObject */
     private Push $push;
@@ -70,8 +62,6 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
 
         $this->commitFile = $this->createMock(CommitFile::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->input      = $this->createMock(InputInterface::class);
-        $this->output     = $this->createMock(OutputInterface::class);
         $this->push       = $this->createMock(Push::class);
         $this->milestone  = Milestone::fromPayload([
             'number'       => 1,
@@ -89,8 +79,6 @@ final class UseKeepAChangelogEventsToReleaseAndFetchChangelogTest extends TestCa
         $this->version             = SemVerVersion::fromMilestoneName('2.0.0');
 
         $this->event = new ReleaseChangelogEvent(
-            $this->input,
-            $this->output,
             $this->repositoryName,
             $this->repositoryDirectory,
             $this->sourceBranch,

@@ -83,8 +83,6 @@ final class ReleaseCommand extends Command
 
         /** @psalm-var non-empty-string $changelog */
         $changelog = ($this->createChangelogText)(new ReleaseChangelogEvent(
-            $input,
-            $output,
             $milestoneClosedEvent->repository(),
             $repositoryPath,
             $releaseBranch,

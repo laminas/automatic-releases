@@ -12,8 +12,6 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 use function assert;
 
@@ -43,15 +41,7 @@ final class CreateChangelogViaMilestoneTest extends TestCase
 
         $this->version = SemVerVersion::fromMilestoneName('2.0.0');
 
-        $input = $this->createMock(InputInterface::class);
-        assert($input instanceof InputInterface);
-
-        $output = $this->createMock(OutputInterface::class);
-        assert($output instanceof OutputInterface);
-
         $this->event = new ReleaseChangelogEvent(
-            $input,
-            $output,
             $this->repositoryName,
             __DIR__,
             BranchName::fromName('2.0.x'),

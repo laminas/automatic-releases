@@ -8,6 +8,8 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
 
 use function assert;
 use function date;
@@ -41,8 +43,8 @@ class UseKeepAChangelogEventsToReleaseAndFetchChangelog implements
         $version = $releaseChangelogEvent->version->fullReleaseName();
 
         $event = $this->dispatcher->dispatch(new ReadyLatestChangelogEvent(
-            $releaseChangelogEvent->input,
-            $releaseChangelogEvent->output,
+            new ArrayInput([]),
+            new NullOutput(),
             $this->dispatcher,
             date('Y-M-d'),
             $version
