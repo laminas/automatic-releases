@@ -8,6 +8,7 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Webmozart\Assert\Assert;
 
 use function array_filter;
 use function array_map;
@@ -17,12 +18,13 @@ final class AppendingCreateReleaseTextAggregate implements CreateReleaseText
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
 
-    /** @psalm-var non-empty-array&CreateReleaseText[] */
+    /** @var CreateReleaseText[] */
     private array $strategies;
 
-    /** @psalm-param CreateReleaseText[]&non-empty-array $strategies */
+    /** @param CreateReleaseText[] $strategies */
     public function __construct(array $strategies)
     {
+        Assert::notEmpty($strategies);
         $this->strategies = $strategies;
     }
 
@@ -34,16 +36,19 @@ final class AppendingCreateReleaseTextAggregate implements CreateReleaseText
         string $repositoryDirectory
     ): string {
         $items = array_map(
-            static fn ($strategy) => $strategy($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
+            static fn (CreateReleaseText $strategy): string => $strategy($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
             array_filter(
                 $this->strategies,
                 // phpcs:disable
-                fn($strategy) => $strategy->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
+                fn(CreateReleaseText $strategy): bool => $strategy->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
                 // phpcs:enable
             )
         );
 
-        return implode(self::CONCATENATION_STRING, $items);
+        /** @psalm-var non-empty-string $changelog */
+        $changelog = implode(self::CONCATENATION_STRING, $items);
+
+        return $changelog;
     }
 
     public function canCreateReleaseText(

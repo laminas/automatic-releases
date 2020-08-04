@@ -11,9 +11,7 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
-use Laminas\AutomaticReleases\Changelog\CreateChangelogViaMilestone;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelogAndFetchContentsAggregate;
-use Laminas\AutomaticReleases\Changelog\UseKeepAChangelogEventsToReleaseAndFetchChangelog;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
@@ -25,13 +23,13 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
+use Laminas\AutomaticReleases\Github\AppendingCreateReleaseTextAggregate;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PackageVersions\Versions;
-use Phly\KeepAChangelog\EventDispatcher;
-use Phly\KeepAChangelog\ListenerProvider;
 use Symfony\Component\Console\Application;
 
 use function set_error_handler;
@@ -62,18 +60,16 @@ use const E_WARNING;
         $httpClient,
         $githubToken
     ));
+    $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
+    $releaseChangelog     = new ReleaseChangelogViaKeepAChangelog($commit, $push);
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient
     ));
-    $createReleaseText    = new ReleaseChangelogAndFetchContentsAggregate([
-        new UseKeepAChangelogEventsToReleaseAndFetchChangelog(
-            new EventDispatcher(new ListenerProvider()),
-            new CommitFileViaConsole(),
-            $push
-        ),
-        new CreateChangelogViaMilestone($createCommitText),
+    $createReleaseText    = new AppendingCreateReleaseTextAggregate([
+        new CreateReleaseTextViaKeepAChangelog(),
+        $createCommitText,
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
         $makeRequests,
@@ -91,6 +87,7 @@ use const E_WARNING;
             $fetch,
             $getCandidateBranches,
             $getMilestone,
+            $releaseChangelog,
             $createReleaseText,
             new CreateTagViaConsole(),
             $push,

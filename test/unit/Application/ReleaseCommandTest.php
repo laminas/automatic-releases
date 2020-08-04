@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelogAndFetchContents;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelogEvent;
+use Laminas\AutomaticReleases\Changelog\ReleaseChangelog;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
@@ -18,6 +17,7 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
+use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
@@ -44,8 +44,10 @@ final class ReleaseCommandTest extends TestCase
     private GetMergeTargetCandidateBranches $getMergeTargets;
     /** @var GetGithubMilestone&MockObject */
     private GetGithubMilestone $getMilestone;
-    /** @var ReleaseChangelogAndFetchContents&MockObject */
-    private ReleaseChangelogAndFetchContents $createReleaseText;
+    /** @var ReleaseChangelog&MockObject */
+    private ReleaseChangelog $releaseChangelog;
+    /** @var CreateReleaseText&MockObject */
+    private CreateReleaseText $createReleaseText;
     /** @var CreateTag&MockObject */
     private CreateTag $createTag;
     /** @var Push&MockObject */
@@ -68,7 +70,8 @@ final class ReleaseCommandTest extends TestCase
         $this->fetch             = $this->createMock(Fetch::class);
         $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
         $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
-        $this->createReleaseText = $this->createMock(ReleaseChangelogAndFetchContents::class);
+        $this->releaseChangelog  = $this->createMock(ReleaseChangelog::class);
+        $this->createReleaseText = $this->createMock(CreateReleaseText::class);
         $this->createTag         = $this->createMock(CreateTag::class);
         $this->push              = $this->createMock(Push::class);
         $this->createRelease     = $this->createMock(CreateRelease::class);
@@ -79,6 +82,7 @@ final class ReleaseCommandTest extends TestCase
             $this->fetch,
             $this->getMergeTargets,
             $this->getMilestone,
+            $this->releaseChangelog,
             $this->createReleaseText,
             $this->createTag,
             $this->push,
@@ -160,25 +164,24 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
-        $milestone      = $this->milestone;
-        $releaseVersion = $this->releaseVersion;
-        $this->createReleaseText->method('__invoke')
+        $this->releaseChangelog
+            ->expects(self::once())
+            ->method('__invoke')
             ->with(
-                self::callback(static function (
-                    ReleaseChangelogEvent $releaseChangelogEvent
-                ) use (
-                    $milestone,
-                    $releaseVersion,
-                    $workspace
-                ) {
-                    TestCase::assertSame($milestone, $releaseChangelogEvent->milestone);
-                    TestCase::assertEquals(RepositoryName::fromFullName('foo/bar'), $releaseChangelogEvent->repositoryName);
-                    TestCase::assertEquals($releaseVersion, $releaseChangelogEvent->version);
-                    TestCase::assertSame($workspace, $releaseChangelogEvent->repositoryDirectory);
-                    TestCase::assertSame('1.2.x', $releaseChangelogEvent->sourceBranch->name());
+                self::equalTo($workspace),
+                self::equalTo($this->releaseVersion),
+                self::equalTo(BranchName::fromName('1.2.x'))
+            );
 
-                    return true;
-                })
+        $this->createReleaseText
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                self::equalTo($this->milestone),
+                self::equalTo(RepositoryName::fromFullName('foo/bar')),
+                self::equalTo($this->releaseVersion),
+                self::equalTo(BranchName::fromName('1.2.x')),
+                self::equalTo($workspace),
             )
             ->willReturn('text of the changelog');
 
