@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
+use DateTimeImmutable;
 use Laminas\AutomaticReleases\Changelog\ReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Lcobucci\Clock\Clock;
+use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
-use function date;
 use function file_put_contents;
 use function Safe\tempnam;
 use function sprintf;
@@ -23,6 +25,8 @@ use function unlink;
 
 class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
+    private Clock $clock;
+
     /** @var CommitFile&MockObject */
     private CommitFile $commitFile;
 
@@ -33,10 +37,12 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->clock      = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
         $this->commitFile = $this->createMock(CommitFile::class);
         $this->push       = $this->createMock(Push::class);
 
         $this->releaseChangelog = new ReleaseChangelogViaKeepAChangelog(
+            $this->clock,
             $this->commitFile,
             $this->push
         );
@@ -87,7 +93,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     public function testWritesCommitsAndPushesChangelogWhenFoundAndReadyToRelease(): void
     {
         $existingChangelog = sprintf(self::READY_CHANGELOG, 'TBD');
-        $expectedChangelog = sprintf(self::READY_CHANGELOG, date('Y-m-d'));
+        $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $sourceBranch      = BranchName::fromName('1.0.x');
 

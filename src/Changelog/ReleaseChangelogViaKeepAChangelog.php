@@ -8,25 +8,28 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Lcobucci\Clock\Clock;
 use Phly\KeepAChangelog\Common\DiscoverChangelogEntryListener;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
 use Symfony\Component\Console\Output\NullOutput;
 
-use function date;
 use function file_exists;
 use function sprintf;
 
 final class ReleaseChangelogViaKeepAChangelog implements ReleaseChangelog
 {
+    private Clock $clock;
     private CommitFile $commitFile;
     private Push $push;
 
     public function __construct(
+        Clock $clock,
         CommitFile $commitFile,
         Push $push
     ) {
+        $this->clock      = $clock;
         $this->commitFile = $commitFile;
         $this->push       = $push;
     }
@@ -86,13 +89,13 @@ final class ReleaseChangelogViaKeepAChangelog implements ReleaseChangelog
          *
          * @psalm-suppress PropertyNotSetInConstructor
          */
-        $event = new class ($versionString) extends ReadyLatestChangelogEvent {
+        $event = new class ($this->clock, $versionString) extends ReadyLatestChangelogEvent {
             private string $releaseDate;
             private string $version;
 
-            public function __construct(string $versionString)
+            public function __construct(Clock $clock, string $versionString)
             {
-                $this->releaseDate = date('Y-m-d');
+                $this->releaseDate = $clock->now()->format('Y-m-d');
                 $this->version     = $versionString;
                 // Required as failure methods write to output
                 $this->output = new NullOutput();

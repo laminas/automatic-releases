@@ -29,6 +29,7 @@ use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Lcobucci\Clock\SystemClock;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 
@@ -62,7 +63,7 @@ use const E_WARNING;
     ));
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
-    $releaseChangelog     = new ReleaseChangelogViaKeepAChangelog($commit, $push);
+    $releaseChangelog     = new ReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push);
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient
