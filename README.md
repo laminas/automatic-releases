@@ -59,7 +59,7 @@ to operate.
 In this model we operate with release branches (e.g. `1.0.x`, `1.1.x`, `1.2.x`).
 This provides a lot of flexibility whilst keeping a single workflow.
 
-![](./docs/branching-model.png)
+![](./docs/branching-model.svg)
 
 ### Working on new features
 
@@ -72,7 +72,7 @@ deprecation notices and `4.0.x` for the next major release.
 ### Working on bug fixes
 
 Bug fixes should be applied on the version which introduced the issue and then synchronized all way to
-the current default release branch.
+the current default release branch via merge-ups.
 
 ### Releasing
 
@@ -83,8 +83,9 @@ default release branch.
 
 To keep branches synchronized merge-ups are used.
 
-That consists in getting the changes of a specific released branch merged all the way up to `master`.
-This ensures that all release branches and the `master` branch are up-to-date and will never present a bug which has already been fixed.
+That consists in getting the changes of a specific released branch merged all the way up to the current
+default branch. This ensures that all release branches are up-to-date and will never present a bug which
+has already been fixed.
 
 **Example**
 
