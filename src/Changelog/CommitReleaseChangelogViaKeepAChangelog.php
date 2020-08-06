@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use function file_exists;
 use function sprintf;
 
-final class ReleaseChangelogViaKeepAChangelog implements ReleaseChangelog
+final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
 {
     private Clock $clock;
     private CommitFile $commitFile;

@@ -11,7 +11,7 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelogViaKeepAChangelog;
+use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
@@ -63,7 +63,7 @@ use const E_WARNING;
     ));
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
-    $releaseChangelog     = new ReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push);
+    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push);
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient
@@ -88,7 +88,7 @@ use const E_WARNING;
             $fetch,
             $getCandidateBranches,
             $getMilestone,
-            $releaseChangelog,
+            $commitChangelog,
             $createReleaseText,
             new CreateTagViaConsole(),
             $push,

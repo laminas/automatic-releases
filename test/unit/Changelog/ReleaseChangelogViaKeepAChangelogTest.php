@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use DateTimeImmutable;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelogViaKeepAChangelog;
+use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
@@ -33,7 +33,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     /** @var Push&MockObject */
     private Push $push;
 
-    private ReleaseChangelogViaKeepAChangelog $releaseChangelog;
+    private CommitReleaseChangelogViaKeepAChangelog $releaseChangelog;
 
     protected function setUp(): void
     {
@@ -41,7 +41,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->commitFile = $this->createMock(CommitFile::class);
         $this->push       = $this->createMock(Push::class);
 
-        $this->releaseChangelog = new ReleaseChangelogViaKeepAChangelog(
+        $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
             $this->clock,
             $this->commitFile,
             $this->push

@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Changelog;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 
-interface ReleaseChangelog
+interface CommitReleaseChangelog
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory

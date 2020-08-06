@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
-use Laminas\AutomaticReleases\Changelog\ReleaseChangelog;
+use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
@@ -44,8 +44,8 @@ final class ReleaseCommandTest extends TestCase
     private GetMergeTargetCandidateBranches $getMergeTargets;
     /** @var GetGithubMilestone&MockObject */
     private GetGithubMilestone $getMilestone;
-    /** @var ReleaseChangelog&MockObject */
-    private ReleaseChangelog $releaseChangelog;
+    /** @var CommitReleaseChangelog&MockObject */
+    private CommitReleaseChangelog $commitChangelog;
     /** @var CreateReleaseText&MockObject */
     private CreateReleaseText $createReleaseText;
     /** @var CreateTag&MockObject */
@@ -70,7 +70,7 @@ final class ReleaseCommandTest extends TestCase
         $this->fetch             = $this->createMock(Fetch::class);
         $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
         $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
-        $this->releaseChangelog  = $this->createMock(ReleaseChangelog::class);
+        $this->commitChangelog   = $this->createMock(CommitReleaseChangelog::class);
         $this->createReleaseText = $this->createMock(CreateReleaseText::class);
         $this->createTag         = $this->createMock(CreateTag::class);
         $this->push              = $this->createMock(Push::class);
@@ -82,7 +82,7 @@ final class ReleaseCommandTest extends TestCase
             $this->fetch,
             $this->getMergeTargets,
             $this->getMilestone,
-            $this->releaseChangelog,
+            $this->commitChangelog,
             $this->createReleaseText,
             $this->createTag,
             $this->push,
@@ -164,7 +164,7 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
-        $this->releaseChangelog
+        $this->commitChangelog
             ->expects(self::once())
             ->method('__invoke')
             ->with(
