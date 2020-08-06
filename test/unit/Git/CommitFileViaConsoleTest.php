@@ -11,6 +11,7 @@ use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
 use function file_put_contents;
+use function mkdir;
 use function Safe\tempnam;
 use function sprintf;
 use function sys_get_temp_dir;
@@ -28,8 +29,13 @@ final class CommitFileViaConsoleTest extends TestCase
 
         $this->checkout = $checkout;
         unlink($this->checkout);
+        mkdir($this->checkout);
 
-        (new Process(['git', 'init', $this->checkout]))
+        (new Process(['git', 'init'], $this->checkout))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->checkout))
+            ->mustRun();
+        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->checkout))
             ->mustRun();
 
         (new Process(
