@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
+use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
+use Webmozart\Assert\Assert;
 
 use function file_exists;
 use function file_get_contents;
@@ -23,12 +25,13 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): string {
-        /** @psalm-var non-empty-string $changelog */
         $changelog = (new ChangelogParser())
             ->findChangelogForVersion(
                 file_get_contents($repositoryDirectory . '/CHANGELOG.md'),
                 $semVerVersion->fullReleaseName()
             );
+
+        Assert::notEmpty($changelog);
 
         return $changelog;
     }
@@ -46,14 +49,16 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         }
 
         try {
-            (new ChangelogParser())
+            $changelog = (new ChangelogParser())
                 ->findChangelogForVersion(
                     file_get_contents($changelogFile),
                     $semVerVersion->fullReleaseName()
                 );
 
+            Assert::notEmpty($changelog);
+
             return true;
-        } catch (ExceptionInterface $e) {
+        } catch (ExceptionInterface | InvalidArgumentException $e) {
             return false;
         }
     }
