@@ -23,7 +23,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
-use Laminas\AutomaticReleases\Github\AppendingCreateReleaseTextAggregate;
+use Laminas\AutomaticReleases\Github\ConcatenateMultipleReleaseTexts;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
@@ -68,7 +68,7 @@ use const E_WARNING;
         $makeRequests,
         $httpClient
     ));
-    $createReleaseText    = new AppendingCreateReleaseTextAggregate([
+    $createReleaseText    = new ConcatenateMultipleReleaseTexts([
         new CreateReleaseTextViaKeepAChangelog(),
         $createCommitText,
     ]);

@@ -14,7 +14,7 @@ use function array_filter;
 use function array_map;
 use function implode;
 
-final class AppendingCreateReleaseTextAggregate implements CreateReleaseText
+final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
 

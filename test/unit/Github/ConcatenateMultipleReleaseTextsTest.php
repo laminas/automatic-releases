@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\AppendingCreateReleaseTextAggregate;
+use Laminas\AutomaticReleases\Github\ConcatenateMultipleReleaseTexts;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use function assert;
 use function range;
 
-final class AppendingCreateReleaseTextAggregateTest extends TestCase
+final class ConcatenateMultipleReleaseTextsTest extends TestCase
 {
     private Milestone $milestone;
 
@@ -73,7 +73,7 @@ final class AppendingCreateReleaseTextAggregateTest extends TestCase
             $strategies[] = $strategy;
         }
 
-        $createReleaseText = new AppendingCreateReleaseTextAggregate($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
 
         $this->assertFalse(
             $createReleaseText->canCreateReleaseText(
@@ -132,7 +132,7 @@ final class AppendingCreateReleaseTextAggregateTest extends TestCase
             $strategies[] = $strategy;
         }
 
-        $createReleaseText = new AppendingCreateReleaseTextAggregate($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
 
         $this->assertTrue(
             $createReleaseText->canCreateReleaseText(
@@ -203,7 +203,7 @@ final class AppendingCreateReleaseTextAggregateTest extends TestCase
             $strategies[] = $strategy;
         }
 
-        $createReleaseText = new AppendingCreateReleaseTextAggregate($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
 
         $expected = <<< 'END'
             STRATEGY 0
