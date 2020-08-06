@@ -104,7 +104,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $this->equalTo($repositoryPath),
                 $this->equalTo($sourceBranch),
                 $this->equalTo('CHANGELOG.md'),
-                $this->equalTo('1.0.0 readiness')
+                $this->stringContains('1.0.0 readiness')
             );
 
         $this->push

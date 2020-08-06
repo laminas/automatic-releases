@@ -22,6 +22,12 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
 {
     private const CHANGELOG_FILE = 'CHANGELOG.md';
 
+    private const COMMIT_TEMPLATE = <<< 'COMMIT'
+        %s readiness
+
+        Updates the %s to set the release date.
+        COMMIT;
+
     private Clock $clock;
     private CommitFile $commitFile;
     private Push $push;
@@ -61,7 +67,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             $repositoryDirectory,
             $sourceBranch,
             self::CHANGELOG_FILE,
-            sprintf('%s readiness', $versionString)
+            sprintf(self::COMMIT_TEMPLATE, $versionString, self::CHANGELOG_FILE)
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
