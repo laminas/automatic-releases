@@ -18,14 +18,13 @@ final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
 
-    /** @var CreateReleaseText[] */
-    private array $strategies;
+    /** @psalm-var non-empty-list<CreateReleaseText> */
+    private array $releaseTextGenerators;
 
-    /** @param CreateReleaseText[] $strategies */
-    public function __construct(array $strategies)
+    /** @psalm-param non-empty-list<CreateReleaseText> $releaseTextGenerators */
+    public function __construct(array $releaseTextGenerators)
     {
-        Assert::notEmpty($strategies);
-        $this->strategies = $strategies;
+        $this->releaseTextGenerators = $releaseTextGenerators;
     }
 
     public function __invoke(
@@ -36,17 +35,15 @@ final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
         string $repositoryDirectory
     ): string {
         $items = array_map(
-            static fn (CreateReleaseText $strategy): string => $strategy($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
+            static fn (CreateReleaseText $generator): string => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
             array_filter(
-                $this->strategies,
-                // phpcs:disable
-                fn(CreateReleaseText $strategy): bool => $strategy->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
-                // phpcs:enable
+                $this->releaseTextGenerators,
+                static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
             )
         );
 
-        /** @psalm-var non-empty-string $changelog */
         $changelog = implode(self::CONCATENATION_STRING, $items);
+        Assert::notEmpty($changelog);
 
         return $changelog;
     }
@@ -58,9 +55,9 @@ final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): bool {
-        foreach ($this->strategies as $strategy) {
+        foreach ($this->releaseTextGenerators as $generator) {
             if (
-                $strategy->canCreateReleaseText(
+                $generator->canCreateReleaseText(
                     $milestone,
                     $repositoryName,
                     $semVerVersion,

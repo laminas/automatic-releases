@@ -51,15 +51,16 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
         $this->version        = SemVerVersion::fromMilestoneName('1.0.1');
     }
 
-    public function testIndicatesCannotCreateReleaseTextIfNoStrategiesCan(): void
+    public function testIndicatesCannotCreateReleaseTextIfNoGeneratorCan(): void
     {
-        $strategies = [];
+        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        $generators = [];
         foreach (range(0, 4) as $index) {
-            $strategy = $this->createMock(CreateReleaseText::class);
-            assert($strategy instanceof CreateReleaseText);
-            assert($strategy instanceof MockObject);
+            $generator = $this->createMock(CreateReleaseText::class);
+            assert($generator instanceof CreateReleaseText);
+            assert($generator instanceof MockObject);
 
-            $strategy
+            $generator
                 ->expects($this->once())
                 ->method('canCreateReleaseText')
                 ->with(
@@ -70,10 +71,10 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                     $this->equalTo($this->repositoryPath)
                 )
                 ->willReturn(false);
-            $strategies[] = $strategy;
+            $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
 
         $this->assertFalse(
             $createReleaseText->canCreateReleaseText(
@@ -86,16 +87,17 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
         );
     }
 
-    public function testIndicatesCanCreateReleaseTextIfAtLeastOneStrategyCan(): void
+    public function testIndicatesCanCreateReleaseTextIfAtLeastOneGeneratorCan(): void
     {
-        $strategies = [];
+        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        $generators = [];
         foreach (range(0, 4) as $index) {
-            $strategy = $this->createMock(CreateReleaseText::class);
-            assert($strategy instanceof CreateReleaseText);
-            assert($strategy instanceof MockObject);
+            $generator = $this->createMock(CreateReleaseText::class);
+            assert($generator instanceof CreateReleaseText);
+            assert($generator instanceof MockObject);
 
             if ($index < 2) {
-                $strategy
+                $generator
                     ->expects($this->once())
                     ->method('canCreateReleaseText')
                     ->with(
@@ -106,19 +108,19 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                         $this->equalTo($this->repositoryPath)
                     )
                     ->willReturn(false);
-                $strategies[] = $strategy;
+                $generators[] = $generator;
                 continue;
             }
 
             if ($index > 2) {
-                $strategy
+                $generator
                     ->expects($this->never())
                     ->method('canCreateReleaseText');
-                $strategies[] = $strategy;
+                $generators[] = $generator;
                 continue;
             }
 
-            $strategy
+            $generator
                 ->expects($this->once())
                 ->method('canCreateReleaseText')
                 ->with(
@@ -129,10 +131,10 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                     $this->equalTo($this->repositoryPath)
                 )
                 ->willReturn(true);
-            $strategies[] = $strategy;
+            $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
 
         $this->assertTrue(
             $createReleaseText->canCreateReleaseText(
@@ -145,13 +147,14 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
         );
     }
 
-    public function testReturnsConcatenatedValuesFromStrategiesThatCanCreateReleaseText(): void
+    public function testReturnsConcatenatedValuesFromGeneratorsThatCanCreateReleaseText(): void
     {
-        $strategies = [];
+        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        $generators = [];
         foreach (range(0, 4) as $index) {
-            $strategy = $this->createMock(CreateReleaseText::class);
-            assert($strategy instanceof CreateReleaseText);
-            assert($strategy instanceof MockObject);
+            $generator = $this->createMock(CreateReleaseText::class);
+            assert($generator instanceof CreateReleaseText);
+            assert($generator instanceof MockObject);
 
             switch ($index) {
                 case 0:
@@ -159,7 +162,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                 case 2:
                     // fall-through
                 case 4:
-                    $strategy
+                    $generator
                         ->expects($this->once())
                         ->method('canCreateReleaseText')
                         ->with(
@@ -170,7 +173,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                             $this->equalTo($this->repositoryPath)
                         )
                         ->willReturn(true);
-                    $strategy
+                    $generator
                         ->expects($this->once())
                         ->method('__invoke')
                         ->with(
@@ -180,10 +183,10 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                             $this->equalTo($this->sourceBranch),
                             $this->equalTo($this->repositoryPath)
                         )
-                        ->willReturn('STRATEGY ' . $index);
+                        ->willReturn('GENERATOR ' . $index);
                     break;
                 default:
-                    $strategy
+                    $generator
                         ->expects($this->once())
                         ->method('canCreateReleaseText')
                         ->with(
@@ -194,27 +197,27 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                             $this->equalTo($this->repositoryPath)
                         )
                         ->willReturn(false);
-                    $strategy
+                    $generator
                         ->expects($this->never())
                         ->method('__invoke');
                     break;
             }
 
-            $strategies[] = $strategy;
+            $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($strategies);
+        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
 
         $expected = <<< 'END'
-            STRATEGY 0
+            GENERATOR 0
             
             -----
             
-            STRATEGY 2
+            GENERATOR 2
             
             -----
             
-            STRATEGY 4
+            GENERATOR 4
             END;
 
         $this->assertSame(
