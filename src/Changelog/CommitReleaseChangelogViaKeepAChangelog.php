@@ -20,6 +20,8 @@ use function sprintf;
 
 final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
 {
+    private const CHANGELOG_FILE = 'CHANGELOG.md';
+
     private Clock $clock;
     private CommitFile $commitFile;
     private Push $push;
@@ -42,7 +44,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         SemVerVersion $version,
         BranchName $sourceBranch
     ): void {
-        $changelogFile = $repositoryDirectory . '/CHANGELOG.md';
+        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         if (! file_exists($changelogFile)) {
             // No changelog
             return;
@@ -58,7 +60,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         ($this->commitFile)(
             $repositoryDirectory,
             $sourceBranch,
-            'CHANGELOG.md',
+            self::CHANGELOG_FILE,
             sprintf('%s readiness', $versionString)
         );
 
