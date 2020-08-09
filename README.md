@@ -77,7 +77,7 @@ the current default release branch via merge-ups.
 ### Releasing
 
 When releasing a new version `x.y.z`, a new branch will be created `x.y+1.z` and will be set as the next
-default release branch.
+default release branch. If a hotfix `x.y.z+1` is released, a merge-up branch is automatically created.
 
 ### Synchronizing branches
 
@@ -85,7 +85,8 @@ To keep branches synchronized merge-ups are used.
 
 That consists in getting the changes of a specific released branch merged all the way up to the current
 default branch. This ensures that all release branches are up-to-date and will never present a bug which
-has already been fixed.
+has already been fixed. Merge-up branches are automatically created but needs to be merged manually into
+the targeted branch.
 
 **Example**
 
@@ -93,18 +94,22 @@ Let's say we've released the versions `1.0.0` and `1.1.0`.
 New features are being developed on `1.2.x`.
 After a couple weeks, a bug was found on version `1.0.0`.
 
-The fix for that bug should be done based on the branch `1.0.x` and, once merged, the branches should be updated in this way:
+The fix for that bug should be done based on the branch `1.0.x` and, once merged, the branches should be updated
+in this way:
 
-1. Create a branch from the fixed `1.0.x` (`git checkout 1.0.x && git checkout -b merge-up/1.0.x-into-1.1.x`)
-1. Create a PR using `1.1.x` as destination
-1. Create a branch from the fixed `1.1.x` (`git checkout 1.1.x && git checkout -b merge-up/1.1.x-into-1.2.x`)
-1. Create a PR using `1.2.x` as destination
+1. Create a PR for the automatically created branch `1.0.x-merge-up-into-1.1.x_*`, using `1.1.x` as destination.
+1. Merge the new PR into `1.1.x`.
+1. Create a PR for the automatically created branch `1.1.x-merge-up-into-1.2.x_*`, using `1.2.x` as destination.
+1. Merge the new PR into `1.2.x`.
 
 :warning: when the merge-up can't be merged due to conflicts, it needs to be synced with the destination branch.
 That's done by merging the destination into the merge-up branch and resolving the conflicts locally:
 
-1. Checkout to merge-up branch (`git checkout -b merge-up/1.1.x-into-1.2.x`)
+1. Update your local repository (`git fetch origin`)
+1. Checkout to merge-up branch (`git checkout 1.1.x-merge-up-into-1.2.x_*`)
 1. Sync merge-up branch (`git merge --no-ff origin/1.2.x`)
 1. Solve conflicts (using `git mergetool` or through an IDE)
 1. Resume merge (`git merge --continue`)
 1. Push (`git push`)
+
+If needed you can create a merge-up branch manually: `git checkout 1.0.x && git checkout -b 1.0.x-merge-up-into-1.1.x`
