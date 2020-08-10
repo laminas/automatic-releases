@@ -10,6 +10,7 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
+use Laminas\AutomaticReleases\Application\Command\CreateMilestones;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
@@ -24,6 +25,7 @@ use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranc
 use Laminas\AutomaticReleases\Git\PushViaConsole;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
@@ -151,6 +153,15 @@ use const STDERR;
             $fetch,
             $getCandidateBranches,
             $bumpChangelogVersion
+        ),
+        new CreateMilestones(
+            $loadEvent,
+            $getMilestone,
+            new CreateMilestoneThroughApiCall(
+                $makeRequests,
+                $httpClient,
+                $githubToken
+            )
         ),
     ]);
 
