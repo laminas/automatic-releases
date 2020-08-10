@@ -30,6 +30,8 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Lcobucci\Clock\SystemClock;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 
@@ -50,6 +52,8 @@ use const E_WARNING;
     );
 
     $variables            = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $logger               = new Logger('automatic-releases');
+    $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
