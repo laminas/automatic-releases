@@ -1,0 +1,20 @@
+# https://github.com/marketplace/actions/actions-tagger
+
+name: "Keep major release version up-to-date"
+
+on:
+  release:
+    types:
+      - published
+      - edited
+
+jobs:
+  actions-tagger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Actions-R-Us/actions-tagger@latest
+        with:
+          publish_latest_tag: false
+          prefer_branch_releases: false
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN}}
