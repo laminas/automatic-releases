@@ -14,6 +14,7 @@ use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -33,6 +34,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     /** @var Push&MockObject */
     private Push $push;
 
+    /** @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
+
     private CommitReleaseChangelogViaKeepAChangelog $releaseChangelog;
 
     protected function setUp(): void
@@ -40,16 +44,22 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->clock      = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
         $this->commitFile = $this->createMock(CommitFile::class);
         $this->push       = $this->createMock(Push::class);
+        $this->logger     = $this->createMock(LoggerInterface::class);
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
             $this->clock,
             $this->commitFile,
-            $this->push
+            $this->push,
+            $this->logger
         );
     }
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
     {
+        $this->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('No CHANGELOG.md'));
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
@@ -64,6 +74,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testNoOpWhenUnableToFindMatchingChangelogEntry(): void
     {
+        $this
+            ->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('Failed to find release version'));
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
@@ -78,6 +93,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testNoOpWhenFailedToSetReleaseDateInChangelogEntry(): void
     {
+        $this
+            ->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('Failed setting release date'));
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
@@ -96,6 +116,12 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $sourceBranch      = BranchName::fromName('1.0.x');
+
+        $this
+            ->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with($this->stringContains('Set release date'));
 
         $this->commitFile
             ->expects($this->once())

@@ -40,6 +40,7 @@ use function set_error_handler;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
+use const STDERR;
 
 (static function (): void {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -51,8 +52,8 @@ use const E_WARNING;
         E_STRICT | E_NOTICE | E_WARNING
     );
 
-    $variables            = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
-    $logger               = new Logger('automatic-releases');
+    $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $logger    = new Logger('automatic-releases');
     $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
@@ -67,7 +68,7 @@ use const E_WARNING;
     ));
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
-    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push);
+    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push, $logger);
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient

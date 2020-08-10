@@ -13,6 +13,7 @@ use Phly\KeepAChangelog\Common\DiscoverChangelogEntryListener;
 use Phly\KeepAChangelog\Config;
 use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\NullOutput;
 
 use function file_exists;
@@ -31,15 +32,18 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
     private Clock $clock;
     private CommitFile $commitFile;
     private Push $push;
+    private LoggerInterface $logger;
 
     public function __construct(
         Clock $clock,
         CommitFile $commitFile,
-        Push $push
+        Push $push,
+        LoggerInterface $logger
     ) {
         $this->clock      = $clock;
         $this->commitFile = $commitFile;
         $this->push       = $push;
+        $this->logger     = $logger;
     }
 
     /**
@@ -53,6 +57,8 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         if (! file_exists($changelogFile)) {
             // No changelog
+            $this->logger->info('No CHANGELOG.md file detected');
+
             return;
         }
 
@@ -80,12 +86,35 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         (new DiscoverChangelogEntryListener())($event);
 
         if ($event->failed()) {
+            $this->logger->info(sprintf(
+                'Failed to find release version "%s" in "%s"',
+                $versionString,
+                $changelogFile
+            ));
+
             return false;
         }
 
         (new SetDateForChangelogReleaseListener())($event);
 
-        return ! $event->failed();
+        if ($event->failed()) {
+            $this->logger->info(sprintf(
+                'Failed setting release date for version "%s" in "%s"',
+                $versionString,
+                $changelogFile
+            ));
+
+            return false;
+        }
+
+        $this->logger->info(sprintf(
+            'Set release date for version "%s" in "%s" to "%s"',
+            $versionString,
+            $changelogFile,
+            $this->clock->now()->format('Y-m-d')
+        ));
+
+        return true;
     }
 
     private function createReadyLatestChangelogEvent(

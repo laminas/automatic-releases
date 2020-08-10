@@ -25,6 +25,7 @@ class EnvironmentVariables implements Variables
     private string $githubEventPath;
     /** @psalm-var non-empty-string */
     private string $workspacePath;
+    /** @psalm-var non-empty-string */
     private string $logLevel;
 
     /**
@@ -33,6 +34,7 @@ class EnvironmentVariables implements Variables
      * @psalm-param non-empty-string $gitAuthorEmail
      * @psalm-param non-empty-string $githubEventPath
      * @psalm-param non-empty-string $workspacePath
+     * @psalm-param non-empty-string $logLevel
      */
     private function __construct(
         string $githubToken,
@@ -102,10 +104,15 @@ class EnvironmentVariables implements Variables
         return $value;
     }
 
-    private function getenvWithFallback(string $key, string $default): string
+    /**
+     * @psalm-param  non-empty-string $default
+     * @psalm-return non-empty-string
+     */
+    private static function getenvWithFallback(string $key, string $default): string
     {
         $value = getenv($key);
-        return false === $value ? $default : $value;
+
+        return $value === false || $value === '' ? $default : $value;
     }
 
     public function githubToken(): string
