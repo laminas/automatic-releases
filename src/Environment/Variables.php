@@ -25,4 +25,7 @@ interface Variables
 
     /** @psalm-return non-empty-string */
     public function githubWorkspacePath(): string;
+
+    /** @psalm-return non-empty-string */
+    public function logLevel(): string;
 }

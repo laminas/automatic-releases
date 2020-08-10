@@ -30,6 +30,8 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Lcobucci\Clock\SystemClock;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 
@@ -38,6 +40,7 @@ use function set_error_handler;
 use const E_NOTICE;
 use const E_STRICT;
 use const E_WARNING;
+use const STDERR;
 
 (static function (): void {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -49,7 +52,9 @@ use const E_WARNING;
         E_STRICT | E_NOTICE | E_WARNING
     );
 
-    $variables            = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $logger    = new Logger('automatic-releases');
+    $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
@@ -63,7 +68,7 @@ use const E_WARNING;
     ));
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
-    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push);
+    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push, $logger);
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient

@@ -25,6 +25,8 @@ class EnvironmentVariables implements Variables
     private string $githubEventPath;
     /** @psalm-var non-empty-string */
     private string $workspacePath;
+    /** @psalm-var non-empty-string */
+    private string $logLevel;
 
     /**
      * @psalm-param non-empty-string $githubToken
@@ -32,6 +34,7 @@ class EnvironmentVariables implements Variables
      * @psalm-param non-empty-string $gitAuthorEmail
      * @psalm-param non-empty-string $githubEventPath
      * @psalm-param non-empty-string $workspacePath
+     * @psalm-param non-empty-string $logLevel
      */
     private function __construct(
         string $githubToken,
@@ -39,7 +42,8 @@ class EnvironmentVariables implements Variables
         string $gitAuthorName,
         string $gitAuthorEmail,
         string $githubEventPath,
-        string $workspacePath
+        string $workspacePath,
+        string $logLevel
     ) {
         $this->githubToken      = $githubToken;
         $this->signingSecretKey = $signingSecretKey;
@@ -47,6 +51,31 @@ class EnvironmentVariables implements Variables
         $this->gitAuthorEmail   = $gitAuthorEmail;
         $this->githubEventPath  = $githubEventPath;
         $this->workspacePath    = $workspacePath;
+
+        Assert::inArray(
+            $logLevel,
+            [
+                '100',
+                '200',
+                '250',
+                '300',
+                '400',
+                '500',
+                '550',
+                '600',
+                'DEBUG',
+                'INFO',
+                'NOTICE',
+                'WARNING',
+                'ERROR',
+                'CRITICAL',
+                'ALERT',
+                'EMERGENCY',
+            ],
+            'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
+            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
+        );
+        $this->logLevel = $logLevel;
     }
 
     public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
@@ -58,6 +87,7 @@ class EnvironmentVariables implements Variables
             self::getenv('GIT_AUTHOR_EMAIL'),
             self::getenv('GITHUB_EVENT_PATH'),
             self::getenv('GITHUB_WORKSPACE'),
+            self::getenvWithFallback('LOG_LEVEL', 'INFO'),
         );
     }
 
@@ -72,6 +102,17 @@ class EnvironmentVariables implements Variables
         Assert::stringNotEmpty($value, sprintf('Could not find a value for environment variable "%s"', $key));
 
         return $value;
+    }
+
+    /**
+     * @psalm-param  non-empty-string $default
+     * @psalm-return non-empty-string
+     */
+    private static function getenvWithFallback(string $key, string $default): string
+    {
+        $value = getenv($key);
+
+        return $value === false || $value === '' ? $default : $value;
     }
 
     public function githubToken(): string
@@ -103,5 +144,10 @@ class EnvironmentVariables implements Variables
     public function githubWorkspacePath(): string
     {
         return $this->workspacePath;
+    }
+
+    public function logLevel(): string
+    {
+        return $this->logLevel;
     }
 }
