@@ -11,8 +11,10 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
 use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
@@ -66,6 +68,7 @@ use const STDERR;
         $httpClient,
         $githubToken
     ));
+    $checkoutBranch       = new CheckoutBranchViaConsole();
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
     $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push, $logger);
@@ -81,6 +84,12 @@ use const STDERR;
         $makeRequests,
         $httpClient,
         $githubToken
+    );
+    $bumpChangelogVersion = new BumpAndCommitChangelogVersionViaKeepAChangelog(
+        $checkoutBranch,
+        $commit,
+        $push,
+        $logger
     );
 
     /** @psalm-suppress DeprecatedClass */
@@ -123,7 +132,8 @@ use const STDERR;
                 $makeRequests,
                 $httpClient,
                 $githubToken
-            )
+            ),
+            $bumpChangelogVersion
         ),
     ]);
 

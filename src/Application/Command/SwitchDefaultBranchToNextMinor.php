@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
@@ -23,6 +24,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
     private GetMergeTargetCandidateBranches $getMergeCandidates;
     private Push $push;
     private SetDefaultBranch $switchDefaultBranch;
+    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
 
     public function __construct(
         Variables $variables,
@@ -30,16 +32,18 @@ final class SwitchDefaultBranchToNextMinor extends Command
         Fetch $fetch,
         GetMergeTargetCandidateBranches $getMergeCandidates,
         Push $push,
-        SetDefaultBranch $switchDefaultBranch
+        SetDefaultBranch $switchDefaultBranch,
+        BumpAndCommitChangelogVersion $bumpChangelogVersion
     ) {
         parent::__construct('laminas:automatic-releases:switch-default-branch-to-next-minor');
 
-        $this->variables           = $variables;
-        $this->loadGithubEvent     = $loadGithubEvent;
-        $this->fetch               = $fetch;
-        $this->getMergeCandidates  = $getMergeCandidates;
-        $this->push                = $push;
-        $this->switchDefaultBranch = $switchDefaultBranch;
+        $this->variables            = $variables;
+        $this->loadGithubEvent      = $loadGithubEvent;
+        $this->fetch                = $fetch;
+        $this->getMergeCandidates   = $getMergeCandidates;
+        $this->push                 = $push;
+        $this->switchDefaultBranch  = $switchDefaultBranch;
+        $this->bumpChangelogVersion = $bumpChangelogVersion;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -72,6 +76,12 @@ final class SwitchDefaultBranchToNextMinor extends Command
                 $repositoryPath,
                 $newestBranch->name(),
                 $nextDefaultBranch->name()
+            );
+            ($this->bumpChangelogVersion)(
+                BumpAndCommitChangelogVersion::BUMP_MINOR,
+                $repositoryPath,
+                $releaseVersion,
+                $newestBranch
             );
         }
 

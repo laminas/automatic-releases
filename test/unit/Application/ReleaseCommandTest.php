@@ -86,7 +86,7 @@ final class ReleaseCommandTest extends TestCase
             $this->createReleaseText,
             $this->createTag,
             $this->push,
-            $this->createRelease
+            $this->createRelease,
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
