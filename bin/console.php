@@ -8,6 +8,7 @@ namespace Laminas\AutomaticReleases\WebApplication;
 use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
@@ -133,6 +134,13 @@ use const STDERR;
                 $httpClient,
                 $githubToken
             ),
+            $bumpChangelogVersion
+        ),
+        new BumpChangelogForReleaseBranch(
+            $variables,
+            $loadEvent,
+            $fetch,
+            $getCandidateBranches,
             $bumpChangelogVersion
         ),
     ]);
