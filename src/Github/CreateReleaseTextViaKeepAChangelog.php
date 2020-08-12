@@ -11,10 +11,8 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
+use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
-
-use function file_exists;
-use function file_get_contents;
 
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
@@ -27,7 +25,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
     ): string {
         $changelog = (new ChangelogParser())
             ->findChangelogForVersion(
-                file_get_contents($repositoryDirectory . '/CHANGELOG.md'),
+                $this->fetchChangelogContentsFromBranch($sourceBranch, $repositoryDirectory),
                 $semVerVersion->fullReleaseName()
             );
 
@@ -43,15 +41,14 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): bool {
-        $changelogFile = $repositoryDirectory . '/CHANGELOG.md';
-        if (! file_exists($changelogFile)) {
+        if (! $this->changelogExistsInBranch($sourceBranch, $repositoryDirectory)) {
             return false;
         }
 
         try {
             $changelog = (new ChangelogParser())
                 ->findChangelogForVersion(
-                    file_get_contents($changelogFile),
+                    $this->fetchChangelogContentsFromBranch($sourceBranch, $repositoryDirectory),
                     $semVerVersion->fullReleaseName()
                 );
 
@@ -61,5 +58,35 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         } catch (ExceptionInterface | InvalidArgumentException $e) {
             return false;
         }
+    }
+
+    /**
+     * @param non-empty-string $repositoryDirectory
+     */
+    private function changelogExistsInBranch(
+        BranchName $sourceBranch,
+        string $repositoryDirectory
+    ): bool {
+        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
+        $process->run();
+
+        return $process->isSuccessful();
+    }
+
+    /**
+     * @psalm-param non-empty-string $repositoryDirectory
+     * @psalm-return non-empty-string
+     */
+    private function fetchChangelogContentsFromBranch(
+        BranchName $sourceBranch,
+        string $repositoryDirectory
+    ): string {
+        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
+        $process->mustRun();
+
+        $contents = $process->getOutput();
+        Assert::notEmpty($contents);
+
+        return $contents;
     }
 }
