@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
@@ -40,6 +42,8 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
     private Push $push;
     /** @var SetDefaultBranch&MockObject */
     private SetDefaultBranch $setDefaultBranch;
+    /** @var BumpAndCommitChangelogVersion&MockObject */
+    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
     private SwitchDefaultBranchToNextMinor $command;
     private MilestoneClosedEvent $event;
 
@@ -47,12 +51,13 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables        = $this->createMock(Variables::class);
-        $this->loadEvent        = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->fetch            = $this->createMock(Fetch::class);
-        $this->getMergeTargets  = $this->createMock(GetMergeTargetCandidateBranches::class);
-        $this->push             = $this->createMock(Push::class);
-        $this->setDefaultBranch = $this->createMock(SetDefaultBranch::class);
+        $this->variables            = $this->createMock(Variables::class);
+        $this->loadEvent            = $this->createMock(LoadCurrentGithubEvent::class);
+        $this->fetch                = $this->createMock(Fetch::class);
+        $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranches::class);
+        $this->push                 = $this->createMock(Push::class);
+        $this->setDefaultBranch     = $this->createMock(SetDefaultBranch::class);
+        $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersion::class);
 
         $this->command = new SwitchDefaultBranchToNextMinor(
             $this->variables,
@@ -60,7 +65,8 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
             $this->fetch,
             $this->getMergeTargets,
             $this->push,
-            $this->setDefaultBranch
+            $this->setDefaultBranch,
+            $this->bumpChangelogVersion
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
@@ -116,6 +122,9 @@ JSON
         $this->push->expects(self::never())
             ->method('__invoke');
 
+        $this->bumpChangelogVersion->expects(self::never())
+            ->method('__invoke');
+
         $this->setDefaultBranch->expects(self::once())
             ->method('__invoke')
             ->with(
@@ -156,6 +165,15 @@ JSON
             ->method('__invoke')
             ->with($workspace, '1.2.x', '1.3.x');
 
+        $this->bumpChangelogVersion->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                BumpAndCommitChangelogVersion::BUMP_MINOR,
+                $workspace,
+                SemVerVersion::fromMilestoneName('1.2.3'),
+                BranchName::fromName('1.2.x')
+            );
+
         $this->setDefaultBranch->expects(self::once())
             ->method('__invoke')
             ->with(
@@ -191,6 +209,9 @@ JSON
             ));
 
         $this->push->expects(self::never())
+            ->method('__invoke');
+
+        $this->bumpChangelogVersion->expects(self::never())
             ->method('__invoke');
 
         $this->setDefaultBranch->expects(self::never())
