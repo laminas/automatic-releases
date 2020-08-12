@@ -16,7 +16,6 @@ use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
 use function sprintf;
@@ -32,6 +31,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         COMMIT;
 
     private Clock $clock;
+    private ChangelogExists $changelogExists;
     private CheckoutBranch $checkoutBranch;
     private CommitFile $commitFile;
     private Push $push;
@@ -39,16 +39,18 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
 
     public function __construct(
         Clock $clock,
+        ChangelogExists $changelogExists,
         CheckoutBranch $checkoutBranch,
         CommitFile $commitFile,
         Push $push,
         LoggerInterface $logger
     ) {
-        $this->clock          = $clock;
-        $this->checkoutBranch = $checkoutBranch;
-        $this->commitFile     = $commitFile;
-        $this->push           = $push;
-        $this->logger         = $logger;
+        $this->clock           = $clock;
+        $this->changelogExists = $changelogExists;
+        $this->checkoutBranch  = $checkoutBranch;
+        $this->commitFile      = $commitFile;
+        $this->push            = $push;
+        $this->logger          = $logger;
     }
 
     /**
@@ -59,7 +61,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         SemVerVersion $version,
         BranchName $sourceBranch
     ): void {
-        if (! $this->changelogExistsInBranch($sourceBranch, $repositoryDirectory)) {
+        if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
             $this->logger->info('No CHANGELOG.md file detected');
 
@@ -187,18 +189,5 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
                 return $this->changelogFile;
             }
         };
-    }
-
-    /**
-     * @param non-empty-string $repositoryDirectory
-     */
-    private function changelogExistsInBranch(
-        BranchName $sourceBranch,
-        string $repositoryDirectory
-    ): bool {
-        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
-        $process->run();
-
-        return $process->isSuccessful();
     }
 }

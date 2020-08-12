@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use DateTimeImmutable;
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Git\CheckoutBranch;
 use Laminas\AutomaticReleases\Git\CommitFile;
@@ -53,6 +54,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
             $this->clock,
+            new ChangelogExistsViaConsole(),
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
