@@ -206,6 +206,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         file_put_contents($changelogFile, self::CHANGELOG_STUB);
 
         (new Process(['git', 'init', '.'], $repo))->mustRun();
+        (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
+        (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
         (new Process(['git', 'add', '.'], $repo))->mustRun();
         (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
         (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
