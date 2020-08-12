@@ -17,9 +17,7 @@ WORKDIR /app
 
 RUN apt update \
     && apt install -y software-properties-common \
-    && apt clean
-
-RUN add-apt-repository -y ppa:ondrej/php \
+    && add-apt-repository -y ppa:ondrej/php \
     && apt install -y \
         git \
         gnupg \
@@ -33,7 +31,6 @@ RUN add-apt-repository -y ppa:ondrej/php \
         php7.4-xml \
         php7.4-zip \
     && apt clean
-
 
 ADD composer.json /app/composer.json
 ADD composer.lock /app/composer.lock
