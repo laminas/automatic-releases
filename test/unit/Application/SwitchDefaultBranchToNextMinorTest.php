@@ -171,7 +171,7 @@ JSON
                 BumpAndCommitChangelogVersion::BUMP_MINOR,
                 $workspace,
                 SemVerVersion::fromMilestoneName('1.2.3'),
-                BranchName::fromName('1.2.x')
+                BranchName::fromName('1.3.x')
             );
 
         $this->setDefaultBranch->expects(self::once())

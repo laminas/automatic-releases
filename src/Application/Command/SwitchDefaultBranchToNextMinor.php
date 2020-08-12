@@ -81,7 +81,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
                 BumpAndCommitChangelogVersion::BUMP_MINOR,
                 $repositoryPath,
                 $releaseVersion,
-                $newestBranch
+                $nextDefaultBranch
             );
         }
 
