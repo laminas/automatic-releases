@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#41](https://github.com/laminas/automatic-releases/pull/41) fixes an issue that occurred when attempting to commit changes to the `CHANGELOG.md`.
 
 ## 1.1.0 - 2020-08-06
 
