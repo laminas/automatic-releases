@@ -49,7 +49,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         SemVerVersion $version,
         BranchName $sourceBranch
     ): void {
-        ($this->checkoutBranch)($repositoryDirectory, $sourceBranch->name());
+        ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
 
         $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         if (! file_exists($changelogFile)) {

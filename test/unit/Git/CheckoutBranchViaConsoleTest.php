@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
+use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
@@ -60,7 +61,7 @@ class CheckoutBranchViaConsoleTest extends TestCase
     public function testSwitchesToSpecifiedBranch(): void
     {
         $checkoutBranch = new CheckoutBranchViaConsole();
-        $checkoutBranch($this->checkout, '1.0.x');
+        $checkoutBranch($this->checkout, BranchName::fromName('1.0.x'));
         $this->assertBranch('1.0.x', 'Failed to checkout 1.0.x branch');
     }
 

@@ -54,7 +54,6 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
     public function testReturnsEarlyWhenNoChangelogFilePresent(): void
     {
         $repoDir      = __DIR__;
-        $branchName   = '1.0.x';
         $sourceBranch = BranchName::fromName('1.0.x');
         $version      = SemVerVersion::fromMilestoneName('1.0.1');
 
@@ -63,7 +62,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->equalTo($repoDir),
-                $this->equalTo($branchName)
+                $sourceBranch
             );
 
         $this->logger
@@ -133,7 +132,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->method('__invoke')
             ->with(
                 $this->equalTo($repoDir),
-                $this->equalTo($branchName)
+                $sourceBranch
             );
 
         $this->commitFile
