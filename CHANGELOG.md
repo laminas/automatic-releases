@@ -44,7 +44,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#43](https://github.com/laminas/automatic-releases/pull/43) fixes which branch the minor changelog bump is targetted to to correctly be the next default branch.
 
 ## 1.2.0 - 2020-08-12
 
