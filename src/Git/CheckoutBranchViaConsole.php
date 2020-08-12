@@ -13,7 +13,7 @@ class CheckoutBranchViaConsole implements CheckoutBranch
         string $repositoryDirectory,
         BranchName $branchName
     ): void {
-        (new Process(['git', 'checkout', $branchName->name()], $repositoryDirectory))
+        (new Process(['git', 'switch', $branchName->name()], $repositoryDirectory))
             ->mustRun();
     }
 }
