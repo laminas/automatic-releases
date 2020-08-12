@@ -4,9 +4,7 @@ name: "Keep major release version up-to-date"
 
 on:
   release:
-    types:
-      - published
-      - edited
+    types: [published]
 
 jobs:
   actions-tagger:
@@ -17,4 +15,4 @@ jobs:
           publish_latest_tag: false
           prefer_branch_releases: false
         env:
-          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
