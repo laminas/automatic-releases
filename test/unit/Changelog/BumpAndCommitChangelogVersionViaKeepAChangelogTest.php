@@ -87,7 +87,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
      * @return iterable<
      *     string,
      *     array{
-     *         0: value-of<BumpAndCommitChangelogVersion::KNOWN_BUMP_TYPES>,
+     *         0: BumpAndCommitChangelogVersion::BUMP_*,
      *         1: non-empty-string,
      *         2: non-empty-string
      *     }
@@ -101,9 +101,9 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
     }
 
     /**
-     * @param value-of<BumpAndCommitChangelogVersion::KNOWN_BUMP_TYPES> $bumpType
-     * @param non-empty-string                                          $branchName
-     * @param non-empty-string                                          $expectedVersion
+     * @param BumpAndCommitChangelogVersion::BUMP_* $bumpType
+     * @param non-empty-string                      $branchName
+     * @param non-empty-string                      $expectedVersion
      *
      * @dataProvider bumpTypes
      */

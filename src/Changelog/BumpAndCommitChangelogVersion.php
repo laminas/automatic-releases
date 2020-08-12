@@ -12,14 +12,9 @@ interface BumpAndCommitChangelogVersion
     public const BUMP_MINOR = 'bumpMinorVersion';
     public const BUMP_PATCH = 'bumpPatchVersion';
 
-    public const KNOWN_BUMP_TYPES = [
-        self::BUMP_MINOR,
-        self::BUMP_PATCH,
-    ];
-
     /**
-     * @psalm-param value-of<self::KNOWN_BUMP_TYPES> $bumpType
-     * @psalm-param non-empty-string                 $repositoryDirectory
+     * @psalm-param self::BUMP_*     $bumpType
+     * @psalm-param non-empty-string $repositoryDirectory
      */
     public function __invoke(
         string $bumpType,
