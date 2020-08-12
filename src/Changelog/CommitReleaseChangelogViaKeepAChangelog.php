@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Changelog;
 
+use Laminas\AutomaticReleases\Git\CheckoutBranch;
 use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
@@ -17,7 +18,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use Webmozart\Assert\Assert;
 
-use function file_exists;
 use function sprintf;
 
 final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
@@ -31,20 +31,26 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         COMMIT;
 
     private Clock $clock;
+    private ChangelogExists $changelogExists;
+    private CheckoutBranch $checkoutBranch;
     private CommitFile $commitFile;
     private Push $push;
     private LoggerInterface $logger;
 
     public function __construct(
         Clock $clock,
+        ChangelogExists $changelogExists,
+        CheckoutBranch $checkoutBranch,
         CommitFile $commitFile,
         Push $push,
         LoggerInterface $logger
     ) {
-        $this->clock      = $clock;
-        $this->commitFile = $commitFile;
-        $this->push       = $push;
-        $this->logger     = $logger;
+        $this->clock           = $clock;
+        $this->changelogExists = $changelogExists;
+        $this->checkoutBranch  = $checkoutBranch;
+        $this->commitFile      = $commitFile;
+        $this->push            = $push;
+        $this->logger          = $logger;
     }
 
     /**
@@ -55,15 +61,17 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         SemVerVersion $version,
         BranchName $sourceBranch
     ): void {
-        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
-        if (! file_exists($changelogFile)) {
+        if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
             $this->logger->info('No CHANGELOG.md file detected');
 
             return;
         }
 
+        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         $versionString = $version->fullReleaseName();
+
+        ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
 
         if (! $this->updateChangelog($changelogFile, $versionString)) {
             // Failure to update; nothing to commit

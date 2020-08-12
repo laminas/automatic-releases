@@ -13,7 +13,6 @@ use Phly\KeepAChangelog\Bump\ChangelogBump;
 use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
 
-use function file_exists;
 use function sprintf;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitChangelogVersion
@@ -26,21 +25,24 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         Updates the %s file to add a changelog entry for a new %s version.
         COMMIT;
 
+    private ChangelogExists $changelogExists;
     private CheckoutBranch $checkoutBranch;
     private CommitFile $commitFile;
     private Push $push;
     private LoggerInterface $logger;
 
     public function __construct(
+        ChangelogExists $changelogExists,
         CheckoutBranch $checkoutBranch,
         CommitFile $commitFile,
         Push $push,
         LoggerInterface $logger
     ) {
-        $this->checkoutBranch = $checkoutBranch;
-        $this->commitFile     = $commitFile;
-        $this->push           = $push;
-        $this->logger         = $logger;
+        $this->changelogExists = $changelogExists;
+        $this->checkoutBranch  = $checkoutBranch;
+        $this->commitFile      = $commitFile;
+        $this->push            = $push;
+        $this->logger          = $logger;
     }
 
     public function __invoke(
@@ -49,16 +51,16 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         SemVerVersion $version,
         BranchName $sourceBranch
     ): void {
-        ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
-
-        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
-        if (! file_exists($changelogFile)) {
+        if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
             $this->logger->info('BumpAndCommitChangelog: No CHANGELOG.md file detected');
 
             return;
         }
 
+        ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
+
+        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         $versionString = $version->fullReleaseName();
         $bumper        = new ChangelogBump($changelogFile);
         $newVersion    = $bumper->$bumpType($versionString);
