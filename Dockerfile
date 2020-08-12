@@ -1,6 +1,6 @@
 FROM composer:1 AS composer
 
-FROM php:7.4-cli
+FROM ubuntu:20.04
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -16,14 +16,21 @@ LABEL "maintainer"="https://github.com/laminas/technical-steering-committee/"
 WORKDIR /app
 
 RUN apt update \
+    && apt install -y software-properties-common \
+    && add-apt-repository -y ppa:ondrej/php \
     && apt install -y \
         git \
         gnupg \
         libzip-dev \
         zip \
-    && docker-php-ext-install zip \
+        php7.4-cli \
+        php7.4-curl \
+        php7.4-json \
+        php7.4-mbstring \
+        php7.4-readline \
+        php7.4-xml \
+        php7.4-zip \
     && apt clean
-
 
 ADD composer.json /app/composer.json
 ADD composer.lock /app/composer.lock
