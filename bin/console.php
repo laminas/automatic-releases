@@ -72,7 +72,13 @@ use const STDERR;
     $checkoutBranch       = new CheckoutBranchViaConsole();
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
-    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(new SystemClock(), $commit, $push, $logger);
+    $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(
+        new SystemClock(),
+        $checkoutBranch,
+        $commit,
+        $push,
+        $logger
+    );
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient
