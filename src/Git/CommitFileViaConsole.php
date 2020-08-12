@@ -19,7 +19,7 @@ final class CommitFileViaConsole implements CommitFile
         string $filename,
         string $commitMessage
     ): void {
-        $this->assertBranch($sourceBranch, $repositoryDirectory, $filename);
+        $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
         (new Process(['git', 'add', $filename], $repositoryDirectory))
             ->mustRun();
@@ -34,18 +34,13 @@ final class CommitFileViaConsole implements CommitFile
      * @param non-empty-string $repositoryDirectory
      * @param non-empty-string $filename
      */
-    private function assertBranch(
+    private function assertWeAreOnBranch(
         BranchName $expectedBranch,
         string $repositoryDirectory,
         string $filename
     ): void {
         $process = new Process(['git', 'branch', '--show-current'], $repositoryDirectory);
-        $process->run();
-
-        Assert::true($process->isSuccessful(), sprintf(
-            'Unable to determine current branch name for commit operation of file %s',
-            $filename
-        ));
+        $process->mustRun();
 
         $output = trim($process->getOutput());
 
