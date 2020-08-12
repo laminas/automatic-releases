@@ -66,11 +66,14 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         Assert::stringNotEmpty($newVersion);
         $bumper->updateChangelog($newVersion);
 
+        $message = sprintf(self::COMMIT_TEMPLATE, $newVersion, self::CHANGELOG_FILE, $newVersion);
+        Assert::stringNotEmpty($message);
+
         ($this->commitFile)(
             $repositoryDirectory,
             $sourceBranch,
             self::CHANGELOG_FILE,
-            sprintf(self::COMMIT_TEMPLATE, $newVersion, self::CHANGELOG_FILE, $newVersion)
+            $message
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());

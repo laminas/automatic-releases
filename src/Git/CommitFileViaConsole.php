@@ -6,6 +6,10 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Symfony\Component\Process\Process;
+use Webmozart\Assert\Assert;
+
+use function sprintf;
+use function trim;
 
 final class CommitFileViaConsole implements CommitFile
 {
@@ -15,8 +19,7 @@ final class CommitFileViaConsole implements CommitFile
         string $filename,
         string $commitMessage
     ): void {
-        (new Process(['git', 'checkout', $sourceBranch->name()], $repositoryDirectory))
-            ->mustRun();
+        $this->assertBranch($sourceBranch, $repositoryDirectory, $filename);
 
         (new Process(['git', 'add', $filename], $repositoryDirectory))
             ->mustRun();
@@ -25,5 +28,31 @@ final class CommitFileViaConsole implements CommitFile
             ['git', 'commit', '-m', $commitMessage],
             $repositoryDirectory
         ))->mustRun();
+    }
+
+    /**
+     * @param non-empty-string $repositoryDirectory
+     * @param non-empty-string $filename
+     */
+    private function assertBranch(
+        BranchName $expectedBranch,
+        string $repositoryDirectory,
+        string $filename
+    ): void {
+        $process = new Process(['git', 'branch', '--show-current'], $repositoryDirectory);
+        $process->run();
+
+        Assert::true($process->isSuccessful(), sprintf(
+            'Unable to determine current branch name for commit operation of file %s',
+            $filename
+        ));
+
+        $output = trim($process->getOutput());
+
+        Assert::same($output, $expectedBranch->name(), sprintf(
+            'Cannot commit file %s to branch %s, as a different branch is currently checked out.',
+            $filename,
+            $expectedBranch->name()
+        ));
     }
 }

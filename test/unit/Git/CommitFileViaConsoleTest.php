@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
+use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
@@ -73,5 +74,25 @@ final class CommitFileViaConsoleTest extends TestCase
 
         self::assertStringContainsString($commitMessage, $commitDetails);
         self::assertStringContainsString('diff --git a/README.md b/README.md', $commitDetails);
+    }
+
+    public function testFailsIfNotOnCorrectBranch(): void
+    {
+        (new Process(
+            ['git', 'switch', '-c', '1.1.x'],
+            $this->checkout
+        ))
+            ->mustRun();
+
+        $filename = sprintf('%s/README.md', $this->checkout);
+        file_put_contents(
+            $filename,
+            "# README\n\nThis is a test file to test commits from laminas/automatic-releases."
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('different branch');
+        (new CommitFileViaConsole())
+            ->__invoke($this->checkout, BranchName::fromName('1.0.x'), 'README.md', 'commit message');
     }
 }
