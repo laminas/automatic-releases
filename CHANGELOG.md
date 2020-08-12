@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.2.3 - TBD
+## 1.2.1 - TBD
 
 ### Added
 
@@ -45,50 +45,6 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Fixed
 
 - Nothing.
-
-## 1.2.2 - 2020-08-12
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.2.1 - 2020-08-12
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#43](https://github.com/laminas/automatic-releases/pull/43) fixes which branch the minor changelog bump is targetted to to correctly be the next default branch.
 
 ## 1.2.0 - 2020-08-12
 
