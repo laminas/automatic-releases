@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use DateTimeImmutable;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
+use Laminas\AutomaticReleases\Git\CheckoutBranch;
 use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
@@ -28,6 +29,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
     private Clock $clock;
 
+    /** @var CheckoutBranch&MockObject */
+    private CheckoutBranch $checkoutBranch;
+
     /** @var CommitFile&MockObject */
     private CommitFile $commitFile;
 
@@ -41,13 +45,15 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->clock      = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
-        $this->commitFile = $this->createMock(CommitFile::class);
-        $this->push       = $this->createMock(Push::class);
-        $this->logger     = $this->createMock(LoggerInterface::class);
+        $this->clock          = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
+        $this->checkoutBranch = $this->createMock(CheckoutBranch::class);
+        $this->commitFile     = $this->createMock(CommitFile::class);
+        $this->push           = $this->createMock(Push::class);
+        $this->logger         = $this->createMock(LoggerInterface::class);
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
             $this->clock,
+            $this->checkoutBranch,
             $this->commitFile,
             $this->push,
             $this->logger
@@ -56,6 +62,10 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
     {
+        $this->checkoutBranch
+            ->expects($this->never())
+            ->method('__invoke');
+
         $this->logger
             ->expects($this->once())
             ->method('info')
@@ -66,14 +76,22 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         self::assertNull(
             $this->releaseChangelog->__invoke(
                 __DIR__,
-                SemVerVersion::fromMilestoneName('1.0.0'),
-                BranchName::fromName('1.0.x')
+                SemVerVersion::fromMilestoneName('0.99.99'),
+                BranchName::fromName('0.99.x')
             )
         );
     }
 
     public function testNoOpWhenUnableToFindMatchingChangelogEntry(): void
     {
+        $repo   = $this->createMockRepositoryWithChangelog(self::INVALID_CHANGELOG);
+        $branch = BranchName::fromName('1.0.x');
+
+        $this->checkoutBranch
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($repo, $branch);
+
         $this
             ->logger
             ->expects($this->once())
@@ -84,15 +102,23 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
-                $this->createMockRepositoryWithChangelog(self::INVALID_CHANGELOG),
+                $repo,
                 SemVerVersion::fromMilestoneName('1.0.0'),
-                BranchName::fromName('1.0.x')
+                $branch
             )
         );
     }
 
     public function testNoOpWhenFailedToSetReleaseDateInChangelogEntry(): void
     {
+        $repo   = $this->createMockRepositoryWithChangelog(self::RELEASED_CHANGELOG);
+        $branch = BranchName::fromName('1.0.x');
+
+        $this->checkoutBranch
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($repo, $branch);
+
         $this
             ->logger
             ->expects($this->once())
@@ -103,9 +129,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
-                $this->createMockRepositoryWithChangelog(self::RELEASED_CHANGELOG),
+                $repo,
                 SemVerVersion::fromMilestoneName('1.0.0'),
-                BranchName::fromName('1.0.x')
+                $branch
             )
         );
     }
@@ -116,6 +142,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $sourceBranch      = BranchName::fromName('1.0.x');
+
+        $this->checkoutBranch
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($repositoryPath, $sourceBranch);
 
         $this
             ->logger
@@ -169,6 +200,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             sprintf('%s/%s', $repo, $filename),
             $template
         );
+
+        (new Process(['git', 'init', '.'], $repo))->mustRun();
+        (new Process(['git', 'add', '.'], $repo))->mustRun();
+        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
+        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
 
         return $repo;
     }
