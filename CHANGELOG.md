@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.2.2 - TBD
+## 1.2.3 - TBD
 
 ### Added
 
@@ -46,7 +46,29 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.2.1 - TBD
+## 1.2.2 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#47](https://github.com/laminas/automatic-releases/pull/47) fixes `CHANGELOG.md` update operations to avoid preventable failures during the release process.
+
+## 1.2.1 - 2020-08-12
 
 ### Added
 
