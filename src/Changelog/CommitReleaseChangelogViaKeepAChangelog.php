@@ -15,6 +15,7 @@ use Phly\KeepAChangelog\Version\ReadyLatestChangelogEvent;
 use Phly\KeepAChangelog\Version\SetDateForChangelogReleaseListener;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\NullOutput;
+use Webmozart\Assert\Assert;
 
 use function file_exists;
 use function sprintf;
@@ -69,11 +70,14 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             return;
         }
 
+        $message = sprintf(self::COMMIT_TEMPLATE, $versionString, self::CHANGELOG_FILE);
+        Assert::notEmpty($message);
+
         ($this->commitFile)(
             $repositoryDirectory,
             $sourceBranch,
             self::CHANGELOG_FILE,
-            sprintf(self::COMMIT_TEMPLATE, $versionString, self::CHANGELOG_FILE)
+            $message
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
