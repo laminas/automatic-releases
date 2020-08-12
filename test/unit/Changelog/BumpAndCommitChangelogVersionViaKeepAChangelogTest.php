@@ -6,6 +6,8 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
+use Laminas\AutomaticReleases\Changelog\ChangelogExists;
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\CheckoutBranch;
 use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
@@ -44,6 +46,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $this->push                   = $this->createMock(Push::class);
         $this->logger                 = $this->createMock(LoggerInterface::class);
         $this->bumpAndCommitChangelog = new BumpAndCommitChangelogVersionViaKeepAChangelog(
+            new ChangelogExistsViaConsole(),
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
@@ -58,12 +61,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $version      = SemVerVersion::fromMilestoneName('1.0.1');
 
         $this->checkoutBranch
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with(
-                $this->equalTo($repoDir),
-                $sourceBranch
-            );
+            ->expects($this->never())
+            ->method('__invoke');
 
         $this->logger
             ->expects($this->once())
@@ -118,6 +117,13 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 
         Assert::stringNotEmpty($repoDir);
 
+        $changelogExists = $this->createMock(ChangelogExists::class);
+        $changelogExists
+            ->expects($this->once())
+            ->method('__invoke')
+            ->with($sourceBranch, $repoDir)
+            ->willReturn(true);
+
         $this->logger
             ->expects($this->once())
             ->method('info')
@@ -154,8 +160,16 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->with(
             );
 
+        $bumpAndCommitChangelog = new BumpAndCommitChangelogVersionViaKeepAChangelog(
+            $changelogExists,
+            $this->checkoutBranch,
+            $this->commitFile,
+            $this->push,
+            $this->logger
+        );
+
         $this->assertNull(
-            ($this->bumpAndCommitChangelog)(
+            $bumpAndCommitChangelog(
                 $bumpType,
                 $repoDir,
                 $version,
@@ -190,6 +204,11 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         Assert::stringNotEmpty($changelogFile);
 
         file_put_contents($changelogFile, self::CHANGELOG_STUB);
+
+        (new Process(['git', 'init', '.'], $repo))->mustRun();
+        (new Process(['git', 'add', '.'], $repo))->mustRun();
+        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
+        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
 
         return $changelogFile;
     }

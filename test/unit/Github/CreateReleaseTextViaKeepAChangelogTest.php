@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -30,7 +31,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog())
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -49,7 +50,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog())
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -69,7 +70,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
 
         self::assertTrue(
-            (new CreateReleaseTextViaKeepAChangelog())
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -113,7 +114,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertSame(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog())
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),

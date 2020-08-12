@@ -13,6 +13,7 @@ use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
@@ -69,11 +70,13 @@ use const STDERR;
         $httpClient,
         $githubToken
     ));
+    $changelogExists      = new ChangelogExistsViaConsole();
     $checkoutBranch       = new CheckoutBranchViaConsole();
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
     $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(
         new SystemClock(),
+        $changelogExists,
         $checkoutBranch,
         $commit,
         $push,
@@ -84,7 +87,7 @@ use const STDERR;
         $httpClient
     ));
     $createReleaseText    = new ConcatenateMultipleReleaseTexts([
-        new CreateReleaseTextViaKeepAChangelog(),
+        new CreateReleaseTextViaKeepAChangelog($changelogExists),
         $createCommitText,
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
@@ -93,6 +96,7 @@ use const STDERR;
         $githubToken
     );
     $bumpChangelogVersion = new BumpAndCommitChangelogVersionViaKeepAChangelog(
+        $changelogExists,
         $checkoutBranch,
         $commit,
         $push,

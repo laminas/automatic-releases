@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github;
 
 use InvalidArgumentException;
+use Laminas\AutomaticReleases\Changelog\ChangelogExists;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -16,6 +17,13 @@ use Webmozart\Assert\Assert;
 
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
+    private ChangelogExists $changelogExists;
+
+    public function __construct(ChangelogExists $changelogExists)
+    {
+        $this->changelogExists = $changelogExists;
+    }
+
     public function __invoke(
         Milestone $milestone,
         RepositoryName $repositoryName,
@@ -41,7 +49,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): bool {
-        if (! $this->changelogExistsInBranch($sourceBranch, $repositoryDirectory)) {
+        if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             return false;
         }
 
@@ -58,19 +66,6 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         } catch (ExceptionInterface | InvalidArgumentException $e) {
             return false;
         }
-    }
-
-    /**
-     * @param non-empty-string $repositoryDirectory
-     */
-    private function changelogExistsInBranch(
-        BranchName $sourceBranch,
-        string $repositoryDirectory
-    ): bool {
-        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
-        $process->run();
-
-        return $process->isSuccessful();
     }
 
     /**
