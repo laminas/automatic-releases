@@ -159,6 +159,11 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             $template
         );
 
+        (new Process(['git', 'init', '.'], $repo))->mustRun();
+        (new Process(['git', 'add', '.'], $repo))->mustRun();
+        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
+        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+
         return $repo;
     }
 
