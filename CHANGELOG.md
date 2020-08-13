@@ -46,7 +46,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.2.3 - TBD
+## 1.2.3 - 2020-08-13
 
 ### Added
 
@@ -66,7 +66,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#50](https://github.com/laminas/automatic-releases/pull/50) updates the various classes performing API calls to issue authorization as a Personal Access Token instead of an OAuth token.
 
 ## 1.2.2 - 2020-08-12
 
