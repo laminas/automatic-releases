@@ -74,7 +74,7 @@ JSON
                         'Host'          => ['the-domain.com'],
                         'Content-Type'  => ['application/json'],
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
-                        'Authorization' => ['bearer ' . $this->apiToken],
+                        'Authorization' => ['token ' . $this->apiToken],
                     ],
                     $request->getHeaders()
                 );
