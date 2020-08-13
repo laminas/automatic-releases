@@ -53,7 +53,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
-            $this->logger->info('BumpAndCommitChangelog: No CHANGELOG.md file detected');
+            $this->logger->info('BumpAndCommitChangelogVersion: No CHANGELOG.md file detected');
 
             return;
         }
@@ -81,7 +81,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         ($this->push)($repositoryDirectory, $sourceBranch->name());
 
         $this->logger->info(sprintf(
-            'BumpAndCommitChangelog: bumped %s to version %s in branch %s',
+            'BumpAndCommitChangelogVersion: bumped %s to version %s in branch %s',
             self::CHANGELOG_FILE,
             $newVersion,
             $sourceBranch->name()

@@ -63,7 +63,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
-            $this->logger->info('No CHANGELOG.md file detected');
+            $this->logger->info('CommitReleaseChangelog: No CHANGELOG.md file detected');
 
             return;
         }
@@ -99,7 +99,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
 
         if ($event->failed()) {
             $this->logger->info(sprintf(
-                'Failed to find release version "%s" in "%s"',
+                'CommitReleaseChangelog: Failed to find release version "%s" in "%s"',
                 $versionString,
                 $changelogFile
             ));
@@ -111,7 +111,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
 
         if ($event->failed()) {
             $this->logger->info(sprintf(
-                'Failed setting release date for version "%s" in "%s"',
+                'CommitReleaseChangelog: Failed setting release date for version "%s" in "%s"',
                 $versionString,
                 $changelogFile
             ));
@@ -120,7 +120,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         }
 
         $this->logger->info(sprintf(
-            'Set release date for version "%s" in "%s" to "%s"',
+            'CommitReleaseChangelog: Set release date for version "%s" in "%s" to "%s"',
             $versionString,
             $changelogFile,
             $this->clock->now()->format('Y-m-d')
