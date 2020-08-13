@@ -48,7 +48,7 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')
-            ->withAddedHeader('Authorization', 'bearer ' . $this->apiToken);
+            ->withAddedHeader('Authorization', 'token ' . $this->apiToken);
 
         $request
             ->getBody()
