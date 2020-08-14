@@ -29,6 +29,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             self::INVALID_CHANGELOG,
             'NOT-A-CHANGELOG.md'
         );
+        $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
             (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
@@ -37,7 +38,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $repositoryPath
+                    $workingPath
                 )
         );
     }
@@ -48,6 +49,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             self::INVALID_CHANGELOG,
             'CHANGELOG.md'
         );
+        $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
             (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
@@ -56,7 +58,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $repositoryPath
+                    $workingPath
                 )
         );
     }
@@ -68,6 +70,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             $changelogContents,
             'CHANGELOG.md'
         );
+        $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertTrue(
             (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
@@ -76,7 +79,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $repositoryPath
+                    $workingPath
                 )
         );
     }
@@ -89,6 +92,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             $changelogContents,
             'CHANGELOG.md'
         );
+        $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         $expected = sprintf(<<< 'END'
             ### Added
@@ -120,7 +124,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $repositoryPath
+                    $workingPath
                 )
         );
     }
@@ -166,6 +170,21 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
         (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
         (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+
+        return $repo;
+    }
+
+    /**
+     * @psalm-param non-empty-string $origin
+     * @psalm-return non-empty-string
+     */
+    private function checkoutMockRepositoryWithChangelog(string $origin): string
+    {
+        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Assert::notEmpty($repo);
+        unlink($repo);
+
+        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
 
         return $repo;
     }

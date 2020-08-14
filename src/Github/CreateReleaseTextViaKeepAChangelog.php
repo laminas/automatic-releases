@@ -76,7 +76,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): string {
-        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
+        $process = new Process(['git', 'show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
         $process->mustRun();
 
         $contents = $process->getOutput();

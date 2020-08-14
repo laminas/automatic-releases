@@ -16,7 +16,7 @@ class ChangelogExistsViaConsole implements ChangelogExists
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): bool {
-        $process = new Process(['git', 'show', $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
+        $process = new Process(['git', 'show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
         $process->run();
 
         return $process->isSuccessful();
