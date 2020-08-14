@@ -86,13 +86,14 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testNoOpWhenUnableToFindMatchingChangelogEntry(): void
     {
-        $repo   = $this->createMockRepositoryWithChangelog(self::INVALID_CHANGELOG);
-        $branch = BranchName::fromName('1.0.x');
+        $repo     = $this->createMockRepositoryWithChangelog(self::INVALID_CHANGELOG);
+        $checkout = $this->checkoutMockRepositoryWithChangelog($repo);
+        $branch   = BranchName::fromName('1.0.x');
 
         $this->checkoutBranch
             ->expects($this->once())
             ->method('__invoke')
-            ->with($repo, $branch);
+            ->with($checkout, $branch);
 
         $this
             ->logger
@@ -104,7 +105,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
-                $repo,
+                $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 $branch
             )
@@ -113,13 +114,14 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testNoOpWhenFailedToSetReleaseDateInChangelogEntry(): void
     {
-        $repo   = $this->createMockRepositoryWithChangelog(self::RELEASED_CHANGELOG);
-        $branch = BranchName::fromName('1.0.x');
+        $repo     = $this->createMockRepositoryWithChangelog(self::RELEASED_CHANGELOG);
+        $checkout = $this->checkoutMockRepositoryWithChangelog($repo);
+        $branch   = BranchName::fromName('1.0.x');
 
         $this->checkoutBranch
             ->expects($this->once())
             ->method('__invoke')
-            ->with($repo, $branch);
+            ->with($checkout, $branch);
 
         $this
             ->logger
@@ -131,7 +133,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
-                $repo,
+                $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 $branch
             )
@@ -143,12 +145,13 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $existingChangelog = sprintf(self::READY_CHANGELOG, 'TBD');
         $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
+        $checkout          = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
         $sourceBranch      = BranchName::fromName('1.0.x');
 
         $this->checkoutBranch
             ->expects($this->once())
             ->method('__invoke')
-            ->with($repositoryPath, $sourceBranch);
+            ->with($checkout, $sourceBranch);
 
         $this
             ->logger
@@ -160,7 +163,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             ->expects($this->once())
             ->method('__invoke')
             ->with(
-                $this->equalTo($repositoryPath),
+                $this->equalTo($checkout),
                 $this->equalTo($sourceBranch),
                 $this->equalTo('CHANGELOG.md'),
                 $this->stringContains('1.0.0 readiness')
@@ -170,19 +173,19 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             ->expects($this->once())
             ->method('__invoke')
             ->with(
-                $this->equalTo($repositoryPath),
+                $this->equalTo($checkout),
                 $this->equalTo('1.0.x'),
             );
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
-                $repositoryPath,
+                $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 BranchName::fromName('1.0.x')
             )
         );
 
-        $this->assertStringEqualsFile($repositoryPath . '/CHANGELOG.md', $expectedChangelog);
+        $this->assertStringEqualsFile($checkout . '/CHANGELOG.md', $expectedChangelog);
     }
 
     /**
@@ -209,6 +212,21 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         (new Process(['git', 'add', '.'], $repo))->mustRun();
         (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
         (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+
+        return $repo;
+    }
+
+    /**
+     * @psalm-param non-empty-string $origin
+     * @psalm-return non-empty-string
+     */
+    private function checkoutMockRepositoryWithChangelog(string $origin): string
+    {
+        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Assert::notEmpty($repo);
+        unlink($repo);
+
+        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
 
         return $repo;
     }

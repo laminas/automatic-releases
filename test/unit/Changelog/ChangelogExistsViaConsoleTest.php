@@ -20,20 +20,24 @@ class ChangelogExistsViaConsoleTest extends TestCase
 {
     public function testReturnsFalseWhenChangelogIsNotPresentInBranch(): void
     {
+        $repository = $this->createMockRepositoryWithChangelog();
+        $workingDir = $this->checkoutMockRepositoryWithChangelog($repository);
         self::assertFalse(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('0.99.x'),
-                $this->createMockRepositoryWithChangelog()
+                $workingDir
             )
         );
     }
 
     public function testReturnsTrueWhenChangelogIsPresentInBranch(): void
     {
+        $repository = $this->createMockRepositoryWithChangelog();
+        $workingDir = $this->checkoutMockRepositoryWithChangelog($repository);
         self::assertTrue(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('1.0.x'),
-                $this->createMockRepositoryWithChangelog()
+                $workingDir
             )
         );
     }
@@ -87,6 +91,21 @@ class ChangelogExistsViaConsoleTest extends TestCase
         (new Process(['git', 'add', '.'], $repo))->mustRun();
         (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
         (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+
+        return $repo;
+    }
+
+    /**
+     * @psalm-param non-empty-string $origin
+     * @psalm-return non-empty-string
+     */
+    private function checkoutMockRepositoryWithChangelog(string $origin): string
+    {
+        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Assert::notEmpty($repo);
+        unlink($repo);
+
+        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
 
         return $repo;
     }
