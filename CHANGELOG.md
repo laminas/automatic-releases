@@ -44,7 +44,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#55](https://github.com/laminas/automatic-releases/pull/55) fixes issues with identifying and retrieving `CHANGELOG.md` contents from non-default branches.
 
 ## 1.2.3 - 2020-08-13
 
