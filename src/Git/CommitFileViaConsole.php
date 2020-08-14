@@ -45,9 +45,10 @@ final class CommitFileViaConsole implements CommitFile
         $output = trim($process->getOutput());
 
         Assert::same($output, $expectedBranch->name(), sprintf(
-            'Cannot commit file %s to branch %s, as a different branch is currently checked out.',
+            'CommitFile: Cannot commit file %s to branch %s, as a different branch is currently checked out (%s).',
             $filename,
-            $expectedBranch->name()
+            $expectedBranch->name(),
+            $output
         ));
     }
 }
