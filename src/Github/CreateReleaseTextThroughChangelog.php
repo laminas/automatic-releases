@@ -17,7 +17,7 @@ use function str_replace;
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
-Release %release%
+### Release Notes for %release%
 
 %description%
 
@@ -42,10 +42,10 @@ MARKDOWN;
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
-            '%changelogText%' => $this->generateChangelog->__invoke(
+            '%changelogText%' => $this->normalizeChangelogHeadings($this->generateChangelog->__invoke(
                 $repositoryName,
                 $semVerVersion
-            ),
+            )),
         ];
 
         $text = str_replace(
@@ -72,5 +72,37 @@ MARKDOWN;
     private function markdownLink(string $text, UriInterface $uri): string
     {
         return '[' . $text . '](' . $uri->__toString() . ')';
+    }
+
+    private function normalizeChangelogHeadings(string $changelog): string
+    {
+        $lines         = explode("\n", trim($changelog));
+        $lineCount     = count($lines);
+        $linesToRemove = [];
+        for ($i = 0; $i < $lineCount; $i += 1) {
+            $line    = $lines[$i];
+            $matches = [];
+            if (! preg_match('/^(?P<delim>-{3,}|={3,})$/', $line, $matches)) {
+                continue;
+            }
+
+            $previousLine = $lines[$i - 1];
+            if (empty($previousLine)) {
+                continue;
+            }
+
+            /** @psalm-var -|= $delimiter */
+            $delimiter = $matches['delim']{0};
+            /** @psalm-var non-empty-string $heading */
+            $heading         = strtr($delimiter, ['-' => '####', '=' => '###']);
+            $lines[$i - 1]   = $heading . ' ' . $previous;
+            $linesToRemove[] = $i;
+        }
+
+        foreach ($linesToRemove as $index) {
+            unset($lines[$index]);
+        }
+
+        return implode("\n", $lines);
     }
 }
