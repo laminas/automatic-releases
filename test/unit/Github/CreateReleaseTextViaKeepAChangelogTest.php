@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
+use DateTimeImmutable;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Lcobucci\Clock\FrozenClock;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
@@ -23,6 +25,13 @@ use function unlink;
 
 class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 {
+    private FrozenClock $clock;
+
+    public function setUp(): void
+    {
+        $this->clock = new FrozenClock(new DateTimeImmutable('2020-01-01'));
+    }
+
     public function testReportsCannotCreateReleaseTextIfChangelogFileIsMissing(): void
     {
         $repositoryPath = $this->createMockRepositoryWithChangelog(
@@ -32,7 +41,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -52,7 +61,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -73,7 +82,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertTrue(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -86,7 +95,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     public function testExtractsReleaseTextViaChangelogFile(): void
     {
-        $date              = date('Y-m-d');
+        $date              = $this->clock->now()->format('Y-m-d');
         $changelogContents = sprintf(self::READY_CHANGELOG, $date);
         $repositoryPath    = $this->createMockRepositoryWithChangelog(
             $changelogContents,
@@ -95,6 +104,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         $expected = sprintf(<<< 'END'
+            ## 1.0.0 - %s
+            
             ### Added
             
             - Everything.
@@ -116,9 +127,9 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             - Nothing.
             END, $date);
 
-        self::assertSame(
+        self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole()))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -126,6 +137,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     BranchName::fromName('1.0.x'),
                     $workingPath
                 )
+                ->contents()
         );
     }
 

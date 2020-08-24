@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
@@ -164,14 +165,12 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
-        $this->commitChangelog
-            ->expects(self::once())
-            ->method('__invoke')
-            ->with(
-                self::equalTo($workspace),
-                self::equalTo($this->releaseVersion),
-                self::equalTo(BranchName::fromName('1.2.x'))
-            );
+        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
+        $releaseNotes
+            ->expects($this->atLeastOnce())
+            ->method('contents')
+            ->willReturn('text of the changelog');
 
         $this->createReleaseText
             ->expects(self::once())
@@ -183,7 +182,17 @@ JSON
                 self::equalTo(BranchName::fromName('1.2.x')),
                 self::equalTo($workspace),
             )
-            ->willReturn('text of the changelog');
+            ->willReturn($releaseNotes);
+
+        $this->commitChangelog
+            ->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                $releaseNotes,
+                self::equalTo($workspace),
+                self::equalTo($this->releaseVersion),
+                self::equalTo(BranchName::fromName('1.2.x'))
+            );
 
         $this->createTag->expects(self::once())
             ->method('__invoke')

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -13,7 +14,6 @@ interface CreateReleaseText
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory
-     * @psalm-return non-empty-string
      */
     public function __invoke(
         Milestone $milestone,
@@ -21,7 +21,7 @@ interface CreateReleaseText
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
         string $repositoryDirectory
-    ): string;
+    ): ChangelogReleaseNotes;
 
     /** @psalm-param non-empty-string $repositoryDirectory */
     public function canCreateReleaseText(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
@@ -155,13 +156,20 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
+        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
+        $releaseNotes
+            ->expects($this->once())
+            ->method('contents')
+            ->willReturn('text of the changelog');
+
         $this->createReleaseText->method('__invoke')
             ->with(
                 self::equalTo($this->milestone),
                 self::equalTo(RepositoryName::fromFullName('foo/bar')),
                 self::equalTo($this->releaseVersion)
             )
-            ->willReturn('text of the changelog');
+            ->willReturn($releaseNotes);
 
         $this->push->expects(self::once())
             ->method('__invoke')
@@ -216,8 +224,11 @@ JSON
         $this->getMilestone->method('__invoke')
             ->willReturn($this->milestone);
 
+        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
+
         $this->createReleaseText->method('__invoke')
-            ->willReturn('text of the changelog');
+            ->willReturn($releaseNotes);
 
         $this->push->expects(self::never())
             ->method('__invoke');

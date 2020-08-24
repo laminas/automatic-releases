@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -12,12 +13,10 @@ use Webmozart\Assert\Assert;
 
 use function array_filter;
 use function array_map;
-use function implode;
+use function array_reduce;
 
-final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
+final class MergeMultipleReleaseNotes implements CreateReleaseText
 {
-    private const CONCATENATION_STRING = "\n\n-----\n\n";
-
     /** @psalm-var non-empty-list<CreateReleaseText> */
     private array $releaseTextGenerators;
 
@@ -33,19 +32,24 @@ final class ConcatenateMultipleReleaseTexts implements CreateReleaseText
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
         string $repositoryDirectory
-    ): string {
+    ): ChangelogReleaseNotes {
         $items = array_map(
-            static fn (CreateReleaseText $generator): string => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
+            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
             array_filter(
                 $this->releaseTextGenerators,
                 static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
             )
         );
 
-        $changelog = implode(self::CONCATENATION_STRING, $items);
-        Assert::notEmpty($changelog);
+        $releaseNotes = array_reduce(
+            $items,
+            static fn (?ChangelogReleaseNotes $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item
+        );
 
-        return $changelog;
+        Assert::isInstanceOf($releaseNotes, ChangelogReleaseNotes::class);
+        Assert::notEmpty($releaseNotes->contents());
+
+        return $releaseNotes;
     }
 
     public function canCreateReleaseText(

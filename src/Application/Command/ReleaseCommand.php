@@ -84,9 +84,7 @@ final class ReleaseCommand extends Command
             sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
         );
 
-        ($this->commitChangelog)($repositoryPath, $releaseVersion, $releaseBranch);
-
-        $changelog = ($this->createChangelogText)(
+        $changelogReleaseNotes = ($this->createChangelogText)(
             $milestone,
             $repositoryName,
             $releaseVersion,
@@ -94,12 +92,20 @@ final class ReleaseCommand extends Command
             $repositoryPath
         );
 
+        ($this->commitChangelog)($changelogReleaseNotes, $repositoryPath, $releaseVersion, $releaseBranch);
+
         $tagName = $releaseVersion->fullReleaseName();
 
-        ($this->createTag)($repositoryPath, $releaseBranch, $tagName, $changelog, $this->environment->signingSecretKey());
+        ($this->createTag)(
+            $repositoryPath,
+            $releaseBranch,
+            $tagName,
+            $changelogReleaseNotes->contents(),
+            $this->environment->signingSecretKey()
+        );
         ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());
-        ($this->createRelease)($repositoryName, $releaseVersion, $changelog);
+        ($this->createRelease)($repositoryName, $releaseVersion, $changelogReleaseNotes->contents());
 
         return 0;
     }

@@ -10,12 +10,14 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
 use Laminas\AutomaticReleases\Github\GenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class CreateChangelogTextTest extends TestCase
 {
     public function testGeneratedReleaseText(): void
     {
+        /** @psalm-var GenerateChangelog&MockObject $generateChangelog */
         $generateChangelog = $this->createMock(GenerateChangelog::class);
 
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
@@ -28,7 +30,7 @@ final class CreateChangelogTextTest extends TestCase
 
         self::assertSame(
             <<<'RELEASE'
-Release [The title](http://example.com/milestone)
+### Release Notes for [The title](http://example.com/milestone)
 
 The description
 
@@ -91,6 +93,7 @@ RELEASE
                     BranchName::fromName('1.0.x'),
                     __DIR__
                 )
+                ->contents()
         );
     }
 

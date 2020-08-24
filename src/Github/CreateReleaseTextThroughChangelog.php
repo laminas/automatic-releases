@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -12,7 +13,13 @@ use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 
 use function array_keys;
+use function count;
+use function explode;
+use function implode;
+use function preg_match;
 use function str_replace;
+use function strtr;
+use function trim;
 
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
@@ -38,7 +45,7 @@ MARKDOWN;
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
         string $repositoryDirectory
-    ): string {
+    ): ChangelogReleaseNotes {
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
@@ -56,7 +63,7 @@ MARKDOWN;
 
         Assert::stringNotEmpty($text);
 
-        return $text;
+        return new ChangelogReleaseNotes($text);
     }
 
     public function canCreateReleaseText(
@@ -91,11 +98,11 @@ MARKDOWN;
                 continue;
             }
 
-            /** @psalm-var -|= $delimiter */
+            /** @psalm-var "-"|"=" $delimiter */
             $delimiter = $matches['delim']{0};
             /** @psalm-var non-empty-string $heading */
             $heading         = strtr($delimiter, ['-' => '####', '=' => '###']);
-            $lines[$i - 1]   = $heading . ' ' . $previous;
+            $lines[$i - 1]   = $heading . ' ' . $previousLine;
             $linesToRemove[] = $i;
         }
 
