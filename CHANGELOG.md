@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.3.0 - TBD
+## 1.3.0 - 2020-08-26
 
 ### Added
 
@@ -29,6 +29,39 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
+
+-----
+
+### Release Notes for [1.3.0](https://github.com/laminas/automatic-releases/milestone/5)
+
+
+
+### 1.3.0
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **9**
+- Total contributors: **3**
+
+#### Bug,Documentation
+
+ - [60: Updates README.md  - automation is not laminas-specific](https://github.com/laminas/automatic-releases/pull/60) thanks to @michalbundyra
+
+#### Bug
+
+ - [59: Remove redundant infection configuration](https://github.com/laminas/automatic-releases/pull/59) thanks to @michalbundyra
+ - [53: Use ORGANIZATION&#95;ADMIN&#95;TOKEN for our own release action](https://github.com/laminas/automatic-releases/pull/53) thanks to @weierophinney
+ - [52: Merge release 1.2.3 into 1.3.x](https://github.com/laminas/automatic-releases/pull/52) thanks to @github-actions[bot]
+ - [48: Merge release 1.2.2 into 1.3.x](https://github.com/laminas/automatic-releases/pull/48) thanks to @github-actions[bot]
+ - [45: Fix YAML config for actions-tagger workflow](https://github.com/laminas/automatic-releases/pull/45) thanks to @weierophinney
+ - [44: Merge release 1.2.1 into 1.3.x](https://github.com/laminas/automatic-releases/pull/44) thanks to @github-actions[bot]
+
+#### Enhancement,Review Needed
+
+ - [58: Automatically generate changelog revision text if the changelog was not hand-crafted - do not commit if unchanged](https://github.com/laminas/automatic-releases/pull/58) thanks to @weierophinney
+
+#### Documentation,Enhancement
+
+ - [54: Update workflow documentation and examples](https://github.com/laminas/automatic-releases/pull/54) thanks to @weierophinney
 ## 1.2.4 - TBD
 
 ### Added
