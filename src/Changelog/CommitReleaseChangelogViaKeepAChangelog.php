@@ -72,7 +72,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         Assert::stringNotEmpty($changelogFile);
 
-        $releaseNotes->writeChangelogFile($changelogFile);
+        $releaseNotes::writeChangelogFile($changelogFile, $releaseNotes);
 
         $message = sprintf(self::COMMIT_TEMPLATE, $version->fullReleaseName(), self::CHANGELOG_FILE);
         Assert::notEmpty($message);

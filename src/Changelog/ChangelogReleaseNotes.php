@@ -9,6 +9,9 @@ use Phly\KeepAChangelog\Common\ChangelogEntry;
 use RuntimeException;
 use Webmozart\Assert\Assert;
 
+/**
+ * @psalm-immutable
+ */
 class ChangelogReleaseNotes
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
@@ -19,13 +22,39 @@ class ChangelogReleaseNotes
     private string $contents;
 
     /**
+     * @psalm-param non-empty-string $changelogFile
+     */
+    public static function writeChangelogFile(string $changelogFile, self $releaseNotes): void
+    {
+        // Nothing to do
+        if (! $releaseNotes->requiresUpdatingChangelogFile()) {
+            return;
+        }
+
+        Assert::notNull($releaseNotes->changelogEntry);
+
+        $editor = new ChangelogEditor();
+        $editor->update(
+            $changelogFile,
+            $releaseNotes->contents,
+            $releaseNotes->changelogEntry
+        );
+    }
+
+    /**
      * @psalm-param non-empty-string $contents
      */
     public function __construct(
         string $contents,
         ?ChangelogEntry $changelogEntry = null
     ) {
-        $this->contents       = $contents;
+        if ($changelogEntry) {
+            $changelogEntry = clone $changelogEntry;
+        }
+
+        $this->contents = $contents;
+
+        /** @psalm-suppress ImpurePropertyAssignment */
         $this->changelogEntry = $changelogEntry;
     }
 
@@ -46,9 +75,15 @@ class ChangelogReleaseNotes
             );
         }
 
-        $merged                 = clone $this;
-        $merged->contents      .= self::CONCATENATION_STRING . $next->contents;
-        $merged->changelogEntry = $merged->changelogEntry ?: $next->changelogEntry;
+        $changelogEntry = $this->changelogEntry ?: $next->changelogEntry;
+        if ($changelogEntry) {
+            $changelogEntry = clone $changelogEntry;
+        }
+
+        $merged            = clone $this;
+        $merged->contents .= self::CONCATENATION_STRING . $next->contents;
+        /** @psalm-suppress ImpurePropertyAssignment */
+        $merged->changelogEntry = $changelogEntry;
 
         return $merged;
     }
@@ -62,25 +97,5 @@ class ChangelogReleaseNotes
         $originalContents = (string) $this->changelogEntry->contents();
 
         return $this->contents !== $originalContents;
-    }
-
-    /**
-     * @psalm-param non-empty-string $changelogFile
-     */
-    public function writeChangelogFile(string $changelogFile): void
-    {
-        // Nothing to do
-        if (! $this->requiresUpdatingChangelogFile()) {
-            return;
-        }
-
-        Assert::notNull($this->changelogEntry);
-
-        $editor = new ChangelogEditor();
-        $editor->update(
-            $changelogFile,
-            $this->contents,
-            $this->changelogEntry
-        );
     }
 }

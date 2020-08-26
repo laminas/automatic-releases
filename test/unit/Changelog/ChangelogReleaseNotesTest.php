@@ -60,7 +60,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $entry->contents = 'Changelog contents';
         $releaseNotes    = new ChangelogReleaseNotes('Changelog contents', $entry);
 
-        $releaseNotes->writeChangelogFile($filename);
+        $releaseNotes::writeChangelogFile($filename, $releaseNotes);
 
         $this->assertStringEqualsFile($filename, 'Original contents');
     }
@@ -90,7 +90,7 @@ class ChangelogReleaseNotesTest extends TestCase
 
         $releaseNotes = new ChangelogReleaseNotes($contents, $entry);
 
-        $releaseNotes->writeChangelogFile($filename);
+        $releaseNotes::writeChangelogFile($filename, $releaseNotes);
 
         $contents = file_get_contents($filename);
 
@@ -163,7 +163,9 @@ class ChangelogReleaseNotesTest extends TestCase
 
         $r = new ReflectionProperty($merged, 'changelogEntry');
         $r->setAccessible(true);
-        $this->assertSame($expectedEntry, $r->getValue($merged));
+
+        // Equals, but not same, as the class stores a clone of the original.
+        $this->assertEquals($expectedEntry, $r->getValue($merged));
     }
 
     private const CHANGELOG_ENTRY = <<< 'ENTRY'
