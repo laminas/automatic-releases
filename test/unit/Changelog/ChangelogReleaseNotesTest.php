@@ -20,6 +20,9 @@ use function Safe\tempnam;
 use function sprintf;
 use function sys_get_temp_dir;
 
+/**
+ * @covers ChangelogReleaseNotes
+ */
 class ChangelogReleaseNotesTest extends TestCase
 {
     public function testInitialContentsAreThoseProvidedToConstructor(): void
