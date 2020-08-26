@@ -47,7 +47,6 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
         );
 
         Assert::isInstanceOf($releaseNotes, ChangelogReleaseNotes::class);
-        Assert::notEmpty($releaseNotes->contents());
 
         return $releaseNotes;
     }
