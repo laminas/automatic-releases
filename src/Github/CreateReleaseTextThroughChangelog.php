@@ -13,7 +13,6 @@ use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 
 use function array_keys;
-use function count;
 use function explode;
 use function implode;
 use function preg_match;
@@ -81,23 +80,47 @@ MARKDOWN;
         return '[' . $text . '](' . $uri->__toString() . ')';
     }
 
+    /**
+     * Normalize changelog headings
+     *
+     * Markdown has two separate headings styles. One uses varying numbers of
+     * `#` prefixes, another puts 3 or more of specific delimeters on the
+     * following line (`===` for H1, `---` for H2).
+     *
+     * The CHANGELOG.md file, when using Keep A Changelog format, uses `#`
+     * prefixes, while jwage/changelog-generator uses delimiter lines. This
+     * method normalizes the latter to conform with the former, though pushing
+     * the header two levels deeper so it can be embedded in a specific
+     * changelog revision.
+     */
     private function normalizeChangelogHeadings(string $changelog): string
     {
         $lines         = explode("\n", trim($changelog));
-        $lineCount     = count($lines);
         $linesToRemove = [];
-        for ($i = 0; $i < $lineCount; $i += 1) {
-            $line    = $lines[$i];
+        foreach ($lines as $i => $line) {
             $matches = [];
+
+            // Does the line match one of the delimiter line types? If so,
+            // capture that in $matches.
             if (! preg_match('/^(?P<delim>-{3,}|={3,})$/', $line, $matches)) {
                 continue;
             }
 
+            // Is this the first line? Then the delimiter is not for a header.
+            if ($i === 0) {
+                continue;
+            }
+
+            // Is the previous line empty, or does it have content? If no
+            // content, then it's not a header delimiter.
             $previousLine = $lines[$i - 1];
             if (empty($previousLine)) {
                 continue;
             }
 
+            // Rewrite the header line to use the appropriate "#" prefix.
+            // We will then remove the current line, as the delimiter is no
+            // longer necessary.
             /** @psalm-var "-"|"=" $delimiter */
             $delimiter = $matches['delim']{0};
             /** @psalm-var non-empty-string $heading */

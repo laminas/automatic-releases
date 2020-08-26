@@ -159,6 +159,43 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
     }
 
     /**
+     * Fetch a changelog entry for a given version from the changelog contents
+     *
+     * Each entry starts with one of the following:
+     *
+     * - Most basic: the version identifier
+     * <code class="markdown">
+     * ## {VERSION}
+     * </code>
+     *
+     * - A linked version identifier (where the link appears at the end of the
+     *   document)
+     * <code class="markdown">
+     * ## [{VERSION}]
+     * </code>
+     *
+     * - Arbitrary linked version name; generally used to delimit links at the
+     *   end of the file:
+     * <code class="markdown">
+     * ## [{VERSION_NAME}]:
+     * </code>
+     *
+     * This code goes line by line through the contents, looking for a line
+     * matching one of the first two cases; if found, that indicates the start
+     * of where that changelog entry exists in the file, and we store the index
+     * of that line.
+     *
+     * We then iterate until we find the next release boundary (any of the above
+     * three types), keeping a count of lines. When a boundary is found, we
+     * create a ChangelogEntry using:
+     *
+     * - The concatenated contents discovered for that version.
+     * - The index of where the version starts in the contents.
+     * - The number of lines discovered for that version.
+     *
+     * This information can be used later to overwrite the contents for that
+     * version.
+     *
      * @psalm-param non-empty-string $contents
      * @psalm-param non-empty-string $version
      */
@@ -171,10 +208,13 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         $regex         = sprintf('/^## (?:%1$s|\[%1$s\])/i', preg_quote($version));
 
         foreach (explode("\n", $contents) as $index => $line) {
+            // If we identified an entry for our version previously, and have
+            // now reached a boundary, we are done.
             if ($entryIndex && preg_match($boundaryRegex, $line)) {
                 break;
             }
 
+            // Did we identify the starting line for the requested version?
             if (preg_match($regex, $line)) {
                 $entryContents[] = $line;
                 $entryIndex      = $index;
@@ -182,10 +222,14 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
                 continue;
             }
 
+            // Are we currently in the contents for the requested version? If
+            // not, move on to the next line.
             if (! $entryIndex) {
                 continue;
             }
 
+            // Update the conttents for this version, and increase the line
+            // count discovered.
             $entryContents[] = $line;
             $entryLength    += 1;
         }
