@@ -16,6 +16,25 @@ final class CreateChangelogTextTest extends TestCase
 {
     public function testGeneratedReleaseText(): void
     {
+        $generatedReleaseNotes = <<< 'NOTES'
+            -----
+
+            2.12.3
+            ======
+
+            - Total issues resolved: 0
+            - Total pull requests resolved: 1
+            - Total contributors: 1
+
+            -----
+
+            Bug
+            ---
+
+            - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
+
+            NOTES;
+
         $generateChangelog = $this->createMock(GenerateChangelog::class);
 
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
@@ -24,18 +43,29 @@ final class CreateChangelogTextTest extends TestCase
         $generateChangelog->expects(self::once())
             ->method('__invoke')
             ->with($repositoryName, $semVerVersion)
-            ->willReturn('Generated changelog');
+            ->willReturn($generatedReleaseNotes);
 
         self::assertSame(
-            <<<'RELEASE'
-Release [The title](http://example.com/milestone)
-
-The description
-
-Generated changelog
-
-RELEASE
-            ,
+            <<< 'RELEASE'
+                ### Release Notes for [The title](http://example.com/milestone)
+                
+                The description
+                
+                -----
+                
+                ### 2.12.3
+                
+                - Total issues resolved: 0
+                - Total pull requests resolved: 1
+                - Total contributors: 1
+                
+                -----
+                
+                #### Bug
+                
+                - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
+                
+                RELEASE,
             (new CreateReleaseTextThroughChangelog($generateChangelog))
                 ->__invoke(
                     Milestone::fromPayload([
@@ -91,6 +121,7 @@ RELEASE
                     BranchName::fromName('1.0.x'),
                     __DIR__
                 )
+                ->contents()
         );
     }
 

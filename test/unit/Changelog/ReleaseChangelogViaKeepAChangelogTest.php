@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use DateTimeImmutable;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
 use Laminas\AutomaticReleases\Git\CheckoutBranch;
 use Laminas\AutomaticReleases\Git\CommitFile;
@@ -14,13 +15,18 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\FrozenClock;
+use Phly\KeepAChangelog\Common\ChangelogEntry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
+use function array_slice;
+use function explode;
+use function file_get_contents;
 use function file_put_contents;
+use function implode;
 use function Safe\tempnam;
 use function sprintf;
 use function sys_get_temp_dir;
@@ -53,7 +59,6 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->logger         = $this->createMock(LoggerInterface::class);
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
-            $this->clock,
             new ChangelogExistsViaConsole(),
             $this->checkoutBranch,
             $this->commitFile,
@@ -75,8 +80,19 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
+        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
+        $releaseNotes
+            ->expects($this->once())
+            ->method('requiresUpdatingChangelogFile')
+            ->willReturn(true);
+        $releaseNotes
+            ->expects($this->never())
+            ->method('writeChangelogFile');
+
         self::assertNull(
             $this->releaseChangelog->__invoke(
+                $releaseNotes,
                 __DIR__,
                 SemVerVersion::fromMilestoneName('0.99.99'),
                 BranchName::fromName('0.99.x')
@@ -91,48 +107,30 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $branch   = BranchName::fromName('1.0.x');
 
         $this->checkoutBranch
-            ->expects($this->once())
-            ->method('__invoke')
-            ->with($checkout, $branch);
+            ->expects($this->never())
+            ->method('__invoke');
 
         $this
             ->logger
             ->expects($this->once())
             ->method('info')
-            ->with($this->stringContains('Failed to find release version'));
+            ->with($this->stringContains('no changes to commit'));
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
-        self::assertNull(
-            $this->releaseChangelog->__invoke(
-                $checkout,
-                SemVerVersion::fromMilestoneName('1.0.0'),
-                $branch
-            )
-        );
-    }
-
-    public function testNoOpWhenFailedToSetReleaseDateInChangelogEntry(): void
-    {
-        $repo     = $this->createMockRepositoryWithChangelog(self::RELEASED_CHANGELOG);
-        $checkout = $this->checkoutMockRepositoryWithChangelog($repo);
-        $branch   = BranchName::fromName('1.0.x');
-
-        $this->checkoutBranch
+        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
+        $releaseNotes
             ->expects($this->once())
-            ->method('__invoke')
-            ->with($checkout, $branch);
-
-        $this
-            ->logger
-            ->expects($this->once())
-            ->method('info')
-            ->with($this->stringContains('Failed setting release date'));
-        $this->commitFile->expects($this->never())->method('__invoke');
-        $this->push->expects($this->never())->method('__invoke');
+            ->method('requiresUpdatingChangelogFile')
+            ->willReturn(false);
+        $releaseNotes
+            ->expects($this->never())
+            ->method('writeChangelogFile');
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
+                $releaseNotes,
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 $branch
@@ -144,20 +142,49 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     {
         $existingChangelog = sprintf(self::READY_CHANGELOG, 'TBD');
         $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
+        $expectedChangelog = sprintf(
+            <<< 'CHANGELOG'
+                ## 1.0.0 - %s
+                
+                ### Added
+                
+                - Everything.
+                
+                ### Changed
+                
+                - Nothing.
+                
+                ### Deprecated
+                
+                - Nothing.
+                
+                ### Removed
+                
+                - Nothing.
+                
+                ### Fixed
+                
+                - Nothing.
+                
+                CHANGELOG,
+            $this->clock->now()->format('Y-m-d')
+        );
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $checkout          = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
         $sourceBranch      = BranchName::fromName('1.0.x');
+
+        Assert::stringNotEmpty($expectedChangelog);
 
         $this->checkoutBranch
             ->expects($this->once())
             ->method('__invoke')
             ->with($checkout, $sourceBranch);
 
-        $this
-            ->logger
-            ->expects($this->once())
-            ->method('info')
-            ->with($this->stringContains('Set release date'));
+        $changelogEntry           = new ChangelogEntry();
+        $changelogEntry->contents = $existingChangelog;
+        $changelogEntry->index    = 4;
+        $changelogEntry->length   = 22;
+        $releaseNotes             = new ChangelogReleaseNotes($expectedChangelog, $changelogEntry);
 
         $this->commitFile
             ->expects($this->once())
@@ -179,13 +206,28 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         self::assertNull(
             $this->releaseChangelog->__invoke(
+                $releaseNotes,
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 BranchName::fromName('1.0.x')
             )
         );
 
-        $this->assertStringEqualsFile($checkout . '/CHANGELOG.md', $expectedChangelog);
+        $changelogFile = $checkout . '/CHANGELOG.md';
+        $contents      = file_get_contents($changelogFile);
+        $this->assertStringContainsString(
+            implode(
+                "\n",
+                array_slice(
+                    explode("\n", self::READY_CHANGELOG),
+                    0,
+                    4
+                )
+            ),
+            $contents
+        );
+        $this->assertStringContainsString($expectedChangelog, $contents);
+        $this->assertStringNotContainsString($existingChangelog, $contents);
     }
 
     /**
@@ -240,35 +282,6 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         It contains bad headers, among other things.
 
-        END;
-
-    private const RELEASED_CHANGELOG = <<< 'END'
-        # Changelog
-        
-        All notable changes to this project will be documented in this file, in reverse chronological order by release.
-                
-        ## 1.0.0 - 2020-01-01
-        
-        ### Added
-        
-        - Everything.
-        
-        ### Changed
-        
-        - Nothing.
-        
-        ### Deprecated
-        
-        - Nothing.
-        
-        ### Removed
-        
-        - Nothing.
-        
-        ### Fixed
-        
-        - Nothing.
-        
         END;
 
     private const READY_CHANGELOG = <<< 'END'

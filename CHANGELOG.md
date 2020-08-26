@@ -10,7 +10,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#58](https://github.com/laminas/automatic-releases/pull/58) updates the "Release" step such that:
+  - It now **always** uses jwage/changelog-generator to generate release notes.
+  - **IF** a `CHANGELOG.md` file is present:
+    - **IF** it contains changes for the target version, it appends the generated release notes to the changes for that version.
+    - **OTHERWISE** it replaces the contents for the target version with the generated release notes.
+    - And then it commits and pushes the file to the originating branch before it tags and releases.
 
 ### Deprecated
 

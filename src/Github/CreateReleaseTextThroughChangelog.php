@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
@@ -12,12 +13,17 @@ use Psr\Http\Message\UriInterface;
 use Webmozart\Assert\Assert;
 
 use function array_keys;
+use function explode;
+use function implode;
+use function preg_match;
 use function str_replace;
+use function strtr;
+use function trim;
 
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
-Release %release%
+### Release Notes for %release%
 
 %description%
 
@@ -38,14 +44,14 @@ MARKDOWN;
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
         string $repositoryDirectory
-    ): string {
+    ): ChangelogReleaseNotes {
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
-            '%changelogText%' => $this->generateChangelog->__invoke(
+            '%changelogText%' => $this->normalizeChangelogHeadings($this->generateChangelog->__invoke(
                 $repositoryName,
                 $semVerVersion
-            ),
+            )),
         ];
 
         $text = str_replace(
@@ -56,7 +62,7 @@ MARKDOWN;
 
         Assert::stringNotEmpty($text);
 
-        return $text;
+        return new ChangelogReleaseNotes($text);
     }
 
     public function canCreateReleaseText(
@@ -72,5 +78,61 @@ MARKDOWN;
     private function markdownLink(string $text, UriInterface $uri): string
     {
         return '[' . $text . '](' . $uri->__toString() . ')';
+    }
+
+    /**
+     * Normalize changelog headings
+     *
+     * Markdown has two separate headings styles. One uses varying numbers of
+     * `#` prefixes, another puts 3 or more of specific delimeters on the
+     * following line (`===` for H1, `---` for H2).
+     *
+     * The CHANGELOG.md file, when using Keep A Changelog format, uses `#`
+     * prefixes, while jwage/changelog-generator uses delimiter lines. This
+     * method normalizes the latter to conform with the former, though pushing
+     * the header two levels deeper so it can be embedded in a specific
+     * changelog revision.
+     */
+    private function normalizeChangelogHeadings(string $changelog): string
+    {
+        $lines         = explode("\n", trim($changelog));
+        $linesToRemove = [];
+        foreach ($lines as $i => $line) {
+            $matches = [];
+
+            // Does the line match one of the delimiter line types? If so,
+            // capture that in $matches.
+            if (! preg_match('/^(?P<delim>-{3,}|={3,})$/', $line, $matches)) {
+                continue;
+            }
+
+            // Is this the first line? Then the delimiter is not for a header.
+            if ($i === 0) {
+                continue;
+            }
+
+            // Is the previous line empty, or does it have content? If no
+            // content, then it's not a header delimiter.
+            $previousLine = $lines[$i - 1];
+            if (empty($previousLine)) {
+                continue;
+            }
+
+            // Rewrite the header line to use the appropriate "#" prefix.
+            // We will then remove the current line, as the delimiter is no
+            // longer necessary.
+            /** @psalm-var "-"|"=" $delimiter */
+            $delimiter = $matches['delim']{0};
+            /** @psalm-var non-empty-string $heading */
+            $heading         = strtr($delimiter, ['-' => '####', '=' => '###']);
+            $lines[$i - 1]   = $heading . ' ' . $previousLine;
+            $linesToRemove[] = $i;
+        }
+
+        foreach ($linesToRemove as $index) {
+            unset($lines[$index]);
+        }
+
+        return implode("\n", $lines);
     }
 }

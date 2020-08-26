@@ -13,6 +13,7 @@ interface CommitReleaseChangelog
      * @psalm-param non-empty-string $repositoryDirectory
      */
     public function __invoke(
+        ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch

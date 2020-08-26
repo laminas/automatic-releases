@@ -94,19 +94,21 @@ final class CreateMergeUpPullRequest extends Command
             . uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
         );
 
+        $releaseNotes = $this->createReleaseText->__invoke(
+            $this->getMilestone->__invoke($event->repository(), $event->milestoneNumber()),
+            $event->repository(),
+            $event->version(),
+            $releaseBranch,
+            $repositoryPath
+        );
+
         $this->push->__invoke($repositoryPath, $releaseBranch->name(), $mergeUpBranch->name());
         $this->createPullRequest->__invoke(
             $event->repository(),
             $mergeUpBranch,
             $mergeUpTarget,
             'Merge release ' . $releaseVersion->fullReleaseName() . ' into ' . $mergeUpTarget->name(),
-            $this->createReleaseText->__invoke(
-                $this->getMilestone->__invoke($event->repository(), $event->milestoneNumber()),
-                $event->repository(),
-                $event->version(),
-                $releaseBranch,
-                $repositoryPath
-            )
+            $releaseNotes->contents()
         );
 
         return 0;

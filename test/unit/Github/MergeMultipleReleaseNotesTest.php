@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
+use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\ConcatenateMultipleReleaseTexts;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
+use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 use function assert;
 use function range;
 
-final class ConcatenateMultipleReleaseTextsTest extends TestCase
+final class MergeMultipleReleaseNotesTest extends TestCase
 {
     private Milestone $milestone;
 
@@ -74,7 +75,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
             $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
+        $createReleaseText = new MergeMultipleReleaseNotes($generators);
 
         $this->assertFalse(
             $createReleaseText->canCreateReleaseText(
@@ -134,7 +135,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
             $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
+        $createReleaseText = new MergeMultipleReleaseNotes($generators);
 
         $this->assertTrue(
             $createReleaseText->canCreateReleaseText(
@@ -183,7 +184,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                             $this->equalTo($this->sourceBranch),
                             $this->equalTo($this->repositoryPath)
                         )
-                        ->willReturn('GENERATOR ' . $index);
+                        ->willReturn(new ChangelogReleaseNotes('GENERATOR ' . $index));
                     break;
                 default:
                     $generator
@@ -206,7 +207,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
             $generators[] = $generator;
         }
 
-        $createReleaseText = new ConcatenateMultipleReleaseTexts($generators);
+        $createReleaseText = new MergeMultipleReleaseNotes($generators);
 
         $expected = <<< 'END'
             GENERATOR 0
@@ -228,7 +229,7 @@ final class ConcatenateMultipleReleaseTextsTest extends TestCase
                 $this->version,
                 $this->sourceBranch,
                 $this->repositoryPath
-            )
+            )->contents()
         );
     }
 }

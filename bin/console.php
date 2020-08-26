@@ -27,11 +27,11 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
-use Laminas\AutomaticReleases\Github\ConcatenateMultipleReleaseTexts;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
+use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
@@ -75,7 +75,6 @@ use const STDERR;
     $commit               = new CommitFileViaConsole();
     $push                 = new PushViaConsole();
     $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(
-        new SystemClock(),
         $changelogExists,
         $checkoutBranch,
         $commit,
@@ -86,8 +85,8 @@ use const STDERR;
         $makeRequests,
         $httpClient
     ));
-    $createReleaseText    = new ConcatenateMultipleReleaseTexts([
-        new CreateReleaseTextViaKeepAChangelog($changelogExists),
+    $createReleaseText    = new MergeMultipleReleaseNotes([
+        new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock()),
         $createCommitText,
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
