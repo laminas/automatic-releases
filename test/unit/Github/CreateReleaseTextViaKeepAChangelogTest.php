@@ -239,5 +239,27 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         
         - Nothing.
         
+        ## 0.1.0 - 2019-01-01
+        
+        ### Added
+        
+        - Everything.
+        
+        ### Changed
+        
+        - Nothing.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Nothing.
+        
+        ### Fixed
+        
+        - Nothing.
+
         END;
 }
