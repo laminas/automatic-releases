@@ -21,7 +21,7 @@ use function sprintf;
 use function sys_get_temp_dir;
 
 /**
- * @covers ChangelogReleaseNotes
+ * @covers \Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes
  */
 class ChangelogReleaseNotesTest extends TestCase
 {
