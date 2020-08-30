@@ -7,7 +7,6 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\V3;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneThroughApiCall;
-use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
