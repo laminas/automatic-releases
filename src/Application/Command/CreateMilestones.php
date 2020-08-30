@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestone;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Symfony\Component\Console\Command\Command;
@@ -41,19 +42,19 @@ final class CreateMilestones extends Command
 
         $milestone->assertAllIssuesAreClosed();
 
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextPatch());
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMinor());
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMajor());
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextPatch(), $output);
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMinor(), $output);
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMajor(), $output);
 
         return 0;
     }
 
-    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version): bool
+    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version, OutputInterface $output): bool
     {
         try {
             ($this->createMilestone)($repositoryName, $version->nextPatch());
-        } catch (InvalidArgumentException $e) {
-            // Log that the milestone exists?
+        } catch (CreateMilestoneFailed $e) {
+            $output->writeln($e->getMessage());
             return false;
         }
 

@@ -77,11 +77,13 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             ->getBody()
             ->__toString();
 
-        Assert::greaterThanEq($response->getStatusCode(), 200);
-        Assert::lessThanEq($response->getStatusCode(), 299);
+        if ($response->getStatusCode() !== 201) {
+            throw CreateMilestoneFailed::forVersion($version->fullReleaseName(), $responseBody);
+        }
+
+        Assert::eq($response->getStatusCode(), 201);
 
         $responseData = json_decode($responseBody, true);
-
         Assert::isMap($responseData);
         Assert::keyExists($responseData, 'html_url');
         Assert::stringNotEmpty($responseData['html_url']);
