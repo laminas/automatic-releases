@@ -10,6 +10,7 @@ use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
 
 use function Safe\json_decode;
@@ -27,21 +28,32 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
     /** @psalm-var non-empty-string */
     private string $apiToken;
 
+    private LoggerInterface $logger;
+
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        string $apiToken
+        string $apiToken,
+        LoggerInterface $logger
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
         $this->apiToken       = $apiToken;
+        $this->logger         = $logger;
     }
 
     public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version
     ): UriInterface {
+        $this->logger->info(sprintf(
+            'Creating milestone "%s" for "%s/%s"',
+            $version->fullReleaseName(),
+            $repository->owner(),
+            $repository->name()
+        ));
+
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
@@ -73,6 +85,11 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
         Assert::isMap($responseData);
         Assert::keyExists($responseData, 'html_url');
         Assert::stringNotEmpty($responseData['html_url']);
+
+        $this->logger->info(sprintf(
+            'Milestone "%s" created',
+            $version->fullReleaseName()
+        ));
 
         return new Uri($responseData['html_url']);
     }

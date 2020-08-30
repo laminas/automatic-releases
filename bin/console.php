@@ -160,7 +160,8 @@ use const STDERR;
             new CreateMilestoneThroughApiCall(
                 $makeRequests,
                 $httpClient,
-                $githubToken
+                $githubToken,
+                $logger
             )
         ),
     ]);
