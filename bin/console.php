@@ -162,7 +162,8 @@ use const STDERR;
                 $httpClient,
                 $githubToken,
                 $logger
-            )
+            ),
+            $logger
         ),
     ]);
 
