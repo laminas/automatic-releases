@@ -11,6 +11,7 @@ use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,17 +21,20 @@ final class CreateMilestones extends Command
     private LoadCurrentGithubEvent $loadEvent;
     private GetGithubMilestone $getMilestone;
     private CreateMilestone $createMilestone;
+    private LoggerInterface $logger;
 
     public function __construct(
         LoadCurrentGithubEvent $loadEvent,
         GetGithubMilestone $getMilestone,
-        CreateMilestone $createMilestone
+        CreateMilestone $createMilestone,
+        LoggerInterface $logger
     ) {
         parent::__construct('laminas:automatic-releases:create-milestones');
 
         $this->loadEvent       = $loadEvent;
         $this->getMilestone    = $getMilestone;
         $this->createMilestone = $createMilestone;
+        $this->logger          = $logger;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -54,7 +58,7 @@ final class CreateMilestones extends Command
         try {
             ($this->createMilestone)($repositoryName, $version);
         } catch (CreateMilestoneFailed $e) {
-            $output->writeln($e->getMessage());
+            $this->logger->info($e->getMessage());
             return false;
         }
 
