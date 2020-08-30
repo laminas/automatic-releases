@@ -66,7 +66,7 @@ final class SemVerVersion
 
     public function nextMajor(): self
     {
-        return new self($this->major + 1, $this->minor, 0);
+        return new self($this->major + 1, 0, 0);
     }
 
     public function targetReleaseBranchName(): BranchName
