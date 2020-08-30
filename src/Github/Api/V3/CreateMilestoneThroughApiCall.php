@@ -66,9 +66,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
         $request
             ->getBody()
             ->write(json_encode([
-                'tag_name' => $version->fullReleaseName(),
-                'name'     => $version->fullReleaseName(),
-                'body'     => sprintf('{"title":"%s"}', $version->fullReleaseName()),
+                'title' => $version->fullReleaseName()
             ]));
 
         $response = $this->client->sendRequest($request);
