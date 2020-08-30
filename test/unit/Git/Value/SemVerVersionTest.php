@@ -164,9 +164,9 @@ final class SemVerVersionTest extends TestCase
      */
     public function testNextVersions(string $version, string $patch, string $minor, string $major): void
     {
-        self::assertEquals($patch, (SemVerVersion::fromMilestoneName($version))->nextPatch()->fullReleaseName());
-        self::assertEquals($minor, (SemVerVersion::fromMilestoneName($version))->nextMinor()->fullReleaseName());
-        self::assertEquals($major, (SemVerVersion::fromMilestoneName($version))->nextMajor()->fullReleaseName());
+        self::assertEquals($patch, SemVerVersion::fromMilestoneName($version)->nextPatch()->fullReleaseName());
+        self::assertEquals($minor, SemVerVersion::fromMilestoneName($version)->nextMinor()->fullReleaseName());
+        self::assertEquals($major, SemVerVersion::fromMilestoneName($version)->nextMajor()->fullReleaseName());
     }
 
     /**

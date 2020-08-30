@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestone;
@@ -59,6 +58,7 @@ final class CreateMilestones extends Command
             ($this->createMilestone)($repositoryName, $version);
         } catch (CreateMilestoneFailed $e) {
             $this->logger->info($e->getMessage());
+
             return false;
         }
 

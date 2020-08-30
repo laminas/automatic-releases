@@ -6,6 +6,8 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 
 use RuntimeException;
 
+use function sprintf;
+
 class CreateMilestoneFailed extends RuntimeException
 {
     public static function forVersion(string $version, string $error): self
