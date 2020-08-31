@@ -48,8 +48,7 @@ final class CreateReleaseTest extends TestCase
 
     public function testSuccessfulRequest(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/releases')
@@ -65,8 +64,7 @@ final class CreateReleaseTest extends TestCase
             JSON
         );
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {

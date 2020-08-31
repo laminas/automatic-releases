@@ -54,8 +54,7 @@ class CreateMilestoneTest extends TestCase
 
     public function testSuccessfulRequest(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
@@ -71,8 +70,7 @@ class CreateMilestoneTest extends TestCase
             JSON
         );
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {
@@ -108,8 +106,7 @@ class CreateMilestoneTest extends TestCase
 
     public function testExistingMilestone(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
@@ -133,8 +130,7 @@ class CreateMilestoneTest extends TestCase
             JSON
         );
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {

@@ -50,8 +50,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
     public function testSuccessfulRequest(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('PATCH', 'https://api.github.com/repos/foo/bar')
@@ -62,8 +61,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
         $validResponse->getBody()
             ->write('{"default_branch": "foo-bar-baz"}');
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {
@@ -95,8 +93,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
     public function testRequestFailedToSwitchBranch(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('PATCH', 'https://api.github.com/repos/foo/bar')
@@ -107,8 +104,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
         $validResponse->getBody()
             ->write('{"default_branch": "not-what-we-expected"}');
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {
