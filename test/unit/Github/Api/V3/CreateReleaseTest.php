@@ -85,8 +85,7 @@ final class CreateReleaseTest extends TestCase
                         "name": "1.2.3",
                         "body": "the-body"
                     }
-                    JSON
-                    ,
+                    JSON,
                     $request->getBody()->__toString()
                 );
 

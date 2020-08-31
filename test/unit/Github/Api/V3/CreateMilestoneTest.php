@@ -89,8 +89,7 @@ class CreateMilestoneTest extends TestCase
                     {
                         "title": "1.2.3"
                     }
-                    JSON
-                    ,
+                    JSON,
                     $request->getBody()->__toString()
                 );
 
@@ -149,8 +148,7 @@ class CreateMilestoneTest extends TestCase
                     {
                         "title": "1.2.3"
                     }
-                    JSON
-                    ,
+                    JSON,
                     $request->getBody()->__toString()
                 );
 

@@ -90,8 +90,7 @@ final class CreatePullRequestTest extends TestCase
                         "maintainer_can_modify": true,
                         "draft": false
                     }
-                    JSON
-                    ,
+                    JSON,
                     $request->getBody()->__toString()
                 );
 
