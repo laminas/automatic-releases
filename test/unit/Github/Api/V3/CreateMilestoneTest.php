@@ -87,6 +87,7 @@ class CreateMilestoneTest extends TestCase
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
                     {
+                        "description": "1.2.x bugfix release (patch)",
                         "title": "1.2.3"
                     }
                     JSON,
@@ -146,7 +147,8 @@ class CreateMilestoneTest extends TestCase
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
                     {
-                        "title": "1.2.3"
+                        "description": "Feature release (minor)",
+                        "title": "2.1.0"
                     }
                     JSON,
                     $request->getBody()->__toString()
@@ -160,7 +162,59 @@ class CreateMilestoneTest extends TestCase
 
         $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            SemVerVersion::fromMilestoneName('1.2.3')
+            SemVerVersion::fromMilestoneName('2.1.0')
+        );
+    }
+
+    public function testMajorMilestone(): void
+    {
+        $this->messageFactory
+            ->expects(self::any())
+            ->method('createRequest')
+            ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
+            ->willReturn(new Request('https://the-domain.com/the-path'));
+
+        $validResponse = (new Response())->withStatus(201);
+
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "html_url": "http://another-domain.com/the-pr"
+            }
+            JSON
+        );
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('sendRequest')
+            ->with(self::callback(function (RequestInterface $request): bool {
+                self::assertSame(
+                    [
+                        'Host'          => ['the-domain.com'],
+                        'Content-Type'  => ['application/json'],
+                        'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
+                        'Authorization' => ['token ' . $this->apiToken],
+                    ],
+                    $request->getHeaders()
+                );
+
+                self::assertJsonStringEqualsJsonString(
+                    <<<'JSON'
+                    {
+                        "description": "Backwards incompatible release (major)",
+                        "title": "3.0.0"
+                    }
+                    JSON,
+                    $request->getBody()->__toString()
+                );
+
+                return true;
+            }))
+            ->willReturn($validResponse);
+
+        $this->createMilestone->__invoke(
+            RepositoryName::fromFullName('foo/bar'),
+            SemVerVersion::fromMilestoneName('3.0.0')
         );
     }
 }

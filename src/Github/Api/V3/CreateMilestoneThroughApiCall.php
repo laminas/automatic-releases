@@ -63,6 +63,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             ->getBody()
             ->write(json_encode([
                 'title' => $version->fullReleaseName(),
+                'description' => $this->milestoneDescription($version),
             ]));
 
         $response = $this->client->sendRequest($request);
@@ -92,5 +93,18 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             '[CreateMilestoneThroughApiCall] Milestone "%s" created',
             $version->fullReleaseName()
         ));
+    }
+
+    private function milestoneDescription(SemVerVersion $version): string
+    {
+        if ($version->isNewMajorRelease()) {
+            return 'Backwards incompatible release (major)';
+        }
+
+        if ($version->isNewMinorRelease()) {
+            return 'Feature release (minor)';
+        }
+
+        return sprintf('%s bugfix release (patch)', $version->targetReleaseBranchName()->name());
     }
 }

@@ -79,6 +79,11 @@ final class SemVerVersion
         return $this->patch === 0;
     }
 
+    public function isNewMajorRelease(): bool
+    {
+        return $this->minor === 0 && $this->patch === 0;
+    }
+
     public function lessThanEqual(self $other): bool
     {
         return $this->fullReleaseName() <= $other->fullReleaseName();

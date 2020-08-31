@@ -120,6 +120,38 @@ final class SemVerVersionTest extends TestCase
     }
 
     /**
+     * @dataProvider newMajorReleasesProvider
+     */
+    public function testIsNewMajorRelease(string $milestoneName, bool $expected): void
+    {
+        self::assertSame(
+            $expected,
+            SemVerVersion::fromMilestoneName($milestoneName)
+                         ->isNewMajorRelease()
+        );
+    }
+
+    /**
+     * @return array<int, array<int, string|bool>>
+     *
+     * @psalm-return array<int, array{0: string, 1: bool}>
+     */
+    public function newMajorReleasesProvider(): array
+    {
+        return [
+            ['3.0.1', false],
+            ['3.0.0', true],
+            ['2.0.10', false],
+            ['2.0.0', true],
+            ['1.0.0', true],
+            ['1.1.0', false],
+            ['1.1.1', false],
+            ['1.1.2', false],
+            ['1.1.90', false],
+        ];
+    }
+
+    /**
      * @dataProvider lessThanEqualProvider
      */
     public function testLessThanEqual(string $a, string $b, bool $expected): void
