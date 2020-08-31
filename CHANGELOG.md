@@ -2,28 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.4.0 - TBD
+## 1.4.0 - 2020-08-31
 
-### Added
 
-- Nothing.
 
-### Changed
+-----
 
-- Nothing.
+### Release Notes for [1.4.0](https://github.com/laminas/automatic-releases/milestone/11)
 
-### Deprecated
 
-- Nothing.
 
-### Removed
+### 1.4.0
 
-- Nothing.
+- Total issues resolved: **1**
+- Total pull requests resolved: **1**
+- Total contributors: **2**
 
-### Fixed
+#### Enhancement
 
-- Nothing.
-
+ - [37: Create new milestones automatically](https://github.com/laminas/automatic-releases/pull/37) thanks to @geerteltink and @Ocramius
 ## 1.3.0 - 2020-08-26
 
 ### Added
