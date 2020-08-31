@@ -99,12 +99,9 @@ JSON
             }))
             ->willReturn($validResponse);
 
-        self::assertEquals(
-            'http://another-domain.com/the-pr',
-            $this->createMilestone->__invoke(
-                RepositoryName::fromFullName('foo/bar'),
-                SemVerVersion::fromMilestoneName('1.2.3')
-            )
+        $this->createMilestone->__invoke(
+            RepositoryName::fromFullName('foo/bar'),
+            SemVerVersion::fromMilestoneName('1.2.3')
         );
     }
 

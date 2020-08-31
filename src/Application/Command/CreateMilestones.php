@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Application\Command;
 
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,22 +16,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class CreateMilestones extends Command
 {
     private LoadCurrentGithubEvent $loadEvent;
-    private GetGithubMilestone $getMilestone;
     private CreateMilestone $createMilestone;
-    private LoggerInterface $logger;
 
     public function __construct(
         LoadCurrentGithubEvent $loadEvent,
-        GetGithubMilestone $getMilestone,
-        CreateMilestone $createMilestone,
-        LoggerInterface $logger
+        CreateMilestone $createMilestone
     ) {
         parent::__construct('laminas:automatic-releases:create-milestones');
 
         $this->loadEvent       = $loadEvent;
-        $this->getMilestone    = $getMilestone;
         $this->createMilestone = $createMilestone;
-        $this->logger          = $logger;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -41,24 +33,19 @@ final class CreateMilestones extends Command
         $milestoneClosedEvent = ($this->loadEvent)();
         $repositoryName       = $milestoneClosedEvent->repository();
         $releaseVersion       = $milestoneClosedEvent->version();
-        $milestone            = ($this->getMilestone)($repositoryName, $milestoneClosedEvent->milestoneNumber());
 
-        $milestone->assertAllIssuesAreClosed();
-
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextPatch(), $output);
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMinor(), $output);
-        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMajor(), $output);
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextPatch());
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMinor());
+        $this->createMilestoneIfNotExists($repositoryName, $releaseVersion->nextMajor());
 
         return 0;
     }
 
-    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version, OutputInterface $output): bool
+    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version): bool
     {
         try {
             ($this->createMilestone)($repositoryName, $version);
         } catch (CreateMilestoneFailed $e) {
-            $this->logger->info($e->getMessage());
-
             return false;
         }
 

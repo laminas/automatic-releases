@@ -156,14 +156,12 @@ use const STDERR;
         ),
         new CreateMilestones(
             $loadEvent,
-            $getMilestone,
             new CreateMilestoneThroughApiCall(
                 $makeRequests,
                 $httpClient,
                 $githubToken,
                 $logger
-            ),
-            $logger
+            )
         ),
     ]);
 
