@@ -63,11 +63,12 @@ class CreateMilestoneTest extends TestCase
 
         $validResponse = (new Response())->withStatus(201);
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "html_url": "http://another-domain.com/the-pr"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "html_url": "http://another-domain.com/the-pr"
+            }
+            JSON
         );
 
         $this
@@ -87,10 +88,10 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "title": "1.2.3"
-}
-JSON
+                    {
+                        "title": "1.2.3"
+                    }
+                    JSON
                     ,
                     $request->getBody()->__toString()
                 );
@@ -116,19 +117,20 @@ JSON
 
         $validResponse = (new Response())->withStatus(422);
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "documentation_url": "https://docs.github.com/rest/reference/issues#create-a-milestone",
-    "errors": [
-        {
-            "code": "already_exists",
-            "field": "title",
-            "resource": "Milestone"
-        }
-    ],
-    "message": "Validation Failed"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "documentation_url": "https://docs.github.com/rest/reference/issues#create-a-milestone",
+                "errors": [
+                    {
+                        "code": "already_exists",
+                        "field": "title",
+                        "resource": "Milestone"
+                    }
+                ],
+                "message": "Validation Failed"
+            }
+            JSON
         );
 
         $this
@@ -148,10 +150,10 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "title": "1.2.3"
-}
-JSON
+                    {
+                        "title": "1.2.3"
+                    }
+                    JSON
                     ,
                     $request->getBody()->__toString()
                 );

@@ -60,11 +60,12 @@ final class CreatePullRequestTest extends TestCase
 
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "url": "http://another-domain.com/the-pr"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "url": "http://another-domain.com/the-pr"
+            }
+            JSON
         );
         $this
             ->httpClient
@@ -83,15 +84,15 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "title": "the-title",
-    "head": "the/source-branch",
-    "base": "the/target-branch",
-    "body": "the-body",
-    "maintainer_can_modify": true,
-    "draft": false
-}
-JSON
+                    {
+                        "title": "the-title",
+                        "head": "the/source-branch",
+                        "base": "the/target-branch",
+                        "body": "the-body",
+                        "maintainer_can_modify": true,
+                        "draft": false
+                    }
+                    JSON
                     ,
                     $request->getBody()->__toString()
                 );

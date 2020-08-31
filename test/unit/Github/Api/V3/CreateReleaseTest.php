@@ -57,11 +57,12 @@ final class CreateReleaseTest extends TestCase
 
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "html_url": "http://another-domain.com/the-pr"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "html_url": "http://another-domain.com/the-pr"
+            }
+            JSON
         );
 
         $this
@@ -81,12 +82,12 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "tag_name": "1.2.3",
-    "name": "1.2.3",
-    "body": "the-body"
-}
-JSON
+                    {
+                        "tag_name": "1.2.3",
+                        "name": "1.2.3",
+                        "body": "the-body"
+                    }
+                    JSON
                     ,
                     $request->getBody()->__toString()
                 );
