@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\V3;
 
-use InvalidArgumentException;
-use Laminas\AutomaticReleases\Git\Value\BranchName;
-use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
+use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneThroughApiCall;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
@@ -15,20 +15,22 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
 
 use function uniqid;
 
-/** @covers \Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall */
-final class SetDefaultBranchThroughApiCallTest extends TestCase
+class CreateMilestoneTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
     private $httpClient;
     /** @var RequestFactoryInterface&MockObject */
     private $messageFactory;
+    /** @var LoggerInterface&MockObject */
+    private $logger;
     /** @psalm-var non-empty-string */
     private string $apiToken;
-    private SetDefaultBranchThroughApiCall $createRelease;
+    private CreateMilestoneThroughApiCall $createMilestone;
 
     protected function setUp(): void
     {
@@ -36,15 +38,17 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
+        $this->logger         = $this->createMock(LoggerInterface::class);
         $apiToken             = uniqid('apiToken', true);
 
         Assert::notEmpty($apiToken);
 
-        $this->apiToken      = $apiToken;
-        $this->createRelease = new SetDefaultBranchThroughApiCall(
+        $this->apiToken        = $apiToken;
+        $this->createMilestone = new CreateMilestoneThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
+            $this->logger
         );
     }
 
@@ -53,13 +57,18 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
         $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
-            ->with('PATCH', 'https://api.github.com/repos/foo/bar')
+            ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
             ->willReturn(new Request('https://the-domain.com/the-path'));
 
-        $validResponse = new Response();
+        $validResponse = (new Response())->withStatus(201);
 
-        $validResponse->getBody()
-            ->write('{"default_branch": "foo-bar-baz"}');
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "html_url": "http://another-domain.com/the-pr"
+            }
+            JSON
+        );
 
         $this->httpClient
             ->expects(self::once())
@@ -76,33 +85,49 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
                 );
 
                 self::assertJsonStringEqualsJsonString(
-                    '{"default_branch": "foo-bar-baz"}',
-                    $request->getBody()
-                        ->__toString()
+                    <<<'JSON'
+                    {
+                        "title": "1.2.3"
+                    }
+                    JSON,
+                    $request->getBody()->__toString()
                 );
 
                 return true;
             }))
             ->willReturn($validResponse);
 
-        $this->createRelease->__invoke(
+        $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            BranchName::fromName('foo-bar-baz')
+            SemVerVersion::fromMilestoneName('1.2.3')
         );
     }
 
-    public function testRequestFailedToSwitchBranch(): void
+    public function testExistingMilestone(): void
     {
         $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
-            ->with('PATCH', 'https://api.github.com/repos/foo/bar')
+            ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
             ->willReturn(new Request('https://the-domain.com/the-path'));
 
-        $validResponse = new Response();
+        $validResponse = (new Response())->withStatus(422);
 
-        $validResponse->getBody()
-            ->write('{"default_branch": "not-what-we-expected"}');
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "documentation_url": "https://docs.github.com/rest/reference/issues#create-a-milestone",
+                "errors": [
+                    {
+                        "code": "already_exists",
+                        "field": "title",
+                        "resource": "Milestone"
+                    }
+                ],
+                "message": "Validation Failed"
+            }
+            JSON
+        );
 
         $this->httpClient
             ->expects(self::once())
@@ -119,21 +144,23 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
                 );
 
                 self::assertJsonStringEqualsJsonString(
-                    '{"default_branch": "foo-bar-baz"}',
-                    $request->getBody()
-                        ->__toString()
+                    <<<'JSON'
+                    {
+                        "title": "1.2.3"
+                    }
+                    JSON,
+                    $request->getBody()->__toString()
                 );
 
                 return true;
             }))
             ->willReturn($validResponse);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('not-what-we-expected');
+        $this->expectException(CreateMilestoneFailed::class);
 
-        $this->createRelease->__invoke(
+        $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            BranchName::fromName('foo-bar-baz')
+            SemVerVersion::fromMilestoneName('1.2.3')
         );
     }
 }

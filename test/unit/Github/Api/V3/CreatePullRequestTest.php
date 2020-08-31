@@ -51,8 +51,7 @@ final class CreatePullRequestTest extends TestCase
 
     public function testSuccessfulRequest(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/pulls')
@@ -60,14 +59,14 @@ final class CreatePullRequestTest extends TestCase
 
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "url": "http://another-domain.com/the-pr"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "url": "http://another-domain.com/the-pr"
+            }
+            JSON
         );
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {
@@ -83,16 +82,15 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "title": "the-title",
-    "head": "the/source-branch",
-    "base": "the/target-branch",
-    "body": "the-body",
-    "maintainer_can_modify": true,
-    "draft": false
-}
-JSON
-                    ,
+                    {
+                        "title": "the-title",
+                        "head": "the/source-branch",
+                        "base": "the/target-branch",
+                        "body": "the-body",
+                        "maintainer_can_modify": true,
+                        "draft": false
+                    }
+                    JSON,
                     $request->getBody()->__toString()
                 );
 

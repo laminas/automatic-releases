@@ -48,8 +48,7 @@ final class CreateReleaseTest extends TestCase
 
     public function testSuccessfulRequest(): void
     {
-        $this
-            ->messageFactory
+        $this->messageFactory
             ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/releases')
@@ -57,15 +56,15 @@ final class CreateReleaseTest extends TestCase
 
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "html_url": "http://another-domain.com/the-pr"
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "html_url": "http://another-domain.com/the-pr"
+            }
+            JSON
         );
 
-        $this
-            ->httpClient
+        $this->httpClient
             ->expects(self::once())
             ->method('sendRequest')
             ->with(self::callback(function (RequestInterface $request): bool {
@@ -81,13 +80,12 @@ JSON
 
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
-{
-    "tag_name": "1.2.3",
-    "name": "1.2.3",
-    "body": "the-body"
-}
-JSON
-                    ,
+                    {
+                        "tag_name": "1.2.3",
+                        "name": "1.2.3",
+                        "body": "the-body"
+                    }
+                    JSON,
                     $request->getBody()->__toString()
                 );
 

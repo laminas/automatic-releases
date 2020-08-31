@@ -158,4 +158,35 @@ final class SemVerVersionTest extends TestCase
             ['1.0.0', '2.0.0', true],
         ];
     }
+
+    /**
+     * @dataProvider nextVersionsProvider
+     * @psalm-param non-empty-string $version
+     * @psalm-param non-empty-string $patch
+     * @psalm-param non-empty-string $minor
+     * @psalm-param non-empty-string $major
+     */
+    public function testNextVersions(string $version, string $patch, string $minor, string $major): void
+    {
+        self::assertEquals($patch, SemVerVersion::fromMilestoneName($version)->nextPatch()->fullReleaseName());
+        self::assertEquals($minor, SemVerVersion::fromMilestoneName($version)->nextMinor()->fullReleaseName());
+        self::assertEquals($major, SemVerVersion::fromMilestoneName($version)->nextMajor()->fullReleaseName());
+    }
+
+    /**
+     * @return string[][]
+     *
+     * @psalm-return non-empty-list<array{non-empty-string, non-empty-string, non-empty-string, non-empty-string}>
+     */
+    public function nextVersionsProvider(): array
+    {
+        return [
+            ['0.0.1', '0.0.2', '0.1.0', '1.0.0'],
+            ['0.1.0', '0.1.1', '0.2.0', '1.0.0'],
+            ['1.0.0', '1.0.1', '1.1.0', '2.0.0'],
+            ['1.0.1', '1.0.2', '1.1.0', '2.0.0'],
+            ['1.1.0', '1.1.1', '1.2.0', '2.0.0'],
+            ['2.0.0', '2.0.1', '2.1.0', '3.0.0'],
+        ];
+    }
 }

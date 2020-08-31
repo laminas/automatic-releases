@@ -54,9 +54,19 @@ final class SemVerVersion
         return $this->minor;
     }
 
+    public function nextPatch(): self
+    {
+        return new self($this->major, $this->minor, $this->patch + 1);
+    }
+
     public function nextMinor(): self
     {
         return new self($this->major, $this->minor + 1, 0);
+    }
+
+    public function nextMajor(): self
+    {
+        return new self($this->major + 1, 0, 0);
     }
 
     public function targetReleaseBranchName(): BranchName

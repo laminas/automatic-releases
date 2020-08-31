@@ -10,7 +10,6 @@ composer-validate:
 	composer validate
 
 static-analysis:
-	vendor/bin/phpstan analyse
 	vendor/bin/psalm
 
 test:
