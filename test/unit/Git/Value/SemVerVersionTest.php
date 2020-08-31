@@ -161,6 +161,10 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @dataProvider nextVersionsProvider
+     * @psalm-param non-empty-string $version
+     * @psalm-param non-empty-string $patch
+     * @psalm-param non-empty-string $minor
+     * @psalm-param non-empty-string $major
      */
     public function testNextVersions(string $version, string $patch, string $minor, string $major): void
     {
@@ -172,7 +176,7 @@ final class SemVerVersionTest extends TestCase
     /**
      * @return string[][]
      *
-     * @psalm-return non-empty-list<array{string, string, string, string}>
+     * @psalm-return non-empty-list<array{non-empty-string, non-empty-string, non-empty-string, non-empty-string}>
      */
     public function nextVersionsProvider(): array
     {
