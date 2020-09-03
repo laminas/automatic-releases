@@ -9,6 +9,8 @@ use Phly\KeepAChangelog\Common\ChangelogEntry;
 use RuntimeException;
 use Webmozart\Assert\Assert;
 
+use function rtrim;
+
 /**
  * @psalm-immutable
  */
@@ -33,10 +35,12 @@ class ChangelogReleaseNotes
 
         Assert::notNull($releaseNotes->changelogEntry);
 
+        $changelogEntry = rtrim($releaseNotes->contents, "\n") . "\n\n";
+
         $editor = new ChangelogEditor();
         $editor->update(
             $changelogFile,
-            $releaseNotes->contents,
+            $changelogEntry,
             $releaseNotes->changelogEntry
         );
     }
