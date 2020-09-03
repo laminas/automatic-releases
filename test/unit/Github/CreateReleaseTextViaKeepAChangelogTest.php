@@ -109,22 +109,6 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             ### Added
             
             - Everything.
-            
-            ### Changed
-            
-            - Nothing.
-            
-            ### Deprecated
-            
-            - Nothing.
-            
-            ### Removed
-            
-            - Nothing.
-            
-            ### Fixed
-            
-            - Nothing.
             END, $date);
 
         self::assertStringContainsString(
@@ -135,6 +119,43 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
+                    $workingPath
+                )
+                ->contents()
+        );
+    }
+
+    public function testExtractsNonEmptySectionsForVersionViaChangelogFile(): void
+    {
+        $date              = $this->clock->now()->format('Y-m-d');
+        $changelogContents = sprintf(self::CHANGELOG_MULTI_SECTION, $date);
+        $repositoryPath    = $this->createMockRepositoryWithChangelog(
+            $changelogContents,
+            'CHANGELOG.md',
+            '2.3.x'
+        );
+        $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
+
+        $expected = sprintf(<<< 'END'
+            ## 2.3.12 - %s
+            
+            ### Added
+            
+            - Something.
+
+            ### Fixed
+
+            - Several things
+            END, $date);
+
+        self::assertStringContainsString(
+            $expected,
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+                ->__invoke(
+                    $this->createMockMilestone(),
+                    RepositoryName::fromFullName('example/repo'),
+                    SemVerVersion::fromMilestoneName('2.3.12'),
+                    BranchName::fromName('2.3.x'),
                     $workingPath
                 )
                 ->contents()
@@ -163,7 +184,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
      */
     private function createMockRepositoryWithChangelog(
         string $template,
-        string $filename = 'CHANGELOG.md'
+        string $filename = 'CHANGELOG.md',
+        string $initialBranch = '1.0.x'
     ): string {
         $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
         Assert::notEmpty($repo);
@@ -181,7 +203,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
         (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
         (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
-        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+        (new Process(['git', 'switch', '-c', $initialBranch], $repo))->mustRun();
 
         return $repo;
     }
@@ -238,6 +260,57 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         ### Fixed
         
         - Nothing.
+        
+        ## 0.1.0 - 2019-01-01
+        
+        ### Added
+        
+        - Everything.
+        
+        ### Changed
+        
+        - Nothing.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Nothing.
+        
+        ### Fixed
+        
+        - Nothing.
+
+        END;
+
+    private const CHANGELOG_MULTI_SECTION = <<< 'END'
+        # Changelog
+        
+        All notable changes to this project will be documented in this file, in reverse chronological order by release.
+                
+        ## 2.3.12 - %s
+        
+        ### Added
+        
+        - Something.
+        
+        ### Changed
+        
+        - Nothing.
+        
+        ### Deprecated
+        
+        - Nothing.
+        
+        ### Removed
+        
+        - Nothing.
+        
+        ### Fixed
+        
+        - Several things
         
         ## 0.1.0 - 2019-01-01
         
