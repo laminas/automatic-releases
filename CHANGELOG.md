@@ -2,27 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.6.0 - TBD
+## 1.6.0 - 2020-09-03
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.6.0](https://github.com/laminas/automatic-releases/milestone/16)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.6.0
 
-- Nothing.
+- Total issues resolved: **3**
+- Total pull requests resolved: **3**
+- Total contributors: **1**
 
-### Removed
+#### Enhancement
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [68: Strip empty sections from keep-a-changelog release notes](https://github.com/laminas/automatic-releases/pull/68) thanks to @weierophinney
+ - [67: Normalize generated text to strip extra lines and redundant version information](https://github.com/laminas/automatic-releases/pull/67) thanks to @weierophinney
+ - [66: End changelog version entry with empty line](https://github.com/laminas/automatic-releases/pull/66) thanks to @weierophinney
 
 ## 1.5.0 - 2020-08-31
 
