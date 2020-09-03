@@ -19,6 +19,7 @@ final class CreateChangelogTextTest extends TestCase
         $generatedReleaseNotes = <<< 'NOTES'
             -----
 
+
             2.12.3
             ======
 
@@ -26,10 +27,13 @@ final class CreateChangelogTextTest extends TestCase
             - Total pull requests resolved: 1
             - Total contributors: 1
 
+
             -----
+
 
             Bug
             ---
+
 
             - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
 
@@ -38,7 +42,7 @@ final class CreateChangelogTextTest extends TestCase
         $generateChangelog = $this->createMock(GenerateChangelog::class);
 
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
-        $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');
+        $semVerVersion  = SemVerVersion::fromMilestoneName('2.12.3');
 
         $generateChangelog->expects(self::once())
             ->method('__invoke')
@@ -52,8 +56,6 @@ final class CreateChangelogTextTest extends TestCase
                 The description
                 
                 -----
-                
-                ### 2.12.3
                 
                 - Total issues resolved: 0
                 - Total pull requests resolved: 1
@@ -118,7 +120,7 @@ final class CreateChangelogTextTest extends TestCase
                     ]),
                     $repositoryName,
                     $semVerVersion,
-                    BranchName::fromName('1.0.x'),
+                    BranchName::fromName('2.12.x'),
                     __DIR__
                 )
                 ->contents()
