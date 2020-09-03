@@ -18,6 +18,7 @@ use Phly\KeepAChangelog\Exception\ExceptionInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
+use function array_reduce;
 use function count;
 use function explode;
 use function implode;
@@ -25,33 +26,17 @@ use function preg_match;
 use function preg_quote;
 use function preg_replace;
 use function sprintf;
-use function str_replace;
 
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
-    private const DEFAULT_CONTENTS = <<< 'CONTENTS'
-        ### Added
-        
-        - Nothing.
-        
-        ### Changed
-        
-        - Nothing.
-        
-        ### Deprecated
-        
-        - Nothing.
-        
-        ### Removed
-        
-        - Nothing.
-        
-        ### Fixed
-        
-        - Nothing.
-        
-        CONTENTS;
-
+    /** @psalm-var list<string> */
+    private const DEFAULT_SECTIONS = [
+        'Added',
+        'Changed',
+        'Deprecated',
+        'Removed',
+        'Fixed',
+    ];
 
     private ChangelogExists $changelogExists;
     private Clock $clock;
@@ -152,7 +137,15 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
      */
     private function removeDefaultContents(string $changelog): string
     {
-        $contents = str_replace(self::DEFAULT_CONTENTS, '', $changelog);
+        $contents = array_reduce(
+            self::DEFAULT_SECTIONS,
+            static fn (string $changelog, string $section): string => preg_replace(
+                "/\n\#{3} " . $section . "\n\n- Nothing.\n/s",
+                '',
+                $changelog
+            ),
+            $changelog
+        );
         Assert::notEmpty($contents);
 
         return $contents;
