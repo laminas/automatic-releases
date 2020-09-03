@@ -98,7 +98,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $contents = file_get_contents($filename);
 
         $this->assertStringContainsString($requiredString, $contents);
-        $this->assertStringContainsString($releaseNotes->contents(), $contents);
+        $this->assertStringContainsString($releaseNotes->contents() . "\n", $contents);
     }
 
     public function testMergeRaisesExceptionIfBothCurrentAndNextInstanceContainChangelogEntries(): void
