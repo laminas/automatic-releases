@@ -16,6 +16,8 @@ use function array_keys;
 use function explode;
 use function implode;
 use function preg_match;
+use function preg_quote;
+use function preg_replace;
 use function str_replace;
 use function strtr;
 use function trim;
@@ -48,10 +50,13 @@ MARKDOWN;
         $replacements = [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
-            '%changelogText%' => $this->normalizeChangelogHeadings($this->generateChangelog->__invoke(
-                $repositoryName,
-                $semVerVersion
-            )),
+            '%changelogText%' => $this->normalizeChangelog(
+                $this->generateChangelog->__invoke(
+                    $repositoryName,
+                    $semVerVersion
+                ),
+                $semVerVersion->fullReleaseName()
+            ),
         ];
 
         $text = str_replace(
@@ -78,6 +83,15 @@ MARKDOWN;
     private function markdownLink(string $text, UriInterface $uri): string
     {
         return '[' . $text . '](' . $uri->__toString() . ')';
+    }
+
+    private function normalizeChangelog(string $changelog, string $version): string
+    {
+        $changelog = $this->normalizeChangelogHeadings($changelog);
+        $changelog = $this->removeRedundantVersionHeadings($changelog, $version);
+        $changelog = $this->collapseMultiLineBreaks($changelog);
+
+        return $changelog;
     }
 
     /**
@@ -134,5 +148,15 @@ MARKDOWN;
         }
 
         return implode("\n", $lines);
+    }
+
+    private function collapseMultiLineBreaks(string $text): string
+    {
+        return preg_replace("/\n\n\n+/s", "\n\n", $text);
+    }
+
+    private function removeRedundantVersionHeadings(string $changelog, string $version): string
+    {
+        return preg_replace("/\n\#{3,} " . preg_quote($version, '/') . "\n/s", '', $changelog);
     }
 }
