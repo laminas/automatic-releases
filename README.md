@@ -35,6 +35,11 @@ to your project or organization:
   command, because [changing default branch of a repository currently requires administrative token rights](https://developer.github.com/v3/repos/#update-a-repository).
   You can generate a token from your [personal access tokens page](https://github.com/settings/tokens/new).
 
+The `GITHUB_TOKEN` secret you see in the examples is automatically created for
+you when you enable GitHub Actions. To learn more about how it works, read
+["Authenticating with the GITHUB\_TOKEN"](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
+in the GitHub Docs.
+
 ## Usage
 
 Assuming your project has Github Actions enabled, each time you [**close**](https://developer.github.com/webhooks/event-payloads/#milestone)
