@@ -2,27 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.6.1 - TBD
+## 1.6.1 - 2020-09-04
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.6.1](https://github.com/laminas/automatic-releases/milestone/17)
 
-- Nothing.
+1.6.x bugfix release (patch)
 
-### Deprecated
+### 1.6.1
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
 
-### Removed
+#### Bug,Documentation
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [69: Add all required environment variables to `release-on-milestone-close&hellip;](https://github.com/laminas/automatic-releases/pull/69) thanks to @Ocramius
 
 ## 1.6.0 - 2020-09-03
 
