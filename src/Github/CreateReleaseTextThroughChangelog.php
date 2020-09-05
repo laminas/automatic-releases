@@ -136,7 +136,7 @@ MARKDOWN;
             // We will then remove the current line, as the delimiter is no
             // longer necessary.
             /** @psalm-var "-"|"=" $delimiter */
-            $delimiter = $matches['delim']{0};
+            $delimiter = $matches['delim'][0];
             /** @psalm-var non-empty-string $heading */
             $heading         = strtr($delimiter, ['-' => '####', '=' => '###']);
             $lines[$i - 1]   = $heading . ' ' . $previousLine;
