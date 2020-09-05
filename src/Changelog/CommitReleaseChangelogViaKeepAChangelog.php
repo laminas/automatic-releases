@@ -9,6 +9,7 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
 
@@ -51,7 +52,8 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,
         SemVerVersion $version,
-        BranchName $sourceBranch
+        BranchName $sourceBranch,
+        SecretKeyId $keyId
     ): void {
         if (! $releaseNotes->requiresUpdatingChangelogFile()) {
             // Nothing to commit
@@ -81,7 +83,8 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             $repositoryDirectory,
             $sourceBranch,
             self::CHANGELOG_FILE,
-            $message
+            $message,
+            $keyId
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());

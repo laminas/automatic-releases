@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 interface CommitFile
 {
@@ -17,6 +18,7 @@ interface CommitFile
         string $repositoryDirectory,
         BranchName $sourceBranch,
         string $filename,
-        string $commitMessage
+        string $commitMessage,
+        SecretKeyId $keyId
     ): void;
 }

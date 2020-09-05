@@ -17,12 +17,14 @@ use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function file_get_contents;
 use function mkdir;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -82,6 +84,11 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
 }
 JSON
         );
+
+        $key = (new ImportGpgKeyFromStringViaTemporaryFile())
+            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+
+        $this->variables->method('signingSecretKey')->willReturn($key);
 
         $this->variables->method('githubToken')
             ->willReturn('github-auth-token');

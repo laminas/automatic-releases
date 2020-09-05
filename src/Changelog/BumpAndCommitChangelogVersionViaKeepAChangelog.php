@@ -9,6 +9,7 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Phly\KeepAChangelog\Bump\ChangelogBump;
 use Psr\Log\LoggerInterface;
 use Webmozart\Assert\Assert;
@@ -49,7 +50,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         string $bumpType,
         string $repositoryDirectory,
         SemVerVersion $version,
-        BranchName $sourceBranch
+        BranchName $sourceBranch,
+        SecretKeyId $keyId
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
@@ -75,7 +77,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             $repositoryDirectory,
             $sourceBranch,
             self::CHANGELOG_FILE,
-            $message
+            $message,
+            $keyId
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
