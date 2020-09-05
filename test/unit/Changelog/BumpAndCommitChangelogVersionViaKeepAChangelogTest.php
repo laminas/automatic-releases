@@ -13,6 +13,8 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -38,6 +40,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
     /** @var LoggerInterface&MockObject */
     private $logger;
     private BumpAndCommitChangelogVersionViaKeepAChangelog $bumpAndCommitChangelog;
+    private SecretKeyId $key;
 
     protected function setUp(): void
     {
@@ -52,6 +55,9 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->push,
             $this->logger
         );
+
+        $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
+            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testReturnsEarlyWhenNoChangelogFilePresent(): void
@@ -74,7 +80,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
                 BumpAndCommitChangelogVersion::BUMP_PATCH,
                 $repoDir,
                 $version,
-                $sourceBranch
+                $sourceBranch,
+                $this->key
             )
         );
     }
@@ -173,7 +180,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
                 $bumpType,
                 $repoDir,
                 $version,
-                $sourceBranch
+                $sourceBranch,
+                $this->key
             )
         );
 

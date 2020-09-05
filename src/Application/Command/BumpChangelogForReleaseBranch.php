@@ -64,7 +64,8 @@ final class BumpChangelogForReleaseBranch extends Command
             BumpAndCommitChangelogVersion::BUMP_PATCH,
             $repositoryPath,
             $releaseVersion,
-            $releaseBranch
+            $releaseBranch,
+            $this->environment->signingSecretKey()
         );
 
         return 0;

@@ -7,10 +7,13 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
+use function file_get_contents;
 use function file_put_contents;
 use function mkdir;
 use function Safe\tempnam;
@@ -22,9 +25,13 @@ final class CommitFileViaConsoleTest extends TestCase
 {
     /** @psalm-var non-empty-string */
     private string $checkout;
+    private SecretKeyId $key;
 
     public function setUp(): void
     {
+        $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
+            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+
         $checkout = tempnam(sys_get_temp_dir(), 'CommitFileViaConsoleTestCheckout');
         Assert::notEmpty($checkout);
 
@@ -66,14 +73,21 @@ final class CommitFileViaConsoleTest extends TestCase
         $commitMessage = 'Commit initiated via unit test';
 
         (new CommitFileViaConsole())
-            ->__invoke($this->checkout, BranchName::fromName('1.0.x'), 'README.md', $commitMessage);
+            ->__invoke(
+                $this->checkout,
+                BranchName::fromName('1.0.x'),
+                'README.md',
+                $commitMessage,
+                $this->key
+            );
 
-        $commitDetails = (new Process(['git', 'show', '-1'], $this->checkout))
+        $commitDetails = (new Process(['git', 'show', '-1', '--pretty=raw'], $this->checkout))
             ->mustRun()
             ->getOutput();
 
         self::assertStringContainsString($commitMessage, $commitDetails);
         self::assertStringContainsString('diff --git a/README.md b/README.md', $commitDetails);
+        self::assertStringContainsString('-----BEGIN PGP SIGNATURE-----', $commitDetails);
     }
 
     public function testFailsIfNotOnCorrectBranch(): void
@@ -93,6 +107,12 @@ final class CommitFileViaConsoleTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('different branch');
         (new CommitFileViaConsole())
-            ->__invoke($this->checkout, BranchName::fromName('1.0.x'), 'README.md', 'commit message');
+            ->__invoke(
+                $this->checkout,
+                BranchName::fromName('1.0.x'),
+                'README.md',
+                'commit message',
+                $this->key
+            );
     }
 }

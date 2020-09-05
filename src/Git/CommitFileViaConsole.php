@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -17,7 +18,8 @@ final class CommitFileViaConsole implements CommitFile
         string $repositoryDirectory,
         BranchName $sourceBranch,
         string $filename,
-        string $commitMessage
+        string $commitMessage,
+        SecretKeyId $keyId
     ): void {
         $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
@@ -25,7 +27,7 @@ final class CommitFileViaConsole implements CommitFile
             ->mustRun();
 
         (new Process(
-            ['git', 'commit', '-m', $commitMessage],
+            ['git', 'commit', '-m', $commitMessage, '--gpg-sign=' . $keyId->id()],
             $repositoryDirectory
         ))->mustRun();
     }

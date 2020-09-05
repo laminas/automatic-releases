@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Changelog;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 interface CommitReleaseChangelog
 {
@@ -16,6 +17,7 @@ interface CommitReleaseChangelog
         ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,
         SemVerVersion $version,
-        BranchName $sourceBranch
+        BranchName $sourceBranch,
+        SecretKeyId $keyId
     ): void;
 }

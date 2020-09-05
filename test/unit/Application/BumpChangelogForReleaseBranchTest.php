@@ -14,11 +14,13 @@ use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function file_get_contents;
 use function mkdir;
 use function sys_get_temp_dir;
 use function tempnam;
@@ -67,6 +69,11 @@ class BumpChangelogForReleaseBranchTest extends TestCase
                 "action": "closed"
             }
             JSON);
+
+        $key = (new ImportGpgKeyFromStringViaTemporaryFile())
+            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+
+        $this->environment->method('signingSecretKey')->willReturn($key);
     }
 
     public function testWillBumpChangelogVersion(): void

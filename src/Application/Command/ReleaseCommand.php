@@ -92,7 +92,13 @@ final class ReleaseCommand extends Command
             $repositoryPath
         );
 
-        ($this->commitChangelog)($changelogReleaseNotes, $repositoryPath, $releaseVersion, $releaseBranch);
+        ($this->commitChangelog)(
+            $changelogReleaseNotes,
+            $repositoryPath,
+            $releaseVersion,
+            $releaseBranch,
+            $this->environment->signingSecretKey()
+        );
 
         $tagName = $releaseVersion->fullReleaseName();
 

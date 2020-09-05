@@ -13,6 +13,8 @@ use Laminas\AutomaticReleases\Git\CommitFile;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\FrozenClock;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
@@ -49,6 +51,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     private LoggerInterface $logger;
 
     private CommitReleaseChangelogViaKeepAChangelog $releaseChangelog;
+    private SecretKeyId $key;
 
     protected function setUp(): void
     {
@@ -65,6 +68,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             $this->push,
             $this->logger
         );
+
+        $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
+            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
@@ -95,7 +101,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $releaseNotes,
                 __DIR__,
                 SemVerVersion::fromMilestoneName('0.99.99'),
-                BranchName::fromName('0.99.x')
+                BranchName::fromName('0.99.x'),
+                $this->key
             )
         );
     }
@@ -133,7 +140,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $releaseNotes,
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
-                $branch
+                $branch,
+                $this->key
             )
         );
     }
@@ -209,7 +217,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $releaseNotes,
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
-                BranchName::fromName('1.0.x')
+                BranchName::fromName('1.0.x'),
+                $this->key
             )
         );
 
