@@ -2,27 +2,32 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.7.0 - TBD
+## 1.7.0 - 2020-09-05
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.7.0](https://github.com/laminas/automatic-releases/milestone/18)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.7.0
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **3**
+- Total contributors: **2**
 
-### Removed
+#### Enhancement
 
-- Nothing.
+ - [72: Sign commits, as well as tags](https://github.com/laminas/automatic-releases/pull/72) thanks to @ramsey
 
-### Fixed
+#### Documentation
 
-- Nothing.
+ - [71: docs: add note about how GITHUB&#95;TOKEN is created](https://github.com/laminas/automatic-releases/pull/71) thanks to @ramsey
+
+#### Bug
+
+ - [70: Merge release 1.6.1 into 1.7.x](https://github.com/laminas/automatic-releases/pull/70) thanks to @github-actions[bot]
 
 ## 1.6.1 - 2020-09-04
 
