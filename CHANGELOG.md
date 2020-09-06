@@ -2,27 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.8.0 - TBD
+## 1.8.0 - 2020-09-06
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.8.0](https://github.com/laminas/automatic-releases/milestone/20)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.8.0
 
-- Nothing.
+- Total issues resolved: **1**
+- Total pull requests resolved: **1**
+- Total contributors: **2**
 
-### Removed
+#### Bug,Enhancement
 
-- Nothing.
+ - [73: fix: update phly/keep-a-changelog](https://github.com/laminas/automatic-releases/pull/73) thanks to @ramsey
 
-### Fixed
+#### Bug
 
-- Nothing.
+ - [57: `CHANGELOG.md` bump failed for branch with valid changelog?](https://github.com/laminas/automatic-releases/issues/57) thanks to @Ocramius
 
 ## 1.7.0 - 2020-09-05
 
