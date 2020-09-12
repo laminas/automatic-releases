@@ -12,7 +12,9 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Lcobucci\Clock\FrozenClock;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -27,9 +29,13 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 {
     private FrozenClock $clock;
 
+    /** @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
+
     public function setUp(): void
     {
-        $this->clock = new FrozenClock(new DateTimeImmutable('2020-01-01'));
+        $this->clock  = new FrozenClock(new DateTimeImmutable('2020-01-01'));
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testReportsCannotCreateReleaseTextIfChangelogFileIsMissing(): void
@@ -41,7 +47,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole($this->logger), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -61,7 +67,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole($this->logger), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -82,7 +88,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertTrue(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole($this->logger), $this->clock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -105,15 +111,15 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         $expected = sprintf(<<< 'END'
             ## 1.0.0 - %s
-            
+
             ### Added
-            
+
             - Everything.
             END, $date);
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole($this->logger), $this->clock))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -138,9 +144,9 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         $expected = sprintf(<<< 'END'
             ## 2.3.12 - %s
-            
+
             ### Added
-            
+
             - Something.
 
             ### Fixed
@@ -150,7 +156,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole($this->logger), $this->clock))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -236,102 +242,102 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     private const READY_CHANGELOG = <<< 'END'
         # Changelog
-        
+
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
-                
+
         ## 1.0.0 - %s
-        
+
         ### Added
-        
+
         - Everything.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Nothing.
-        
+
         ## 0.1.0 - 2019-01-01
-        
+
         ### Added
-        
+
         - Everything.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Nothing.
 
         END;
 
     private const CHANGELOG_MULTI_SECTION = <<< 'END'
         # Changelog
-        
+
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
-                
+
         ## 2.3.12 - %s
-        
+
         ### Added
-        
+
         - Something.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Several things
-        
+
         ## 0.1.0 - 2019-01-01
-        
+
         ### Added
-        
+
         - Everything.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Nothing.
 
         END;

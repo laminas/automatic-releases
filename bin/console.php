@@ -38,6 +38,7 @@ use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Monolog\Processor\PsrLogMessageProcessor;
 use PackageVersions\Versions;
 use Symfony\Component\Console\Application;
 
@@ -61,6 +62,7 @@ use const STDERR;
     $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
     $logger    = new Logger('automatic-releases');
     $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
+    $logger->pushProcessor(new PsrLogMessageProcessor('H:i:s.u', true));
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
@@ -72,10 +74,10 @@ use const STDERR;
         $httpClient,
         $githubToken
     ));
-    $changelogExists      = new ChangelogExistsViaConsole();
-    $checkoutBranch       = new CheckoutBranchViaConsole();
-    $commit               = new CommitFileViaConsole();
-    $push                 = new PushViaConsole();
+    $changelogExists      = new ChangelogExistsViaConsole($logger);
+    $checkoutBranch       = new CheckoutBranchViaConsole($logger);
+    $commit               = new CommitFileViaConsole($logger);
+    $push                 = new PushViaConsole($logger);
     $commitChangelog      = new CommitReleaseChangelogViaKeepAChangelog(
         $changelogExists,
         $checkoutBranch,

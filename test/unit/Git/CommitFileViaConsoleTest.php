@@ -9,7 +9,9 @@ use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -26,11 +28,15 @@ final class CommitFileViaConsoleTest extends TestCase
     /** @psalm-var non-empty-string */
     private string $checkout;
     private SecretKeyId $key;
+    /** @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
 
     public function setUp(): void
     {
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
             ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $checkout = tempnam(sys_get_temp_dir(), 'CommitFileViaConsoleTestCheckout');
         Assert::notEmpty($checkout);
@@ -72,7 +78,7 @@ final class CommitFileViaConsoleTest extends TestCase
 
         $commitMessage = 'Commit initiated via unit test';
 
-        (new CommitFileViaConsole())
+        (new CommitFileViaConsole($this->logger))
             ->__invoke(
                 $this->checkout,
                 BranchName::fromName('1.0.x'),
@@ -106,7 +112,7 @@ final class CommitFileViaConsoleTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('different branch');
-        (new CommitFileViaConsole())
+        (new CommitFileViaConsole($this->logger))
             ->__invoke(
                 $this->checkout,
                 BranchName::fromName('1.0.x'),

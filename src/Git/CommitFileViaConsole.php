@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -14,6 +15,13 @@ use function trim;
 
 final class CommitFileViaConsole implements CommitFile
 {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function __invoke(
         string $repositoryDirectory,
         BranchName $sourceBranch,
@@ -23,9 +31,11 @@ final class CommitFileViaConsole implements CommitFile
     ): void {
         $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
+        $this->logger->info('CommitFileViaConsole: git add {filename}', ['filename' => $filename]);
         (new Process(['git', 'add', $filename], $repositoryDirectory))
             ->mustRun();
 
+        $this->logger->info('CommitFileViaConsole: git commit {commitMessage}', ['commitMessage' => $commitMessage]);
         (new Process(
             ['git', 'commit', '-m', $commitMessage, '--gpg-sign=' . $keyId->id()],
             $repositoryDirectory

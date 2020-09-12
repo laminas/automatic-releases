@@ -49,7 +49,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $this->push                   = $this->createMock(Push::class);
         $this->logger                 = $this->createMock(LoggerInterface::class);
         $this->bumpAndCommitChangelog = new BumpAndCommitChangelogVersionViaKeepAChangelog(
-            new ChangelogExistsViaConsole(),
+            new ChangelogExistsViaConsole($this->logger),
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
@@ -71,9 +71,12 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->method('__invoke');
 
         $this->logger
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('info')
-            ->with($this->stringContains('No CHANGELOG.md file detected'));
+            ->withConsecutive(
+                [$this->stringContains('git show origin/{sourceBranch}:CHANGELOG.md')],
+                [$this->stringContains('No CHANGELOG.md file detected')]
+            );
 
         $this->assertNull(
             ($this->bumpAndCommitChangelog)(
@@ -225,29 +228,29 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 
     private const CHANGELOG_STUB = <<< 'CHANGELOG'
         # Changelog
-        
+
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
-        
+
         ## 1.0.1 - 2020-08-06
-        
+
         ### Added
-        
+
         - Nothing.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Fixed a bug.
         CHANGELOG;
 }
