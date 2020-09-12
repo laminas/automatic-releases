@@ -4,7 +4,7 @@ FROM ubuntu:20.04
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-LABEL "com.github.actions.name"="doctrine/automatic-releases"
+LABEL "com.github.actions.name"="laminas/automatic-releases"
 LABEL "com.github.actions.description"="Creates git tags, releases, release branches and merge-up PRs based on closed milestones"
 LABEL "com.github.actions.icon"="check"
 LABEL "com.github.actions.color"="blue"
