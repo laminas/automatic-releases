@@ -28,6 +28,11 @@ to your project or organization:
 - `GIT_AUTHOR_EMAIL` - email address of the author of your releases: can be an email address of a bot account.
 - `SIGNING_SECRET_KEY` - a **password-less** private GPG key in ASCII format, to be used for signing your releases:
   please use a dedicated GPG subkey for this purpose. Unsigned releases are not supported, and won't be supported.
+  To generate a new GPG key use the following commands
+  `gpg2 --full-generate-key` Pick option 4, then type 4096 for key size, select your desired expiry. Fill out the user information and leave the password blank.
+  Once generated it will output something like `gpg: key <Key ID> marked as ultimately trusted` take a note of this Key Id to use in the next step
+  `gpg --output private.key --armor --export-secret-key <Key ID>` This will output the key to the file private.key in the correct format to paste into github. Delete the file once you are done and don't share it with anyone else
+  Optionally you can use `gpg --output public.key --armor --export <Key ID>` to export the corresponding public key. You can publish this key on your project webpage to allow users to verify your signed releases.
 - `ORGANIZATION_ADMIN_TOKEN` - if you use the file from [`examples/.github/workflows/release-on-milestone-closed.yml`](examples/.github/workflows/release-on-milestone-closed.yml),
   then you have to provide a `ORGANIZATION_ADMIN_TOKEN` (with a full repo scope), which is a github token with
   administrative rights over your organization (issued by a user that has administrative rights over your project).
@@ -39,6 +44,12 @@ The `GITHUB_TOKEN` secret you see in the examples is automatically created for
 you when you enable GitHub Actions. To learn more about how it works, read
 ["Authenticating with the GITHUB\_TOKEN"](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
 in the GitHub Docs.
+
+### Branches
+
+You will also need to setup the initial branches used by this project. 
+
+@TODO
 
 ## Usage
 
