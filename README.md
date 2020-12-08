@@ -40,6 +40,46 @@ you when you enable GitHub Actions. To learn more about how it works, read
 ["Authenticating with the GITHUB\_TOKEN"](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
 in the GitHub Docs.
 
+### Setting up GPG keys
+
+#### Using a subkey from an existing GPG key
+
+First open your master key for editing `gpg --edit-key "<YOUR MASTER KEY ID>"` type `addkey` and select signing or s for 
+capabilities. RSA key type is recommended for greatest compatibility. Type `save` to persist the new subkey to your 
+master key. Make a note of the Key ID  as you will need it in the next step.
+
+Next export the new sub key `gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"`  this will be exported to
+the file private.key the ! at the end is important as it limits the export to just the sub key 
+**Delete the file once you are done and don't share it with anyone else**
+
+If your master key is password protected, you will need to remove the password from the subkey before you can add it into
+github settings, you can skip this if your master key is not password protected. 
+
+To remove the password from the subkey create a ephemeral gpg home directory `mkdir /tmp/gpg` and ensure that it works with gpg 
+`gpg --homedir /tmp/gpg --list-keys` You can ignore the warning about unsafe directory permissions. 
+Import your subkey `gpg --homedir /tmp/gpg --import private.key` and enter edit mode `gpg --homedir /tmp/gpg --edit-key <SubKey ID>` 
+type `passwd` entering your current password and then set the password to "" to remove it. 
+Type `save` to exit edit mode and reexport your subkey `gpg --homedir /tmp/gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"`. 
+Finally, remove the ephemeral directory: `rm --rf /tmp/gpg`  
+
+You will now need to do `gpg --output public.key --armor --export <YOUR MASTER KEY ID>` to export your master public key
+with the new subkey public key to the file `public.key`. Then republish it to anywhere that you currently publish your public keys
+
+#### Using a new key
+
+To generate a new GPG key use the following command `gpg2 --full-generate-key` Pick option 4, then type 4096 for key size, select your desired expiry. 
+Fill out the user information and leave the password blank.
+
+Once generated it will output something like `gpg: key <Key ID> marked as ultimately trusted` take a note of this Key Id to use in the next step.
+
+`gpg --output private.key --armor --export-secret-key <Key ID>` This will output the key to the file `private.key` in the correct format to put into the environment
+variable required for setup. **Delete the file once you are done and don't share it with anyone else**
+
+Optionally you can use `gpg --output public.key --armor --export <Key ID>` to export the corresponding public key to the file `public.key`. 
+You can publish this key on your project webpage to allow users to verify your signed releases.
+
+You could sign this new key with your personal key and the keys of other project maintainers to establish its provenance.
+
 ## Usage
 
 Assuming your project has Github Actions enabled, each time you [**close**](https://developer.github.com/webhooks/event-payloads/#milestone)
