@@ -24,16 +24,12 @@ To get started you need to create a branch for the next release. e.g. if your ne
 Then add following [secrets](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
 to your project or organization:
 
-- `GIT_AUTHOR_NAME` - full name of the author of your releases: can be the name of a bot account.
-- `GIT_AUTHOR_EMAIL` - email address of the author of your releases: can be an email address of a bot account.
-- `SIGNING_SECRET_KEY` - a **password-less** private GPG key in ASCII format, to be used for signing your releases:
-  please use a dedicated GPG subkey for this purpose. Unsigned releases are not supported, and won't be supported.
-- `ORGANIZATION_ADMIN_TOKEN` - if you use the file from [`examples/.github/workflows/release-on-milestone-closed.yml`](examples/.github/workflows/release-on-milestone-closed.yml),
-  then you have to provide a `ORGANIZATION_ADMIN_TOKEN` (with a full repo scope), which is a github token with
-  administrative rights over your organization (issued by a user that has administrative rights over your project).
-  This is required for the `laminas:automatic-releases:switch-default-branch-to-next-minor`
-  command, because [changing default branch of a repository currently requires administrative token rights](https://developer.github.com/v3/repos/#update-a-repository).
-  You can generate a token from your [personal access tokens page](https://github.com/settings/tokens/new).
+| Secret | Description |
+| ------ | ----------- |
+| `GIT_AUTHOR_NAME` | full name of the author of your releases: can be the name of a bot account. |
+| `GIT_AUTHOR_EMAIL` | email address of the author of your releases: can be an email address of a bot account. |
+| `SIGNING_SECRET_KEY` | a **password-less** private GPG key in ASCII format, to be used for signing your releases: please use a dedicated GPG subkey for this purpose. Unsigned releases are not supported, and won't be supported. |
+| `ORGANIZATION_ADMIN_TOKEN` | if you use the file from [`examples/.github/workflows/release-on-milestone-closed.yml`](examples/.github/workflows/release-on-milestone-closed.yml), then you have to provide a `ORGANIZATION_ADMIN_TOKEN` (with a full repo scope), which is a github token with administrative rights over your organization (issued by a user that has administrative rights over your project). This is required for the `laminas:automatic-releases:switch-default-branch-to-next-minor` command, because [changing default branch of a repository currently requires administrative token rights](https://developer.github.com/v3/repos/#update-a-repository). You can generate a token from your [personal access tokens page](https://github.com/settings/tokens/new). |
 
 The `GITHUB_TOKEN` secret you see in the examples is automatically created for
 you when you enable GitHub Actions. To learn more about how it works, read
@@ -44,40 +40,104 @@ in the GitHub Docs.
 
 #### Using a subkey from an existing GPG key
 
-First open your master key for editing `gpg --edit-key "<YOUR MASTER KEY ID>"` type `addkey` and select signing or s for 
-capabilities. RSA key type is recommended for greatest compatibility. Type `save` to persist the new subkey to your 
-master key. Make a note of the Key ID  as you will need it in the next step.
+First open your master key for editing:
 
-Next export the new sub key `gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"`  this will be exported to
-the file private.key the ! at the end is important as it limits the export to just the sub key 
+```bash
+gpg --edit-key "<YOUR MASTER KEY ID>"
+```
+
+Type `addkey` and select signing or s for capabilities. RSA key type is recommended for greatest compatibility.
+Type `save` to persist the new subkey to your master key. Make a note of the Key ID  as you will need it in the next step.
+
+Next export the new sub key:
+
+```bash
+gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
+```
+This will be exported to the file `private.key`.
+The `!` at the end is important as it limits the export to just the sub key
+
 **Delete the file once you are done and don't share it with anyone else**
 
-If your master key is password protected, you will need to remove the password from the subkey before you can add it into
-github settings, you can skip this if your master key is not password protected. 
+If your master key is password protected, you will need to remove the password from the subkey before you can add it into github settings.
+You can skip this if your master key is not password protected. 
 
-To remove the password from the subkey create a ephemeral gpg home directory `mkdir /tmp/gpg` and ensure that it works with gpg 
-`gpg --homedir /tmp/gpg --list-keys` You can ignore the warning about unsafe directory permissions. 
-Import your subkey `gpg --homedir /tmp/gpg --import private.key` and enter edit mode `gpg --homedir /tmp/gpg --edit-key <SubKey ID>` 
-type `passwd` entering your current password and then set the password to "" to remove it. 
-Type `save` to exit edit mode and reexport your subkey `gpg --homedir /tmp/gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"`. 
-Finally, remove the ephemeral directory: `rm --rf /tmp/gpg`  
+To remove the password from the subkey, create an ephemeral gpg home directory:
 
-You will now need to do `gpg --output public.key --armor --export <YOUR MASTER KEY ID>` to export your master public key
-with the new subkey public key to the file `public.key`. Then republish it to anywhere that you currently publish your public keys
+```bash
+mkdir /tmp/gpg
+```
+
+Ensure that it works with gpg:
+
+```bash
+gpg --homedir /tmp/gpg --list-keys
+```
+
+You can ignore the warning about unsafe directory permissions. 
+
+Import your subkey:
+
+```bash
+gpg --homedir /tmp/gpg --import private.key
+```
+
+Enter edit mode:
+
+```bash
+gpg --homedir /tmp/gpg --edit-key <SubKey ID>
+```
+
+Type `passwd`, entering your current password and then set the password to "" to remove it.
+
+Type `save` to exit edit mode and re-export your subkey:
+
+```bash
+gpg --homedir /tmp/gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
+```
+
+Finally, remove the ephemeral directory:
+
+```bash
+rm --rf /tmp/gpg
+```
+
+You will now need to export your master public key with the new subkey public key to the file `public.key`:
+
+```bash
+gpg --output public.key --armor --export <YOUR MASTER KEY ID>
+```
+
+Then republish it to anywhere that you currently publish your public keys.
 
 #### Using a new key
 
-To generate a new GPG key use the following command `gpg2 --full-generate-key` Pick option 4, then type 4096 for key size, select your desired expiry. 
+To generate a new GPG key use the following command:
+
+```bash
+gpg2 --full-generate-key
+```
+
+Pick option 4, then type `4096` for key size, select your desired expiry. 
 Fill out the user information and leave the password blank.
 
-Once generated it will output something like `gpg: key <Key ID> marked as ultimately trusted` take a note of this Key Id to use in the next step.
+Once generated it will output something like `gpg: key <Key ID> marked as ultimately trusted`. Take a note of this Key Id to use in the next step.
 
-`gpg --output private.key --armor --export-secret-key <Key ID>` This will output the key to the file `private.key` in the correct format to put into the environment
-variable required for setup. **Delete the file once you are done and don't share it with anyone else**
+Now output the key to the file `private.key` in the correct format to put into the environment variable required for setup:
 
-Optionally you can use `gpg --output public.key --armor --export <Key ID>` to export the corresponding public key to the file `public.key`. 
+```bash
+gpg --output private.key --armor --export-secret-key <Key ID>
+```
+
+**Delete the file once you are done and don't share it with anyone else**
+
+Optionally, you can export the corresponding public key to the file `public.key`:
+
+```bash
+gpg --output public.key --armor --export <Key ID>
+```
+
 You can publish this key on your project webpage to allow users to verify your signed releases.
-
 You could sign this new key with your personal key and the keys of other project maintainers to establish its provenance.
 
 ## Usage
