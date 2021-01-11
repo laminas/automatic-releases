@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\WebApplication;
 
+use DateTimeZone;
 use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -88,7 +89,7 @@ use const STDERR;
         $httpClient
     ));
     $createReleaseText    = new MergeMultipleReleaseNotes([
-        new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock()),
+        new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock(new DateTimeZone('UTC'))),
         $createCommitText,
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
