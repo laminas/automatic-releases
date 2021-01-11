@@ -1,0 +1,21 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: "Simulate Docker Build"
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * *' # run daily
+
+jobs:
+  docker-build:
+    name: "Simulate Docker Build"
+
+    runs-on: ${{ matrix.operating-system }}
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Docker Build"
+        run: "docker build ."
