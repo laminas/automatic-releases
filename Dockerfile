@@ -25,7 +25,6 @@ RUN apt update \
         zip \
         php8.0-cli \
         php8.0-curl \
-        php8.0-json \
         php8.0-mbstring \
         php8.0-readline \
         php8.0-xml \
