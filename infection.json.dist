@@ -6,7 +6,8 @@
         ]
     },
     "logs": {
-        "text": "php:\/\/stderr"
+        "text": "php:\/\/stderr",
+        "github": true
     },
     "mutators": {
         "@default": true
