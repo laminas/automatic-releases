@@ -106,7 +106,7 @@ use const STDERR;
     );
 
     /** @psalm-suppress DeprecatedClass */
-    $application = new Application(Versions::ROOT_PACKAGE_NAME, Versions::getVersion('laminas/automatic-releases'));
+    $application = new Application(Versions::rootPackageName(), Versions::getVersion('laminas/automatic-releases'));
 
     $application->addCommands([
         new ReleaseCommand(
