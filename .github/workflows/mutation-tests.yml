@@ -21,13 +21,11 @@ jobs:
           - "ubuntu-latest"
 
     steps:
-      - name: "Checkout github.base_ref branch (for diffing)"
-        uses: "actions/checkout@v2"
-        with:
-          ref: ${{ github.base_ref }}
-
       - name: "Checkout"
         uses: "actions/checkout@v2"
+
+      - name: "Fetch github.base_ref (for diffing)"
+        run: git fetch --depth=1 origin +refs/heads/${{github.base_ref}}:refs/remotes/origin/${{github.base_ref}}
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -62,9 +60,7 @@ jobs:
           vendor/bin/roave-infection-static-analysis-plugin \
             --ignore-msi-with-no-mutations \
             --git-diff-filter=AM \
-            --git-diff-base=$GITHUB_BASE_REF
+            --git-diff-base=origin/${{ github.base_ref }}
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-          GITHUB_BASE_REF: ${{ github.base_ref }}
-
