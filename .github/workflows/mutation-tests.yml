@@ -21,6 +21,14 @@ jobs:
           - "ubuntu-latest"
 
     steps:
+      - name: "Load CI environment variables"
+        uses: FranzDiebold/github-env-vars-action@v2
+
+      - name: "Checkout $GITHUB_BASE_REF branch (for diffing)"
+        uses: "actions/checkout@v2"
+        with:
+          ref: ${{ env.GITHUB_BASE_REF }}
+
       - name: "Checkout"
         uses: "actions/checkout@v2"
 
@@ -51,9 +59,6 @@ jobs:
       - name: "Install locked dependencies"
         if: ${{ matrix.dependencies == 'locked' }}
         run: "composer install --no-interaction --no-progress --no-suggest"
-
-      - name: "Load environment variables"
-        uses: FranzDiebold/github-env-vars-action@v2
 
       - name: "Infection"
         run: |
