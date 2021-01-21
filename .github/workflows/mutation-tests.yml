@@ -4,9 +4,6 @@ name: "Mutation tests"
 
 on:
   pull_request:
-  push:
-    branches:
-      - "master"
 
 jobs:
   mutation-tests:
@@ -55,8 +52,15 @@ jobs:
         if: ${{ matrix.dependencies == 'locked' }}
         run: "composer install --no-interaction --no-progress --no-suggest"
 
+      - name: "Load environment variables"
+        uses: FranzDiebold/github-env-vars-action@v2
+
       - name: "Infection"
-        run: "vendor/bin/infection"
+        run: |
+          vendor/bin/roave-infection-static-analysis-plugin \
+            --ignore-msi-with-no-mutations \
+            --git-diff-filter=AM \
+            --git-diff-base="$GITHUB_BASE_REF"
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
