@@ -11,7 +11,7 @@ jobs:
   docker-build:
     name: "Simulate Docker Build"
 
-    runs-on: ${{ matrix.operating-system }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: "Checkout"
