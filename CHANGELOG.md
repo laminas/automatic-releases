@@ -2,27 +2,43 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.9.0 - TBD
+## 1.9.0 - 2021-01-21
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.9.0](https://github.com/laminas/automatic-releases/milestone/22)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.9.0
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **14**
+- Total contributors: **4**
 
-### Removed
+#### Awaiting Author Updates,Enhancement
 
-- Nothing.
+ - [97: Upgraded dependencies, `composer:^2` and `php:^8`, mutation tests CI improvements](https://github.com/laminas/automatic-releases/pull/97) thanks to @Ocramius
 
-### Fixed
+#### Enhancement
 
-- Nothing.
+ - [95: build(deps): Bump doctrine/instantiator from 1.3.1 to 1.4.0](https://github.com/laminas/automatic-releases/pull/95) thanks to @dependabot-preview[bot]
+ - [94: build(deps): Bump sebastian/object-enumerator from 4.0.2 to 4.0.4](https://github.com/laminas/automatic-releases/pull/94) thanks to @dependabot-preview[bot]
+ - [93: build(deps-dev): Bump infection/infection from 0.16.4 to 0.17.5](https://github.com/laminas/automatic-releases/pull/93) thanks to @dependabot-preview[bot]
+ - [92: build(deps): Bump laminas/laminas-diactoros from 2.3.1 to 2.5.0](https://github.com/laminas/automatic-releases/pull/92) thanks to @dependabot-preview[bot]
+ - [89: build(deps): Bump php-http/discovery from 1.9.1 to 1.13.0](https://github.com/laminas/automatic-releases/pull/89) thanks to @dependabot-preview[bot]
+ - [87: build(deps-dev): Bump vimeo/psalm from 3.13.1 to 3.18.2](https://github.com/laminas/automatic-releases/pull/87) thanks to @dependabot-preview[bot]
+ - [85: build(deps-dev): Bump squizlabs/php&#95;codesniffer from 3.5.5 to 3.5.8](https://github.com/laminas/automatic-releases/pull/85) thanks to @dependabot-preview[bot]
+ - [83: build(deps): Bump m4tthumphrey/php-gitlab-api from 9.18.1 to 9.19.2](https://github.com/laminas/automatic-releases/pull/83) thanks to @dependabot-preview[bot]
+ - [82: build(deps): Bump slevomat/coding-standard from 6.3.10 to 6.3.11](https://github.com/laminas/automatic-releases/pull/82) thanks to @dependabot-preview[bot]
+ - [81: build(deps): Bump infection/abstract-testframework-adapter from 0.3.0 to 0.3.1](https://github.com/laminas/automatic-releases/pull/81) thanks to @dependabot-preview[bot]
+ - [80: build(deps-dev): Bump psalm/plugin-phpunit from 0.10.1 to 0.12.2](https://github.com/laminas/automatic-releases/pull/80) thanks to @dependabot-preview[bot]
+
+#### Documentation
+
+ - [77: Update documentation around generating GPG keys to sign releases](https://github.com/laminas/automatic-releases/pull/77) thanks to @carnage
+ - [75: Fix docker actions name label](https://github.com/laminas/automatic-releases/pull/75) thanks to @geerteltink
 
 ## 1.8.0 - 2020-09-06
 
