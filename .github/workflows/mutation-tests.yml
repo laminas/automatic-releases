@@ -21,13 +21,10 @@ jobs:
           - "ubuntu-latest"
 
     steps:
-      - name: "Load CI environment variables"
-        uses: FranzDiebold/github-env-vars-action@v2
-
-      - name: "Checkout $GITHUB_BASE_REF branch (for diffing)"
+      - name: "Checkout github.base_ref branch (for diffing)"
         uses: "actions/checkout@v2"
         with:
-          ref: ${{ env.GITHUB_BASE_REF }}
+          ref: ${{ github.base_ref }}
 
       - name: "Checkout"
         uses: "actions/checkout@v2"
@@ -65,8 +62,9 @@ jobs:
           vendor/bin/roave-infection-static-analysis-plugin \
             --ignore-msi-with-no-mutations \
             --git-diff-filter=AM \
-            --git-diff-base="$GITHUB_BASE_REF"
+            --git-diff-base=$GITHUB_BASE_REF
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
 
