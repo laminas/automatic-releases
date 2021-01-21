@@ -1,4 +1,4 @@
-FROM composer:1 AS composer
+FROM composer:2 AS composer
 
 FROM ubuntu:20.04
 
@@ -23,13 +23,12 @@ RUN apt update \
         gnupg \
         libzip-dev \
         zip \
-        php7.4-cli \
-        php7.4-curl \
-        php7.4-json \
-        php7.4-mbstring \
-        php7.4-readline \
-        php7.4-xml \
-        php7.4-zip \
+        php8.0-cli \
+        php8.0-curl \
+        php8.0-mbstring \
+        php8.0-readline \
+        php8.0-xml \
+        php8.0-zip \
     && apt clean
 
 ADD composer.json /app/composer.json

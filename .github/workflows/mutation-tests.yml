@@ -4,9 +4,6 @@ name: "Mutation tests"
 
 on:
   pull_request:
-  push:
-    branches:
-      - "master"
 
 jobs:
   mutation-tests:
@@ -19,13 +16,16 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "7.4"
+          - "8.0"
         operating-system:
           - "ubuntu-latest"
 
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
+
+      - name: "Fetch github.base_ref (for diffing)"
+        run: git fetch --depth=1 origin +refs/heads/${{github.base_ref}}:refs/remotes/origin/${{github.base_ref}}
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -56,8 +56,11 @@ jobs:
         run: "composer install --no-interaction --no-progress --no-suggest"
 
       - name: "Infection"
-        run: "vendor/bin/infection"
+        run: |
+          vendor/bin/roave-infection-static-analysis-plugin \
+            --ignore-msi-with-no-mutations \
+            --git-diff-filter=AM \
+            --git-diff-base=origin/${{ github.base_ref }}
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-  

@@ -98,8 +98,6 @@ class ChangelogReleaseNotes
             return false;
         }
 
-        $originalContents = (string) $this->changelogEntry->contents();
-
-        return $this->contents !== $originalContents;
+        return $this->contents !== $this->changelogEntry->contents();
     }
 }

@@ -6,11 +6,12 @@
         ]
     },
     "logs": {
-        "text": "php:\/\/stderr"
+        "text": "php:\/\/stderr",
+        "github": true
     },
     "mutators": {
         "@default": true
     },
-    "minMsi": 62,
-    "minCoveredMsi": 62
+    "minMsi": 75,
+    "minCoveredMsi": 77
 }
