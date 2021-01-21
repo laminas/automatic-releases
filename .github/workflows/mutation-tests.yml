@@ -19,7 +19,7 @@ jobs:
         dependencies:
           - "locked"
         php-version:
-          - "7.4"
+          - "8.0"
         operating-system:
           - "ubuntu-latest"
 
@@ -60,4 +60,4 @@ jobs:
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-  
+
