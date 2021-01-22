@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-/app/bin/console.php $@
+exec /app/bin/console.php "$@"
