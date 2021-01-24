@@ -2,27 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.9.1 - TBD
+## 1.9.1 - 2021-01-24
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.9.1](https://github.com/laminas/automatic-releases/milestone/23)
 
-- Nothing.
+1.9.x bugfix release (patch)
 
-### Deprecated
+### 1.9.1
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **2**
+- Total contributors: **1**
 
-### Removed
+#### Bug
 
-- Nothing.
+ - [100: Replace bash wrapper for entrypoint](https://github.com/laminas/automatic-releases/pull/100) thanks to @glensc
 
-### Fixed
+#### Bug,Duplicate
 
-- Nothing.
+ - [98: Update entrypoint for argument quoting](https://github.com/laminas/automatic-releases/pull/98) thanks to @glensc
 
 ## 1.9.0 - 2021-01-21
 
