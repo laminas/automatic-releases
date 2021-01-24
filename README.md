@@ -91,6 +91,9 @@ gpg --homedir gpg-tmp --edit-key <SubKey ID>
 
 Type `passwd`, entering your current password and then set the password to "" to remove it.
 
+The command may give error `error changing passphrase: No secret key` when setting empty password.
+You should ignore it as the password was really removed.
+
 Type `save` to exit edit mode and re-export your subkey:
 
 ```bash
