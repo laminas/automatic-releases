@@ -44,6 +44,4 @@ ADD src /app/src
 
 RUN composer install -a --no-dev
 
-ADD entrypoint.sh /app/entrypoint.sh
-
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/bin/console.php"]
