@@ -46,7 +46,9 @@ First open your master key for editing (use `--list-keys` to find it):
 gpg --edit-key "<YOUR MASTER KEY ID>"
 ```
 
-Type `addkey` and select signing or s for capabilities. RSA key type is recommended for greatest compatibility.
+A signing key type RSA with 3072 bits is recommended for greatest compatibility.
+
+Type `addkey` and select a type that is for signing, you might be asked about bit size depending on your choice.
 Type `save` to persist the new subkey to your master key. Make a note of the Key ID  as you will need it in the next step.
 
 Next export the new sub key:
