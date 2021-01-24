@@ -40,7 +40,7 @@ in the GitHub Docs.
 
 #### Using a subkey from an existing GPG key
 
-First open your master key for editing:
+First open your master key for editing (use `--list-keys` to find it):
 
 ```bash
 gpg --edit-key "<YOUR MASTER KEY ID>"
