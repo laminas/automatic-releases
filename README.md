@@ -68,27 +68,25 @@ You can skip this if your master key is not password protected.
 To remove the password from the subkey, create an ephemeral gpg home directory:
 
 ```bash
-mkdir /tmp/gpg
+install -d -m 700 gpg-tmp
 ```
 
 Ensure that it works with gpg:
 
 ```bash
-gpg --homedir /tmp/gpg --list-keys
+gpg --homedir gpg-tmp --list-keys
 ```
-
-You can ignore the warning about unsafe directory permissions. 
 
 Import your subkey:
 
 ```bash
-gpg --homedir /tmp/gpg --import private.key
+gpg --homedir gpg-tmp --import private.key
 ```
 
 Enter edit mode:
 
 ```bash
-gpg --homedir /tmp/gpg --edit-key <SubKey ID>
+gpg --homedir gpg-tmp --edit-key <SubKey ID>
 ```
 
 Type `passwd`, entering your current password and then set the password to "" to remove it.
@@ -96,13 +94,13 @@ Type `passwd`, entering your current password and then set the password to "" to
 Type `save` to exit edit mode and re-export your subkey:
 
 ```bash
-gpg --homedir /tmp/gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
+gpg --homedir gpg-tmp --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
 ```
 
 Finally, remove the ephemeral directory:
 
 ```bash
-rm --rf /tmp/gpg
+rm --rf gpg-tmp
 ```
 
 You will now need to export your master public key with the new subkey public key to the file `public.key`:
