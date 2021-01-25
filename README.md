@@ -46,8 +46,6 @@ First open your master key for editing (use `--list-keys` to find it):
 gpg --edit-key "<YOUR MASTER KEY ID>"
 ```
 
-A signing key type RSA with 3072 bits is recommended for greatest compatibility.
-
 Type `addkey` and select a type that is for signing, you might be asked about bit size depending on your choice.
 When deciding over key expire, avoid setting to never expire, as recommendation of key bits will change over time.
 Type `save` to persist the new subkey to your master key. Make a note of the Key ID  as you will need it in the next step.
