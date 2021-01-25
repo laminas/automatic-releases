@@ -13,8 +13,12 @@ workflows into your own project:
 cd /tmp
 git clone https://github.com/laminas/automatic-releases.git
 cd /path/to/your/project
-cp -r /tmp/automatic-releases/examples/.github ./.github
-git add .github
+mkdir -p .github/workflows
+# Copy selected flow that fits for your project
+cp /tmp/automatic-releases/examples/.github/release-on-milestone-closed.yml .github/workflows
+# ... or:
+cp /tmp/automatic-releases/examples/.github/release-on-milestone-closed-triggering-release-event.yml .github/workflows
+git add .github/workflows
 git commit -m "Added release automation"
 ```
 
