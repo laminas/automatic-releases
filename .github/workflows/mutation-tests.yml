@@ -3,7 +3,10 @@
 name: "Mutation tests"
 
 on:
+  create:
   pull_request:
+  push:
+    branches:
 
 jobs:
   mutation-tests:
