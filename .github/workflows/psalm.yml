@@ -3,10 +3,10 @@
 name: "Static Analysis by Psalm"
 
 on:
+  create:
   pull_request:
   push:
     branches:
-      - "master"
 
 jobs:
   static-analysis-psalm:

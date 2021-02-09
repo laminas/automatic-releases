@@ -3,10 +3,10 @@
 name: "PHPUnit tests"
 
 on:
+  create:
   pull_request:
   push:
     branches:
-      - "master"
 
 jobs:
   phpunit:
