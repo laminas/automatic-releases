@@ -1,6 +1,6 @@
 FROM composer:2 AS composer
 
-FROM ubuntu:20.04
+FROM php:8.0-alpine
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -15,21 +15,10 @@ LABEL "maintainer"="https://github.com/laminas/technical-steering-committee/"
 
 WORKDIR /app
 
-RUN apt update \
-    && apt install -y software-properties-common \
-    && add-apt-repository -y ppa:ondrej/php \
-    && apt install -y \
-        git \
-        gnupg \
-        libzip-dev \
-        zip \
-        php8.0-cli \
-        php8.0-curl \
-        php8.0-mbstring \
-        php8.0-readline \
-        php8.0-xml \
-        php8.0-zip \
-    && apt clean
+RUN apk add --no-cache git gnupg libzip \
+    && apk add --no-cache --virtual .build-deps libzip-dev \
+    && docker-php-ext-install zip \
+    && apk del .build-deps
 
 ADD composer.json /app/composer.json
 ADD composer.lock /app/composer.lock
