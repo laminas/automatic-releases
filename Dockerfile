@@ -30,6 +30,6 @@ RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --no-autoloader
 COPY bin /app/bin/
 COPY src /app/src/
 
-RUN composer install -a --no-dev
+RUN composer dump-autoload -a --no-dev
 
 ENTRYPOINT ["/app/bin/console.php"]
