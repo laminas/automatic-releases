@@ -2,27 +2,35 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.9.2 - TBD
+## 1.9.2 - 2021-02-25
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.9.2](https://github.com/laminas/automatic-releases/milestone/25)
 
-- Nothing.
+1.9.x bugfix release (patch)
 
-### Deprecated
+### 1.9.2
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **6**
+- Total contributors: **4**
 
-### Removed
+#### Bug
 
-- Nothing.
+ - [116: Fix version comparison algorithm](https://github.com/laminas/automatic-releases/pull/116) thanks to @lcobucci
 
-### Fixed
+#### Enhancement
 
-- Nothing.
+ - [113: Fix workflow trigger to include all branches and tags](https://github.com/laminas/automatic-releases/pull/113) thanks to @core23
+
+#### Documentation,Enhancement
+
+ - [104: Docs clarification on ORGANIZATION&#95;ADMIN&#95;TOKEN for non-organization accounts](https://github.com/laminas/automatic-releases/pull/104) thanks to @asgrim
+ - [103: README: Do not add all possible workflows](https://github.com/laminas/automatic-releases/pull/103) thanks to @glensc
+ - [102: Improve documentation for gpg subkey creation](https://github.com/laminas/automatic-releases/pull/102) thanks to @glensc
+ - [101: Add setting up gpg keys link to SIGNING&#95;SECRET&#95;KEY](https://github.com/laminas/automatic-releases/pull/101) thanks to @glensc
 
 ## 1.9.1 - 2021-01-24
 
