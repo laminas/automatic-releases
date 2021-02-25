@@ -2,27 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.10.0 - TBD
+## 1.10.0 - 2021-02-25
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.10.0](https://github.com/laminas/automatic-releases/milestone/24)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.10.0
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
 
-### Removed
+#### Enhancement
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [115: Reduce docker image size (and build time)](https://github.com/laminas/automatic-releases/pull/115) thanks to @lcobucci
 
 ## 1.9.2 - 2021-02-25
 
