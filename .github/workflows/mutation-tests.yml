@@ -28,6 +28,7 @@ jobs:
         uses: "actions/checkout@v2"
 
       - name: "Fetch github.base_ref (for diffing)"
+        if: ${{ github.base_ref != '' }}
         run: git fetch --depth=1 origin +refs/heads/${{github.base_ref}}:refs/remotes/origin/${{github.base_ref}}
 
       - name: "Install PHP"
@@ -59,11 +60,19 @@ jobs:
         run: "composer install --no-interaction --no-progress --no-suggest"
 
       - name: "Infection"
+        if: ${{ github.base_ref != '' }}
         run: |
           vendor/bin/roave-infection-static-analysis-plugin \
             --ignore-msi-with-no-mutations \
             --git-diff-filter=AM \
             --git-diff-base=origin/${{ github.base_ref }}
+        env:
+          INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+      - name: "Infection"
+        if: ${{ github.base_ref == '' }}
+        run: vendor/bin/roave-infection-static-analysis-plugin --ignore-msi-with-no-mutations
         env:
           INFECTION_BADGE_API_KEY: ${{ secrets.INFECTION_BADGE_API_KEY }}
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
