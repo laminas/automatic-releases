@@ -44,13 +44,14 @@ in the GitHub Docs.
 
 #### Using a subkey from an existing GPG key
 
-First open your master key for editing:
+First open your master key for editing (use `--list-keys` to find it):
 
 ```bash
 gpg --edit-key "<YOUR MASTER KEY ID>"
 ```
 
-Type `addkey` and select signing or s for capabilities. RSA key type is recommended for greatest compatibility.
+Type `addkey` and select a type that is for signing, you might be asked about bit size depending on your choice.
+When deciding over key expire, avoid setting to never expire, as recommendation of key bits will change over time.
 Type `save` to persist the new subkey to your master key. Make a note of the Key ID  as you will need it in the next step.
 
 Next export the new sub key:
@@ -69,41 +70,42 @@ You can skip this if your master key is not password protected.
 To remove the password from the subkey, create an ephemeral gpg home directory:
 
 ```bash
-mkdir /tmp/gpg
+install -d -m 700 gpg-tmp
 ```
 
 Ensure that it works with gpg:
 
 ```bash
-gpg --homedir /tmp/gpg --list-keys
+gpg --homedir gpg-tmp --list-keys
 ```
-
-You can ignore the warning about unsafe directory permissions. 
 
 Import your subkey:
 
 ```bash
-gpg --homedir /tmp/gpg --import private.key
+gpg --homedir gpg-tmp --import private.key
 ```
 
 Enter edit mode:
 
 ```bash
-gpg --homedir /tmp/gpg --edit-key <SubKey ID>
+gpg --homedir gpg-tmp --edit-key <SubKey ID>
 ```
 
 Type `passwd`, entering your current password and then set the password to "" to remove it.
 
+The command may give error `error changing passphrase: No secret key` when setting empty password.
+You should ignore it as the password was really removed.
+
 Type `save` to exit edit mode and re-export your subkey:
 
 ```bash
-gpg --homedir /tmp/gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
+gpg --homedir gpg-tmp --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
 ```
 
 Finally, remove the ephemeral directory:
 
 ```bash
-rm --rf /tmp/gpg
+rm --rf gpg-tmp
 ```
 
 You will now need to export your master public key with the new subkey public key to the file `public.key`:
