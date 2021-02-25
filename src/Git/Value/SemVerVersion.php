@@ -86,6 +86,19 @@ final class SemVerVersion
 
     public function lessThanEqual(self $other): bool
     {
-        return $this->fullReleaseName() <= $other->fullReleaseName();
+        return $this->compare($other) <= 0;
+    }
+
+    private function compare(self $other): int
+    {
+        $comparison = $this->major <=> $other->major;
+
+        if ($comparison !== 0) {
+            return $comparison;
+        }
+
+        $comparison = $this->minor <=> $other->minor;
+
+        return $comparison !== 0 ? $comparison : $this->patch <=> $other->patch;
     }
 }
