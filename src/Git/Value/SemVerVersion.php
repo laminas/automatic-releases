@@ -91,14 +91,6 @@ final class SemVerVersion
 
     private function compare(self $other): int
     {
-        $comparison = $this->major <=> $other->major;
-
-        if ($comparison !== 0) {
-            return $comparison;
-        }
-
-        $comparison = $this->minor <=> $other->minor;
-
-        return $comparison !== 0 ? $comparison : $this->patch <=> $other->patch;
+        return [$this->major, $this->minor, $this->patch] <=> [$other->major, $other->minor, $other->patch];
     }
 }
