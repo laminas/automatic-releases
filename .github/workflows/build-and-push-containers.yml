@@ -5,10 +5,8 @@ on:
     types: [published]
 
 jobs:
-  tags:
+  release-container:
     runs-on: ubuntu-latest
-    outputs:
-      tags: ${{ steps.tags.outputs.tags }}
     steps:
       - name: Compile tag list
         id: tags
@@ -18,12 +16,7 @@ jobs:
           MAJOR="${PREFIX}:$(echo ${TAG} | cut -d. -f1)"
           MINOR="${MAJOR}.$(echo ${TAG} | cut -d. -f2)"
           PATCH="${PREFIX}:${TAG}"
-          echo "::set-output name=tags::${MAJOR}%0A${MINOR}%0A${PATCH}"
-
-  release-container:
-    runs-on: ubuntu-latest
-    needs: [tags]
-    steps:
+          echo "::set-output name=tags::[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup QEMU
@@ -43,5 +36,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ needs.tags.outputs.tags }}
-
+          tags: ${{ join(fromJSON(steps.tags.outputs.tags), "\n") }}
