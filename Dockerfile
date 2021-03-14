@@ -32,4 +32,6 @@ COPY src /app/src/
 
 RUN composer dump-autoload -a --no-dev
 
+ENV SHELL_VERBOSITY=3
+
 ENTRYPOINT ["/app/bin/console.php"]
