@@ -1,0 +1,44 @@
+name: Build and push containers
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compile tag list
+        id: tags
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          PREFIX=ghcr.io/laminas/automatic-releases
+          MAJOR="${PREFIX}:$(echo ${TAG} | cut -d. -f1)"
+          MINOR="${MAJOR}.$(echo ${TAG} | cut -d. -f2)"
+          PATCH="${PREFIX}:${TAG}"
+          echo "::set-output name=tags::[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.AUTOMATIC_RELEASES_CONTAINER_USERNAME }}
+          password: ${{ secrets.AUTOMATIC_RELEASES_CONTAINER_PAT }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ join(fromJSON(steps.tags.outputs.tags), ",") }}
