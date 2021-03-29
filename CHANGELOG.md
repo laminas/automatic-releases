@@ -2,27 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.11.1 - TBD
+## 1.11.1 - 2021-03-29
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.11.1](https://github.com/laminas/automatic-releases/milestone/29)
 
-- Nothing.
+1.11.x bugfix release (patch)
 
-### Deprecated
+### 1.11.1
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
 
-### Removed
+#### Bug
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [127: Use ' instead of &quot;in workflow expression](https://github.com/laminas/automatic-releases/pull/127) thanks to @weierophinney
 
 ## 1.11.0 - 2021-03-29
 
