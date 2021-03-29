@@ -11,7 +11,7 @@ jobs:
       - name: Compile tag list
         id: tags
         run: |
-          TAG=${GITHUB_REF/refs\/tags\//}
+          TAG=${GITHUB_REF#refs/tags/}
           PREFIX=ghcr.io/laminas/automatic-releases
           MAJOR="${PREFIX}:$(echo ${TAG} | cut -d. -f1)"
           MINOR="${MAJOR}.$(echo ${TAG} | cut -d. -f2)"
