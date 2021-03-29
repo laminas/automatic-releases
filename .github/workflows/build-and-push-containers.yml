@@ -27,8 +27,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ secrets.CONTAINER_USERNAME }}
-          password: ${{ secrets.CONTAINER_PAT }}
+          username: ${{ secrets.AUTOMATIC_RELEASES_CONTAINER_USERNAME }}
+          password: ${{ secrets.AUTOMATIC_RELEASES_CONTAINER_PAT }}
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
