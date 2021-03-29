@@ -2,27 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.11.0 - TBD
+## 1.11.0 - 2021-03-29
 
-### Added
 
-- Nothing.
+-----
+
+### Release Notes for [1.11.0](https://github.com/laminas/automatic-releases/milestone/28)
 
 ### Changed
 
-- Nothing.
+- This release modifies the action to both tag a pre-built container, as well as directly use that container within the action, in order to speed up the release process.
 
-### Deprecated
+### 1.11.0
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **3**
+- Total contributors: **3**
 
-### Removed
+#### Enhancement
 
-- Nothing.
+ - [124: Modify action to build and consume container](https://github.com/laminas/automatic-releases/pull/124) thanks to @weierophinney
+ - [117: reduce semver version comparison complexity](https://github.com/laminas/automatic-releases/pull/117) thanks to @bendavies
 
-### Fixed
+#### Bug
 
-- Nothing.
+ - [118: Fix mutation test flow for branches/tags](https://github.com/laminas/automatic-releases/pull/118) thanks to @lcobucci
 
 ## 1.10.0 - 2021-02-25
 
