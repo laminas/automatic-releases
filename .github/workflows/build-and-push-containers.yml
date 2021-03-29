@@ -41,4 +41,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ join(fromJSON(steps.tags.outputs.tags), ",") }}
+          tags: ${{ join(fromJSON(steps.tags.outputs.tags), ',') }}

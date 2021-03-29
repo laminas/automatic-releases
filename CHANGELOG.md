@@ -24,12 +24,17 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
+## 1.11.1 - 2021-03-29
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
+
+#### Bug
+
+ - [127: Use ' instead of &quot;in workflow expression](https://github.com/laminas/automatic-releases/pull/127) thanks to @weierophinney
+
 ## 1.11.0 - 2021-03-29
-
-
------
-
-### Release Notes for [1.11.0](https://github.com/laminas/automatic-releases/milestone/28)
 
 ### Changed
 
