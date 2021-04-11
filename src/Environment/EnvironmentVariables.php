@@ -46,6 +46,14 @@ class EnvironmentVariables implements Variables
     private string $workspacePath;
     /** @psalm-var non-empty-string */
     private string $logLevel;
+    /** @psalm-var non-empty-string */
+    private string $twitterConsumerApiKey;
+    /** @psalm-var non-empty-string */
+    private string $twitterConsumerApiSecret;
+    /** @psalm-var non-empty-string */
+    private string $twitterAaccessToken;
+    /** @psalm-var non-empty-string */
+    private string $twitterAccessTokenSecret;
 
     /**
      * @psalm-param non-empty-string $githubToken
@@ -54,6 +62,10 @@ class EnvironmentVariables implements Variables
      * @psalm-param non-empty-string $githubEventPath
      * @psalm-param non-empty-string $workspacePath
      * @psalm-param non-empty-string $logLevel
+     * @psalm-param non-empty-string $twitterConsumerApiKey
+     * @psalm-param non-empty-string $twitterConsumerApiSecret
+     * @psalm-param non-empty-string $twitterAaccessToken
+     * @psalm-param non-empty-string $twitterAccessTokenSecret
      */
     private function __construct(
         string $githubToken,
@@ -62,14 +74,22 @@ class EnvironmentVariables implements Variables
         string $gitAuthorEmail,
         string $githubEventPath,
         string $workspacePath,
-        string $logLevel
+        string $logLevel,
+        string $twitterAaccessToken,
+        string $twitterAccessTokenSecret,
+        string $twitterConsumerApiKey,
+        string $twitterConsumerApiSecret
     ) {
-        $this->githubToken      = $githubToken;
-        $this->signingSecretKey = $signingSecretKey;
-        $this->gitAuthorName    = $gitAuthorName;
-        $this->gitAuthorEmail   = $gitAuthorEmail;
-        $this->githubEventPath  = $githubEventPath;
-        $this->workspacePath    = $workspacePath;
+        $this->githubToken              = $githubToken;
+        $this->signingSecretKey         = $signingSecretKey;
+        $this->gitAuthorName            = $gitAuthorName;
+        $this->gitAuthorEmail           = $gitAuthorEmail;
+        $this->githubEventPath          = $githubEventPath;
+        $this->workspacePath            = $workspacePath;
+        $this->twitterConsumerApiKey    = $twitterConsumerApiKey;
+        $this->twitterConsumerApiSecret = $twitterConsumerApiSecret;
+        $this->twitterAaccessToken      = $twitterAaccessToken;
+        $this->twitterAccessTokenSecret = $twitterAccessTokenSecret;
 
         /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
         Psl\invariant(
@@ -91,6 +111,10 @@ class EnvironmentVariables implements Variables
             self::getenv('GITHUB_EVENT_PATH'),
             self::getenv('GITHUB_WORKSPACE'),
             self::getenvWithFallback('LOG_LEVEL', 'INFO'),
+            self::getenv('TWITTER_CONSUMER_API_KEY'),
+            self::getenv('TWITTER_CONSUMER_API_SECRET'),
+            self::getenv('TWITTER_ACCESS_TOKEN'),
+            self::getenv('TWITTER_ACCESS_TOKEN_SECRET')
         );
     }
 
@@ -154,5 +178,25 @@ class EnvironmentVariables implements Variables
     public function logLevel(): string
     {
         return $this->logLevel;
+    }
+
+    public function twitterConsumerApiKey(): string
+    {
+        return $this->twitterConsumerApiKey;
+    }
+
+    public function twitterConsumerApiSecret(): string
+    {
+        return $this->twitterConsumerApiSecret;
+    }
+
+    public function twitterAccessToken(): string
+    {
+        return $this->twitterAaccessToken;
+    }
+
+    public function twitterAccessTokenSecret(): string
+    {
+        return $this->twitterAccessTokenSecret;
     }
 }

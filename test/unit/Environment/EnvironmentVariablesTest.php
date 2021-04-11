@@ -25,6 +25,10 @@ final class EnvironmentVariablesTest extends TestCase
         'GIT_AUTHOR_EMAIL',
         'GITHUB_EVENT_PATH',
         'GITHUB_WORKSPACE',
+        'TWITTER_CONSUMER_API_KEY',
+        'TWITTER_CONSUMER_API_SECRET',
+        'TWITTER_ACCESS_TOKEN',
+        'TWITTER_ACCESS_TOKEN_SECRET',
     ];
 
     /** @var array<string, ?string> */
@@ -67,6 +71,10 @@ final class EnvironmentVariablesTest extends TestCase
         $gitAuthorEmail     = 'gitAuthorEmail' . SecureRandom\string(8);
         $githubEventPath    = 'githubEventPath' . SecureRandom\string(8);
         $githubWorkspace    = 'githubWorkspace' . SecureRandom\string(8);
+        $twitterConsumerApiKey    = 'twitterConsumerApiKey' . SecureRandom\string(8);
+        $twitterConsumerApiSecret    = 'twitterConsumerApiSecret' . SecureRandom\string(8);
+        $twitterAaccessToken    = 'twitterAaccessToken' . SecureRandom\string(8);
+        $twitterAccessTokenSecret    = 'twitterAccessTokenSecret' . SecureRandom\string(8);
 
         Env\set_var('GITHUB_TOKEN', $githubToken);
         Env\set_var('SIGNING_SECRET_KEY', $signingSecretKey);
@@ -75,6 +83,13 @@ final class EnvironmentVariablesTest extends TestCase
         Env\set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
         Env\set_var('GITHUB_EVENT_PATH', $githubEventPath);
         Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        Env\set_var('TWITTER_CONSUMER_API_KEY', $twitterConsumerApiKey);
+        Env\set_var('TWITTER_CONSUMER_API_SECRET', $twitterConsumerApiSecret);
+        Env\set_var('TWITTER_ACCESS_TOKEN', $twitterAaccessToken);
+        Env\set_var('TWITTER_ACCESS_TOKEN_SECRET', $twitterAccessTokenSecret);
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
