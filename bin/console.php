@@ -15,6 +15,7 @@ use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\CreateMilestones;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
+use Laminas\AutomaticReleases\Application\Command\TweetReleaseCommand;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
@@ -37,6 +38,8 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Twitter\CreateTweetThroughApiCall;
+use Laminas\Twitter\Twitter;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -164,6 +167,21 @@ use const STDERR;
                 $httpClient,
                 $githubToken,
                 $logger
+            )
+        ),
+        new TweetReleaseCommand(
+            $loadEvent,
+            new CreateTweetThroughApiCall(
+                new Twitter([
+                    'access_token' => [
+                        'token' => $variables->twitterAccessToken(),
+                        'secret' => $variables->twitterAccessTokenSecret(),
+                    ],
+                    'oauth_options' => [
+                        'consumerKey' => $variables->twitterConsumerApiKey(),
+                        'consumerSecret' => $variables->twitterConsumerApiSecret(),
+                    ],
+                ])
             )
         ),
     ]);
