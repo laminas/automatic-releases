@@ -1,0 +1,26 @@
+# name: 'Tweet on Release'
+# on:
+#   release:
+#     types: [released]
+
+# jobs:
+#   tweet:
+#     name: "Tweet on Release"
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: "Tweet"
+#         uses: "./.github/actions/automatic-releases/"
+#         with:
+#           command-name: "laminas:automatic-releases:tweet-on-release"
+#           status: |
+#             Released ${{ github.event.release.name }}
+#             ${{ github.event.release.html_url }}
+#         env:
+#           "TWITTER_CONSUMER_API_KEY": ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+#           "TWITTER_CONSUMER_API_SECRET": ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+#           "TWITTER_ACCESS_TOKEN": ${{ secrets.TWITTER_ACCESS_TOKEN }}
+#           "TWITTER_ACCESS_TOKEN_SECRET": ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+
+# Not yet supported.
