@@ -35,7 +35,7 @@ JSON;
         $tweet = Tweet::fromMilestoneClosedEvent($this->milestoneClosedEvent);
 
         self::assertSame(
-            'Released: foo/bar 1.2.3 https://github.com/laminas/laminas-navigation/releases/tag/1.2.3',
+            'Released: foo/bar 1.2.3 https://github.com/foo/bar/releases/tag/1.2.3',
             $tweet->content()
         );
     }

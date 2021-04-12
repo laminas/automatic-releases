@@ -12,7 +12,7 @@ use function str_replace;
 final class Tweet
 {
     /** @psalm-var non-empty-string */
-    private const TEMPLATE = 'Released: {repository} {version} {link}';
+    private const TEMPLATE = 'Released: {repository} {version} https://github.com/{repository}/releases/tag/{version}';
     /** @psalm-var non-empty-string */
     private string $content;
 
@@ -32,17 +32,13 @@ final class Tweet
     /** @psalm-pure */
     public static function fromMilestoneClosedEvent(MilestoneClosedEvent $event): self
     {
-        $repository = $event->repository()->owner() . '/' . $event->repository()->name();
-        $version    = $event->version()->fullReleaseName();
         /** @psalm-var non-empty-string $content*/
         $content = str_replace([
             '{repository}',
             '{version}',
-            '{link}',
         ], [
-            $repository,
-            $version,
-            'https://github.com/laminas/laminas-navigation/releases/tag/' . $version,
+            $event->repository()->owner() . '/' . $event->repository()->name(),
+            $event->version()->fullReleaseName(),
         ], self::TEMPLATE);
 
         return new self($content);
