@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\NullOutput;
 
 class TweetReleaseCommandTest extends TestCase
 {
-    private TweetReleaseCommand | MockObject $command;
+    private TweetReleaseCommand $command;
 
     private LoadCurrentGithubEvent | MockObject $loadEvent;
 

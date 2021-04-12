@@ -20,8 +20,8 @@ final class CreateTweetThroughApiCallTest extends TestCase
 {
     private Twitter | MockObject $twitter;
     private EnvironmentVariables | MockObject $variables;
-    private CreateTweetThroughApiCall | MockObject $createTweetThroughApiCall;
-    private MilestoneClosedEvent | MockObject $milestoneClosedEvent;
+    private CreateTweetThroughApiCall $createTweetThroughApiCall;
+    private MilestoneClosedEvent $milestoneClosedEvent;
     private HttpResponse | MockObject $httpResponse;
     private TwitterResponse | MockObject $twitterResponse;
 
