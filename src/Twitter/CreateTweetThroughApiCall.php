@@ -30,14 +30,12 @@ final class CreateTweetThroughApiCall
 
         $response = $this->statusesUpdate($tweet);
 
-        Assert::true($response->isSuccess());
+        $responseObject = $response->toValue();
+        Assert::isInstanceOf($responseObject, stdClass::class);
+        Assert::propertyExists($responseObject, 'id');
 
-        $responseJson = $response->toValue();
-
-        Assert::isInstanceOf($responseJson, stdClass::class);
-        Assert::propertyExists($responseJson, 'id');
-
-        $tweetId = $responseJson->id;
+        $tweetId = $responseObject->id;
+        Assert::notNull($tweetId);
         Assert::integer($tweetId);
 
         return new Uri(sprintf('https://twitter.com/i/web/status/%s', $tweetId));
@@ -45,6 +43,10 @@ final class CreateTweetThroughApiCall
 
     private function statusesUpdate(Tweet $tweet): Response
     {
-        return $this->twitter->statusesUpdate($tweet->content());
+        $response = $this->twitter->statusesUpdate($tweet->content());
+
+        Assert::true($response->isSuccess());
+
+        return $response;
     }
 }
