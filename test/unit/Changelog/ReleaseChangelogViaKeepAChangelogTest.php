@@ -62,7 +62,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->logger         = $this->createMock(LoggerInterface::class);
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
-            new ChangelogExistsViaConsole(),
+            new ChangelogExistsViaConsole($this->logger),
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
@@ -80,9 +80,13 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             ->method('__invoke');
 
         $this->logger
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('info')
-            ->with($this->stringContains('No CHANGELOG.md'));
+            ->withConsecutive(
+                [$this->stringContains('git show origin/{sourceBranch}:CHANGELOG.md')],
+                [$this->stringContains('No CHANGELOG.md file detected')]
+            );
+
         $this->commitFile->expects($this->never())->method('__invoke');
         $this->push->expects($this->never())->method('__invoke');
 
@@ -153,27 +157,27 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $expectedChangelog = sprintf(
             <<< 'CHANGELOG'
                 ## 1.0.0 - %s
-                
+
                 ### Added
-                
+
                 - Everything.
-                
+
                 ### Changed
-                
+
                 - Nothing.
-                
+
                 ### Deprecated
-                
+
                 - Nothing.
-                
+
                 ### Removed
-                
+
                 - Nothing.
-                
+
                 ### Fixed
-                
+
                 - Nothing.
-                
+
                 CHANGELOG,
             $this->clock->now()->format('Y-m-d')
         );
@@ -295,30 +299,30 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     private const READY_CHANGELOG = <<< 'END'
         # Changelog
-        
+
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
-                
+
         ## 1.0.0 - %s
-        
+
         ### Added
-        
+
         - Everything.
-        
+
         ### Changed
-        
+
         - Nothing.
-        
+
         ### Deprecated
-        
+
         - Nothing.
-        
+
         ### Removed
-        
+
         - Nothing.
-        
+
         ### Fixed
-        
+
         - Nothing.
-        
+
         END;
 }

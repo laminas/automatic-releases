@@ -7,6 +7,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -23,7 +24,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
         $repository = $this->createMockRepositoryWithChangelog();
         $workingDir = $this->checkoutMockRepositoryWithChangelog($repository);
         self::assertFalse(
-            (new ChangelogExistsViaConsole())(
+            (new ChangelogExistsViaConsole($this->createMock(LoggerInterface::class)))(
                 BranchName::fromName('0.99.x'),
                 $workingDir
             )
@@ -35,7 +36,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
         $repository = $this->createMockRepositoryWithChangelog();
         $workingDir = $this->checkoutMockRepositoryWithChangelog($repository);
         self::assertTrue(
-            (new ChangelogExistsViaConsole())(
+            (new ChangelogExistsViaConsole($this->createMock(LoggerInterface::class)))(
                 BranchName::fromName('1.0.x'),
                 $workingDir
             )
@@ -57,31 +58,31 @@ class ChangelogExistsViaConsoleTest extends TestCase
             sprintf('%s/%s', $repo, 'CHANGELOG.md'),
             <<< 'CHANGELOG'
                 # Changelog
-                
+
                 All notable changes to this project will be documented in this file, in reverse chronological order by release.
-                        
+
                 ## 1.0.0 - %s
-                
+
                 ### Added
-                
+
                 - Everything.
-                
+
                 ### Changed
-                
+
                 - Nothing.
-                
+
                 ### Deprecated
-                
+
                 - Nothing.
-                
+
                 ### Removed
-                
+
                 - Nothing.
-                
+
                 ### Fixed
-                
+
                 - Nothing.
-                
+
                 CHANGELOG
         );
 

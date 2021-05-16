@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\PushViaConsole;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -21,10 +23,14 @@ final class PushViaConsoleTest extends TestCase
     private string $source;
     /** @psalm-var non-empty-string */
     private string $destination;
+    /** @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $source      = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestSource');
         $destination = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestDestination');
@@ -73,7 +79,7 @@ final class PushViaConsoleTest extends TestCase
 
     public function testPushesSelectedGitRef(): void
     {
-        (new PushViaConsole())
+        (new PushViaConsole($this->logger))
             ->__invoke($this->source, 'pushed-branch');
 
         $destinationBranches = (new Process(['git', 'branch'], $this->destination))
@@ -86,7 +92,7 @@ final class PushViaConsoleTest extends TestCase
 
     public function testPushesSelectedGitRefAsAlias(): void
     {
-        (new PushViaConsole())
+        (new PushViaConsole($this->logger))
             ->__invoke($this->source, 'pushed-branch', 'pushed-alias');
 
         $destinationBranches = (new Process(['git', 'branch'], $this->destination))
@@ -103,7 +109,7 @@ final class PushViaConsoleTest extends TestCase
         (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
             ->mustRun();
 
-        (new PushViaConsole())
+        (new PushViaConsole($this->logger))
             ->__invoke($this->source, 'tag-name');
 
         $destinationBranches = (new Process(['git', 'tag'], $this->destination))
@@ -118,7 +124,7 @@ final class PushViaConsoleTest extends TestCase
         (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
             ->mustRun();
 
-        (new PushViaConsole())
+        (new PushViaConsole($this->logger))
             ->__invoke($this->source, 'tag-name', 'pushed-alias');
 
         $destinationBranches = (new Process(['git', 'branch'], $this->destination))

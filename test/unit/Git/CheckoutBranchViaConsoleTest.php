@@ -6,7 +6,9 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 use Webmozart\Assert\Assert;
 
@@ -20,6 +22,8 @@ class CheckoutBranchViaConsoleTest extends TestCase
 {
     /** @psalm-var non-empty-string */
     private string $checkout;
+    /** @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
 
     public function setUp(): void
     {
@@ -56,11 +60,13 @@ class CheckoutBranchViaConsoleTest extends TestCase
             ->mustRun();
 
         $this->assertBranch('1.1.x', 'Setup failed to set initial branch to 1.1.x');
+
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testSwitchesToSpecifiedBranch(): void
     {
-        $checkoutBranch = new CheckoutBranchViaConsole();
+        $checkoutBranch = new CheckoutBranchViaConsole($this->logger);
         $checkoutBranch($this->checkout, BranchName::fromName('1.0.x'));
         $this->assertBranch('1.0.x', 'Failed to checkout 1.0.x branch');
     }
