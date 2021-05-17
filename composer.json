@@ -3,11 +3,6 @@
     "type": "project",
     "description": "Application that eases release management in the Laminas organisation through GitHub actions",
     "license": "BSD-3-Clause",
-    "autoload": {
-        "psr-4": {
-            "Laminas\\AutomaticReleases\\": "src"
-        }
-    },
     "require": {
         "php": "^8.0.0",
         "azjezz/psl": "^1.7.1",
@@ -25,11 +20,6 @@
         "psr/log": "^1.1.3",
         "symfony/console": "^5.2.3"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
-        }
-    },
     "require-dev": {
         "doctrine/coding-standard": "^9.0.0",
         "php-standard-library/psalm-plugin": "^1.1.1",
@@ -41,5 +31,15 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Laminas\\AutomaticReleases\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
+        }
     }
 }
