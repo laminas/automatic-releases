@@ -105,7 +105,7 @@ gpg --homedir gpg-tmp --output private.key --armor --export-secret-subkeys "<Sub
 Finally, remove the ephemeral directory:
 
 ```bash
-rm --rf gpg-tmp
+rm -rf gpg-tmp
 ```
 
 You will now need to export your master public key with the new subkey public key to the file `public.key`:
