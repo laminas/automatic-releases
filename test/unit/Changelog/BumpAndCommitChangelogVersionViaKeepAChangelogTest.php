@@ -17,28 +17,23 @@ use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function dirname;
-use function file_get_contents;
-use function file_put_contents;
-use function Safe\tempnam;
-use function sprintf;
-use function sys_get_temp_dir;
-use function unlink;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 {
     /** @var CheckoutBranch&MockObject */
-    private $checkoutBranch;
+    private MockObject | CheckoutBranch $checkoutBranch;
     /** @var CommitFile&MockObject */
-    private $commitFile;
+    private MockObject | CommitFile $commitFile;
     /** @var Push&MockObject */
-    private $push;
+    private MockObject | Push $push;
     /** @var LoggerInterface&MockObject */
-    private $logger;
+    private LoggerInterface $logger;
     private BumpAndCommitChangelogVersionViaKeepAChangelog $bumpAndCommitChangelog;
     private SecretKeyId $key;
 
@@ -57,7 +52,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testReturnsEarlyWhenNoChangelogFilePresent(): void
@@ -67,22 +62,20 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $version      = SemVerVersion::fromMilestoneName('1.0.1');
 
         $this->checkoutBranch
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('__invoke');
 
         $this->logger
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('info')
-            ->with($this->stringContains('No CHANGELOG.md file detected'));
+            ->with(self::stringContains('No CHANGELOG.md file detected'));
 
-        $this->assertNull(
-            ($this->bumpAndCommitChangelog)(
-                BumpAndCommitChangelogVersion::BUMP_PATCH,
-                $repoDir,
-                $version,
-                $sourceBranch,
-                $this->key
-            )
+        ($this->bumpAndCommitChangelog)(
+            BumpAndCommitChangelogVersion::BUMP_PATCH,
+            $repoDir,
+            $version,
+            $sourceBranch,
+            $this->key
         );
     }
 
@@ -118,54 +111,51 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         string $expectedVersion
     ): void {
         $changelogFile = $this->createMockChangelog();
-        $repoDir       = dirname($changelogFile);
+        $repoDir       = Type\non_empty_string()->assert(Filesystem\get_directory($changelogFile));
         $sourceBranch  = BranchName::fromName($branchName);
         $version       = SemVerVersion::fromMilestoneName('1.0.1');
 
-        Assert::stringNotEmpty($repoDir);
-
         $changelogExists = $this->createMock(ChangelogExists::class);
         $changelogExists
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with($sourceBranch, $repoDir)
             ->willReturn(true);
 
         $this->logger
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('info')
-            ->with($this->stringContains(sprintf(
+            ->with(self::stringContains(Str\format(
                 'Bumped CHANGELOG.md to version %s in branch %s',
                 $expectedVersion,
                 $branchName
             )));
 
         $this->checkoutBranch
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with(
-                $this->equalTo($repoDir),
+                self::equalTo($repoDir),
                 $sourceBranch
             );
 
         $this->commitFile
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
             ->with(
-                $this->equalTo($repoDir),
+                self::equalTo($repoDir),
                 $sourceBranch,
                 'CHANGELOG.md',
-                $this->stringContains(sprintf(
+                self::stringContains(Str\format(
                     'Bumps changelog version to %s',
                     $expectedVersion
                 ))
             );
 
         $this->push
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('__invoke')
-            ->with(
-            );
+            ->with();
 
         $bumpAndCommitChangelog = new BumpAndCommitChangelogVersionViaKeepAChangelog(
             $changelogExists,
@@ -175,21 +165,19 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->logger
         );
 
-        $this->assertNull(
-            $bumpAndCommitChangelog(
-                $bumpType,
-                $repoDir,
-                $version,
-                $sourceBranch,
-                $this->key
-            )
+        $bumpAndCommitChangelog(
+            $bumpType,
+            $repoDir,
+            $version,
+            $sourceBranch,
+            $this->key
         );
 
-        $changelogContents = file_get_contents($changelogFile);
-        $this->assertMatchesRegularExpression(
+        $changelogContents = Filesystem\read_file($changelogFile);
+        self::assertMatchesRegularExpression(
             '/^## ' . $expectedVersion . ' - TBD$/m',
             $changelogContents,
-            sprintf(
+            Str\format(
                 'Could not locate entry for new version %s in file %s',
                 $expectedVersion,
                 $changelogFile
@@ -202,25 +190,23 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
      */
     private function createMockChangelog(): string
     {
-        $repo = tempnam(sys_get_temp_dir(), 'BumpAndCommitChangelogVersion');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'BumpAndCommitChangelogVersion');
 
-        (new Process(['mkdir', '-p', $repo]))->mustRun();
+        Filesystem\delete_file($repo);
+        Filesystem\create_directory($repo);
 
-        $changelogFile = sprintf('%s/CHANGELOG.md', $repo);
-        Assert::stringNotEmpty($changelogFile);
+        $changelogFile = Str\format('%s/CHANGELOG.md', $repo);
 
-        file_put_contents($changelogFile, self::CHANGELOG_STUB);
+        Filesystem\write_file($changelogFile, self::CHANGELOG_STUB);
 
-        (new Process(['git', 'init', '.'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
-        (new Process(['git', 'add', '.'], $repo))->mustRun();
-        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
-        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+        Shell\execute('git', ['init', '.'], $repo);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $repo);
+        Shell\execute('git', ['add', '.'], $repo);
+        Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
+        Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
 
-        return $changelogFile;
+        return Type\non_empty_string()->assert($changelogFile);
     }
 
     private const CHANGELOG_STUB = <<< 'CHANGELOG'

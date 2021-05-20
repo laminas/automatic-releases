@@ -7,14 +7,11 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function file_put_contents;
-use function Safe\tempnam;
-use function sprintf;
-use function sys_get_temp_dir;
-use function unlink;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
 
 class ChangelogExistsViaConsoleTest extends TestCase
 {
@@ -47,14 +44,13 @@ class ChangelogExistsViaConsoleTest extends TestCase
      */
     private function createMockRepositoryWithChangelog(): string
     {
-        $repo = tempnam(sys_get_temp_dir(), 'ChangelogExists');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExists');
+        Filesystem\delete_file($repo);
 
-        (new Process(['mkdir', '-p', $repo]))->mustRun();
+        Filesystem\create_directory($repo);
 
-        file_put_contents(
-            sprintf('%s/%s', $repo, 'CHANGELOG.md'),
+        Filesystem\write_file(
+            Str\format('%s/%s', $repo, 'CHANGELOG.md'),
             <<< 'CHANGELOG'
                 # Changelog
                 
@@ -85,14 +81,14 @@ class ChangelogExistsViaConsoleTest extends TestCase
                 CHANGELOG
         );
 
-        (new Process(['git', 'init', '.'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
-        (new Process(['git', 'add', '.'], $repo))->mustRun();
-        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
-        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+        Shell\execute('git', ['init', '.'], $repo);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $repo);
+        Shell\execute('git', ['add', '.'], $repo);
+        Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
+        Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
 
-        return $repo;
+        return Type\non_empty_string()->assert($repo);
     }
 
     /**
@@ -101,12 +97,11 @@ class ChangelogExistsViaConsoleTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Filesystem\delete_file($repo);
 
-        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
+        Shell\execute('git', ['clone', $origin, $repo]);
 
-        return $repo;
+        return Type\non_empty_string()->assert($repo);
     }
 }

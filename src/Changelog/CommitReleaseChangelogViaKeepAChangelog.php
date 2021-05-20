@@ -10,10 +10,9 @@ use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Psl\Str;
+use Psl\Type;
 use Psr\Log\LoggerInterface;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
 
 final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
 {
@@ -71,13 +70,13 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
 
         ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
 
-        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
-        Assert::stringNotEmpty($changelogFile);
+        $changelogFile = Type\non_empty_string()
+            ->assert(Str\format('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE));
 
         $releaseNotes::writeChangelogFile($changelogFile, $releaseNotes);
 
-        $message = sprintf(self::COMMIT_TEMPLATE, $version->fullReleaseName(), self::CHANGELOG_FILE);
-        Assert::notEmpty($message);
+        $message = Type\non_empty_string()
+            ->assert(Str\format(self::COMMIT_TEMPLATE, $version->fullReleaseName(), self::CHANGELOG_FILE));
 
         ($this->commitFile)(
             $repositoryDirectory,

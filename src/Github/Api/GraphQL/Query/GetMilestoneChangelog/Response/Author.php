@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
 use Laminas\Diactoros\Uri;
+use Psl\Type;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
 
 final class Author
 {
@@ -24,11 +24,10 @@ final class Author
     /** @param array<string, mixed> $payload */
     public static function fromPayload(array $payload): self
     {
-        Assert::isMap($payload);
-        Assert::keyExists($payload, 'login');
-        Assert::keyExists($payload, 'url');
-        Assert::stringNotEmpty($payload['login']);
-        Assert::stringNotEmpty($payload['url']);
+        $payload = Type\shape([
+            'login' => Type\non_empty_string(),
+            'url' => Type\non_empty_string(),
+        ])->coerce($payload);
 
         return new self($payload['login'], new Uri($payload['url']));
     }

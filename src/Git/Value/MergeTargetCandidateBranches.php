@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git\Value;
 
-use function array_filter;
-use function array_reverse;
+use Psl\Iter;
+use Psl\Type;
+use Psl\Vec;
+
 use function array_search;
-use function array_values;
-use function assert;
-use function end;
-use function is_int;
-use function Safe\usort;
 
 final class MergeTargetCandidateBranches
 {
@@ -33,16 +30,15 @@ final class MergeTargetCandidateBranches
 
     public static function fromAllBranches(BranchName ...$branches): self
     {
-        $mergeTargetBranches = array_filter($branches, static function (BranchName $branch): bool {
+        $mergeTargetBranches = Vec\filter($branches, static function (BranchName $branch): bool {
             return $branch->isReleaseBranch();
         });
 
-        usort($mergeTargetBranches, static function (BranchName $a, BranchName $b): int {
+        $mergeTargetBranches = Vec\sort($mergeTargetBranches, static function (BranchName $a, BranchName $b): int {
             return $a->majorAndMinor() <=> $b->majorAndMinor();
         });
 
-        /** @psalm-var non-empty-list<BranchName> $mergeTargetBranches */
-        return new self(array_values($mergeTargetBranches));
+        return new self($mergeTargetBranches);
     }
 
     public function targetBranchFor(SemVerVersion $version): ?BranchName
@@ -69,13 +65,10 @@ final class MergeTargetCandidateBranches
             return null;
         }
 
-        $lastBranch = end($this->sortedBranches);
-
-        assert($lastBranch instanceof BranchName);
-
+        $lastBranch      = Type\object(BranchName::class)->assert(Iter\last($this->sortedBranches));
         $targetBranchKey = array_search($targetBranch, $this->sortedBranches, true);
 
-        $branch = is_int($targetBranchKey)
+        $branch = Type\int()->matches($targetBranchKey)
             ? ($this->sortedBranches[$targetBranchKey + 1] ?? $lastBranch)
             : $lastBranch;
 
@@ -87,24 +80,26 @@ final class MergeTargetCandidateBranches
 
     public function newestReleaseBranch(): ?BranchName
     {
-        return array_reverse($this->sortedBranches)[0] ?? null;
+        return Iter\first(Vec\reverse($this->sortedBranches));
     }
 
     public function newestFutureReleaseBranchAfter(SemVerVersion $version): BranchName
     {
         $nextMinor = $version->nextMinor();
 
-        return array_filter(
-            array_reverse($this->sortedBranches),
+        $futureReleaseBranch = Vec\filter(
+            Vec\reverse($this->sortedBranches),
             static function (BranchName $branch) use ($nextMinor): bool {
                 return $nextMinor->lessThanEqual($branch->targetMinorReleaseVersion());
             }
-        )[0] ?? $nextMinor->targetReleaseBranchName();
+        );
+
+        return Iter\first($futureReleaseBranch) ?? $nextMinor->targetReleaseBranchName();
     }
 
     public function contains(BranchName $needle): bool
     {
-        return (bool) array_filter(
+        return Iter\any(
             $this->sortedBranches,
             static fn (BranchName $branch): bool => $needle->equals($branch)
         );

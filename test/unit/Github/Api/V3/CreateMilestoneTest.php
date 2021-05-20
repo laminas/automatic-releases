@@ -12,22 +12,18 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
-use Webmozart\Assert\Assert;
-
-use function uniqid;
 
 class CreateMilestoneTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
-    private $httpClient;
+    private ClientInterface $httpClient;
     /** @var RequestFactoryInterface&MockObject */
-    private $messageFactory;
-    /** @var LoggerInterface&MockObject */
-    private $logger;
+    private MockObject | RequestFactoryInterface $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
     private CreateMilestoneThroughApiCall $createMilestone;
@@ -36,26 +32,20 @@ class CreateMilestoneTest extends TestCase
     {
         parent::setUp();
 
-        $this->httpClient     = $this->createMock(ClientInterface::class);
-        $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $this->logger         = $this->createMock(LoggerInterface::class);
-        $apiToken             = uniqid('apiToken', true);
-
-        Assert::notEmpty($apiToken);
-
-        $this->apiToken        = $apiToken;
+        $this->httpClient      = $this->createMock(ClientInterface::class);
+        $this->messageFactory  = $this->createMock(RequestFactoryInterface::class);
+        $this->apiToken        = 'apiToken' . SecureRandom\string(8);
         $this->createMilestone = new CreateMilestoneThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken,
-            $this->logger
+            $this->createMock(LoggerInterface::class)
         );
     }
 
     public function testSuccessfulRequest(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -65,7 +55,7 @@ class CreateMilestoneTest extends TestCase
         $validResponse->getBody()->write(
             <<<'JSON'
             {
-                "html_url": "http://another-domain.com/the-pr"
+                "html_url": "https://another-domain.com/the-pr"
             }
             JSON
         );
@@ -107,7 +97,6 @@ class CreateMilestoneTest extends TestCase
     public function testExistingMilestone(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -169,7 +158,6 @@ class CreateMilestoneTest extends TestCase
     public function testMajorMilestone(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/milestones')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -179,7 +167,7 @@ class CreateMilestoneTest extends TestCase
         $validResponse->getBody()->write(
             <<<'JSON'
             {
-                "html_url": "http://another-domain.com/the-pr"
+                "html_url": "https://another-domain.com/the-pr"
             }
             JSON
         );

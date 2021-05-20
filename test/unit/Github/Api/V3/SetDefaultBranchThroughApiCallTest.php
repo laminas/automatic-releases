@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\V3;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
@@ -12,20 +11,19 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Json\Exception\DecodeException;
+use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Webmozart\Assert\Assert;
-
-use function uniqid;
 
 /** @covers \Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchThroughApiCall */
 final class SetDefaultBranchThroughApiCallTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
-    private $httpClient;
+    private ClientInterface $httpClient;
     /** @var RequestFactoryInterface&MockObject */
-    private $messageFactory;
+    private MockObject | RequestFactoryInterface $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
     private SetDefaultBranchThroughApiCall $createRelease;
@@ -36,12 +34,8 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $apiToken             = uniqid('apiToken', true);
-
-        Assert::notEmpty($apiToken);
-
-        $this->apiToken      = $apiToken;
-        $this->createRelease = new SetDefaultBranchThroughApiCall(
+        $this->apiToken       = 'apiToken' . SecureRandom\string(8);
+        $this->createRelease  = new SetDefaultBranchThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken
@@ -51,7 +45,6 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
     public function testSuccessfulRequest(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('PATCH', 'https://api.github.com/repos/foo/bar')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -94,7 +87,6 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
     public function testRequestFailedToSwitchBranch(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('PATCH', 'https://api.github.com/repos/foo/bar')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -128,8 +120,8 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
             }))
             ->willReturn($validResponse);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('not-what-we-expected');
+        $this->expectException(DecodeException::class);
+        $this->expectExceptionMessage('foo-bar-baz');
 
         $this->createRelease->__invoke(
             RepositoryName::fromFullName('foo/bar'),

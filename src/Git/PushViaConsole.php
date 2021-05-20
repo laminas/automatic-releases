@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git;
 
-use Symfony\Component\Process\Process;
-
-use function uniqid;
+use Psl\SecureRandom;
+use Psl\Shell;
 
 final class PushViaConsole implements Push
 {
@@ -16,21 +15,15 @@ final class PushViaConsole implements Push
         ?string $alias = null
     ): void {
         if ($alias === null) {
-            (new Process(['git', 'push', 'origin', $symbol], $repositoryDirectory))
-                ->mustRun();
+            Shell\execute('git', ['push', 'origin', $symbol], $repositoryDirectory);
 
             return;
         }
 
-        $localTemporaryBranch = uniqid('temporary-branch', true);
+        $localTemporaryBranch = 'temporary-branch' . SecureRandom\string(8);
 
-        (new Process(['git', 'branch', $localTemporaryBranch, $symbol], $repositoryDirectory))
-            ->mustRun();
-
-        (new Process(['git', 'push', 'origin', $localTemporaryBranch . ':' . $alias], $repositoryDirectory))
-            ->mustRun();
-
-        (new Process(['git', 'branch', '-D', $localTemporaryBranch], $repositoryDirectory))
-            ->mustRun();
+        Shell\execute('git', ['branch', $localTemporaryBranch, $symbol], $repositoryDirectory);
+        Shell\execute('git', ['push', 'origin', $localTemporaryBranch . ':' . $alias], $repositoryDirectory);
+        Shell\execute('git', ['branch', '-D', $localTemporaryBranch], $repositoryDirectory);
     }
 }

@@ -7,14 +7,11 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function mkdir;
-use function Safe\tempnam;
-use function sys_get_temp_dir;
-use function trim;
-use function unlink;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
 
 class CheckoutBranchViaConsoleTest extends TestCase
 {
@@ -23,37 +20,22 @@ class CheckoutBranchViaConsoleTest extends TestCase
 
     public function setUp(): void
     {
-        $checkout = tempnam(sys_get_temp_dir(), 'CommitFileViaConsoleTestCheckout');
-        Assert::notEmpty($checkout);
+        $checkout = Type\non_empty_string()
+            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'CommitFileViaConsoleTestCheckout'));
 
         $this->checkout = $checkout;
-        unlink($this->checkout);
-        mkdir($this->checkout);
 
-        (new Process(['git', 'init'], $this->checkout))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->checkout))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->checkout))
-            ->mustRun();
+        Filesystem\delete_file($this->checkout);
+        Filesystem\create_directory($this->checkout);
 
-        (new Process(
-            ['git', 'symbolic-ref', 'HEAD', 'refs/heads/1.0.x'],
-            $this->checkout
-        ))
-            ->mustRun();
-
-        (new Process(['touch', 'README.md'], $this->checkout))
-            ->mustRun();
-
-        (new Process(['git', 'add', 'README.md'], $this->checkout))
-            ->mustRun();
-
-        (new Process(['git', 'commit', '-m', 'Initial import'], $this->checkout))
-            ->mustRun();
-
-        (new Process(['git', 'switch', '-c', '1.1.x'], $this->checkout))
-            ->mustRun();
+        Shell\execute('git', ['init'], $this->checkout);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $this->checkout);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $this->checkout);
+        Shell\execute('git', ['symbolic-ref', 'HEAD', 'refs/heads/1.0.x'], $this->checkout);
+        Shell\execute('touch', ['README.md'], $this->checkout);
+        Shell\execute('git', ['add', 'README.md'], $this->checkout);
+        Shell\execute('git', ['commit', '-m', 'Initial import'], $this->checkout);
+        Shell\execute('git', ['switch', '-c', '1.1.x'], $this->checkout);
 
         $this->assertBranch('1.1.x', 'Setup failed to set initial branch to 1.1.x');
     }
@@ -68,11 +50,8 @@ class CheckoutBranchViaConsoleTest extends TestCase
     /** @param non-empty-string $branchName */
     private function assertBranch(string $branchName, string $message = ''): void
     {
-        $process = new Process(['git', 'branch', '--show-current'], $this->checkout);
-        $process->run();
+        $output = Shell\execute('git', ['branch', '--show-current'], $this->checkout);
 
-        self::assertTrue($process->isSuccessful(), 'git branch --show-current failed');
-        $output = $process->getOutput();
-        self::assertEquals($branchName, trim($output), $message);
+        self::assertEquals($branchName, Str\trim($output), $message);
     }
 }

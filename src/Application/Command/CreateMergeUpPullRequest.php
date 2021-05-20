@@ -13,13 +13,13 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequest;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Psl;
+use Psl\Filesystem;
+use Psl\SecureRandom;
+use Psl\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
-use function uniqid;
 
 final class CreateMergeUpPullRequest extends Command
 {
@@ -59,7 +59,7 @@ final class CreateMergeUpPullRequest extends Command
         $event          = $this->loadGithubEvent->__invoke();
         $repositoryPath = $this->variables->githubWorkspacePath();
 
-        Assert::directory($repositoryPath . '/.git');
+        Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
         $this->fetch->__invoke(
             $event->repository()
@@ -74,7 +74,7 @@ final class CreateMergeUpPullRequest extends Command
         $mergeUpTarget  = $mergeCandidates->branchToMergeUp($releaseVersion);
 
         if ($mergeUpTarget === null) {
-            $output->writeln(sprintf(
+            $output->writeln(Str\format(
                 'No merge-up candidate for release %s - skipping pull request creation',
                 $releaseVersion->fullReleaseName()
             ));
@@ -82,16 +82,14 @@ final class CreateMergeUpPullRequest extends Command
             return 0;
         }
 
-        Assert::notNull(
-            $releaseBranch,
-            sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
-        );
+        Psl\invariant($releaseBranch !== null, Str\format('No valid release branch found for version %s', $releaseVersion->fullReleaseName()));
 
         $mergeUpBranch = BranchName::fromName(
             $releaseBranch->name()
             . '-merge-up-into-'
             . $mergeUpTarget->name()
-            . uniqid('_', true) // This is to ensure that a new merge-up pull request is created even if one already exists
+            . '_'
+            . SecureRandom\string(8) // This is to ensure that a new merge-up pull request is created even if one already exists
         );
 
         $releaseNotes = $this->createReleaseText->__invoke(

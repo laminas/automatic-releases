@@ -9,14 +9,10 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
 use Psr\Http\Message\UriInterface;
-use Symfony\Component\Process\Process;
-
-use function file_get_contents;
-use function mkdir;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
 
 /** @covers \Laminas\AutomaticReleases\Git\CreateTagViaConsole */
 final class CreateTagViaConsoleTest extends TestCase
@@ -29,27 +25,20 @@ final class CreateTagViaConsoleTest extends TestCase
         parent::setUp();
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
-        $this->repository = tempnam(sys_get_temp_dir(), 'CreateTagViaConsoleRepository');
+        $this->repository = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateTagViaConsoleRepository');
 
-        unlink($this->repository);
-        mkdir($this->repository);
+        Filesystem\delete_file($this->repository);
+        Filesystem\create_directory($this->repository);
 
-        (new Process(['git', 'init'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'tag-branch'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'commit', '--allow-empty', '-m', 'a commit'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'ignored-branch'], $this->repository))
-            ->mustRun();
-        (new Process(['git', 'commit', '--allow-empty', '-m', 'another commit'], $this->repository))
-            ->mustRun();
+        Shell\execute('git', ['init'], $this->repository);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $this->repository);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $this->repository);
+        Shell\execute('git', ['checkout', '-b', 'tag-branch'], $this->repository);
+        Shell\execute('git', ['commit', '--allow-empty', '-m', 'a commit'], $this->repository);
+        Shell\execute('git', ['checkout', '-b', 'ignored-branch'], $this->repository);
+        Shell\execute('git', ['commit', '--allow-empty', '-m', 'another commit'], $this->repository);
     }
 
     public function testCreatesSignedTag(): void
@@ -68,12 +57,9 @@ final class CreateTagViaConsoleTest extends TestCase
                 $this->key
             );
 
-        (new Process(['git', 'tag', '-v', 'name-of-the-tag'], $this->repository))
-            ->mustRun();
+        Shell\execute('git', ['tag', '-v', 'name-of-the-tag'], $this->repository);
 
-        $fetchedTag = (new Process(['git', 'show', 'name-of-the-tag'], $this->repository))
-            ->mustRun()
-            ->getOutput();
+        $fetchedTag = Shell\execute('git', ['show', 'name-of-the-tag'], $this->repository);
 
         self::assertStringContainsString('tag name-of-the-tag', $fetchedTag);
         self::assertStringContainsString('changelog text for the tag', $fetchedTag);

@@ -11,10 +11,11 @@ use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Psl;
+use Psl\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Assert\Assert;
 
 final class SwitchDefaultBranchToNextMinor extends Command
 {
@@ -51,7 +52,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
         $event          = $this->loadGithubEvent->__invoke();
         $repositoryPath = $this->variables->githubWorkspacePath();
 
-        Assert::directory($repositoryPath . '/.git');
+        Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
         $this->fetch->__invoke(
             $event->repository()

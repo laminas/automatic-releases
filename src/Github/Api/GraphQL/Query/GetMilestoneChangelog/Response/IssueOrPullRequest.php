@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
 use Laminas\Diactoros\Uri;
+use Psl\Type;
+use Psl\Vec;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
-
-use function array_map;
-use function array_values;
 
 /** @psalm-immutable */
 final class IssueOrPullRequest
@@ -52,38 +50,29 @@ final class IssueOrPullRequest
      *
      * @psalm-pure
      *
-     * @psalm-suppress ImpureMethodCall the {@see UriInterface} API is pure by design
+     * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
+     * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromPayload(array $payload): self
     {
-        Assert::keyExists($payload, 'number');
-        Assert::keyExists($payload, 'title');
-        Assert::keyExists($payload, 'author');
-        Assert::keyExists($payload, 'url');
-        Assert::keyExists($payload, 'closed');
-        Assert::keyExists($payload, 'labels');
-        Assert::integer($payload['number']);
-        Assert::greaterThan($payload['number'], 0);
-        Assert::stringNotEmpty($payload['title']);
-        Assert::isMap($payload['author']);
-        Assert::isMap($payload['labels']);
-        Assert::keyExists($payload['labels'], 'nodes');
-        Assert::stringNotEmpty($payload['url']);
-        Assert::boolean($payload['closed']);
-
-        $labels = $payload['labels']['nodes'];
-
-        Assert::isList($labels);
-        Assert::allIsMap($labels);
+        $payload = Type\shape([
+            'number' => Type\positive_int(),
+            'title' => Type\non_empty_string(),
+            'author' => Type\dict(Type\string(), Type\mixed()),
+            'labels' => Type\shape([
+                'nodes' => Type\vec(Type\dict(Type\string(), Type\mixed())),
+            ]),
+            'url' => Type\non_empty_string(),
+            'closed' => Type\bool(),
+            'merged' => Type\optional(Type\bool()),
+        ])->coerce($payload);
 
         return new self(
             $payload['number'],
             $payload['title'],
             Author::fromPayload($payload['author']),
-            array_values(array_map([Label::class, 'fromPayload'], $labels)),
-            isset($payload['merged'])
-                ? (bool) $payload['merged'] || $payload['closed']
-                : $payload['closed'],
+            Vec\map($payload['labels']['nodes'], [Label::class, 'fromPayload']),
+            isset($payload['merged']) ? $payload['merged'] || $payload['closed'] : $payload['closed'],
             new Uri($payload['url'])
         );
     }

@@ -12,24 +12,23 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Lcobucci\Clock\FrozenClock;
+use Lcobucci\Clock\SystemClock;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function date;
-use function file_put_contents;
-use function Safe\tempnam;
-use function sprintf;
-use function sys_get_temp_dir;
-use function unlink;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
 
 class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 {
-    private FrozenClock $clock;
+    private FrozenClock $frozenClock;
+    private SystemClock $systemClock;
 
     public function setUp(): void
     {
-        $this->clock = new FrozenClock(new DateTimeImmutable('2020-01-01'));
+        $this->systemClock = SystemClock::fromSystemTimezone();
+        $this->frozenClock = new FrozenClock(new DateTimeImmutable('2020-01-01'));
     }
 
     public function testReportsCannotCreateReleaseTextIfChangelogFileIsMissing(): void
@@ -41,7 +40,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -54,14 +53,11 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     public function testReportsCannotCreateReleaseTextIfChangelogFileDoesNotContainVersion(): void
     {
-        $repositoryPath = $this->createMockRepositoryWithChangelog(
-            self::INVALID_CHANGELOG,
-            'CHANGELOG.md'
-        );
+        $repositoryPath = $this->createMockRepositoryWithChangelog(self::INVALID_CHANGELOG);
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertFalse(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -74,15 +70,14 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     public function testReportsCanCreateReleaseWhenChangelogWithVersionExists(): void
     {
-        $changelogContents = sprintf(self::READY_CHANGELOG, date('Y-m-d'));
+        $changelogContents = Str\format(self::READY_CHANGELOG, $this->systemClock->now()->format('Y-m-d'));
         $repositoryPath    = $this->createMockRepositoryWithChangelog(
             $changelogContents,
-            'CHANGELOG.md'
         );
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
         self::assertTrue(
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
                 ->canCreateReleaseText(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -95,15 +90,12 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     public function testExtractsReleaseTextViaChangelogFile(): void
     {
-        $date              = $this->clock->now()->format('Y-m-d');
-        $changelogContents = sprintf(self::READY_CHANGELOG, $date);
-        $repositoryPath    = $this->createMockRepositoryWithChangelog(
-            $changelogContents,
-            'CHANGELOG.md'
-        );
+        $date              = $this->frozenClock->now()->format('Y-m-d');
+        $changelogContents = Str\format(self::READY_CHANGELOG, $date);
+        $repositoryPath    = $this->createMockRepositoryWithChangelog($changelogContents);
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = sprintf(<<< 'END'
+        $expected = Str\format(<<< 'END'
             ## 1.0.0 - %s
             
             ### Added
@@ -113,7 +105,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -127,8 +119,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     public function testExtractsNonEmptySectionsForVersionViaChangelogFile(): void
     {
-        $date              = $this->clock->now()->format('Y-m-d');
-        $changelogContents = sprintf(self::CHANGELOG_MULTI_SECTION, $date);
+        $date              = $this->frozenClock->now()->format('Y-m-d');
+        $changelogContents = Str\format(self::CHANGELOG_MULTI_SECTION, $date);
         $repositoryPath    = $this->createMockRepositoryWithChangelog(
             $changelogContents,
             'CHANGELOG.md',
@@ -136,7 +128,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = sprintf(<<< 'END'
+        $expected = Str\format(<<< 'END'
             ## 2.3.12 - %s
             
             ### Added
@@ -150,7 +142,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->clock))
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
                 ->__invoke(
                     $this->createMockMilestone(),
                     RepositoryName::fromFullName('example/repo'),
@@ -175,7 +167,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
             'pullRequests' => [
                 'nodes' => [],
             ],
-            'url'          => 'http://example.com/milestone',
+            'url'          => 'https://example.com/milestone',
         ]);
     }
 
@@ -187,25 +179,20 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         string $filename = 'CHANGELOG.md',
         string $initialBranch = '1.0.x'
     ): string {
-        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Filesystem\delete_file($repo);
+        Filesystem\create_directory($repo);
 
-        (new Process(['mkdir', '-p', $repo]))->mustRun();
+        Filesystem\write_file(Str\format('%s/%s', $repo, $filename), $template);
 
-        file_put_contents(
-            sprintf('%s/%s', $repo, $filename),
-            $template
-        );
+        Shell\execute('git', ['init', '.'], $repo);
+        Shell\execute('git', ['add', '.'], $repo);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $repo);
+        Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
+        Shell\execute('git', ['switch', '-c', $initialBranch], $repo);
 
-        (new Process(['git', 'init', '.'], $repo))->mustRun();
-        (new Process(['git', 'add', '.'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
-        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
-        (new Process(['git', 'switch', '-c', $initialBranch], $repo))->mustRun();
-
-        return $repo;
+        return Type\non_empty_string()->assert($repo);
     }
 
     /**
@@ -214,13 +201,12 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        Filesystem\delete_file($repo);
 
-        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
+        Shell\execute('git', ['clone', $origin, $repo]);
 
-        return $repo;
+        return Type\non_empty_string()->assert($repo);
     }
 
     private const INVALID_CHANGELOG = <<< 'END'

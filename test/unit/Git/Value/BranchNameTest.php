@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Git\Value;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
+use Psl\Type\Exception\AssertException;
 
 final class BranchNameTest extends TestCase
 {
@@ -39,7 +39,7 @@ final class BranchNameTest extends TestCase
 
     public function testDisallowsEmptyBranchName(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(AssertException::class);
 
         BranchName::fromName('');
     }

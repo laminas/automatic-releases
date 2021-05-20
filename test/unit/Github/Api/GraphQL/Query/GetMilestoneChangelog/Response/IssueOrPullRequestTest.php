@@ -18,21 +18,21 @@ final class IssueOrPullRequestTest extends TestCase
             'title'  => 'Yadda',
             'author' => [
                 'login' => 'Magoo',
-                'url'   => 'http://example.com/author',
+                'url'   => 'https://example.com/author',
             ],
-            'url'    => 'http://example.com/issue',
+            'url'    => 'https://example.com/issue',
             'closed' => true,
             'labels' => [
                 'nodes' => [
                     [
                         'name'  => 'BC Break',
                         'color' => 'abcabc',
-                        'url'   => 'http://example.com/bc-break',
+                        'url'   => 'https://example.com/bc-break',
                     ],
                     [
                         'name'  => 'Question',
                         'color' => 'defdef',
-                        'url'   => 'http://example.com/question',
+                        'url'   => 'https://example.com/question',
                     ],
                 ],
             ],
@@ -40,12 +40,12 @@ final class IssueOrPullRequestTest extends TestCase
 
         self::assertSame(123, $issue->number());
         self::assertTrue($issue->closed());
-        self::assertSame('http://example.com/issue', $issue->url()->__toString());
+        self::assertSame('https://example.com/issue', $issue->url()->__toString());
         self::assertSame('Yadda', $issue->title());
         self::assertEquals(
             Author::fromPayload([
                 'login' => 'Magoo',
-                'url'   => 'http://example.com/author',
+                'url'   => 'https://example.com/author',
             ]),
             $issue->author()
         );
@@ -54,12 +54,12 @@ final class IssueOrPullRequestTest extends TestCase
                 Label::fromPayload([
                     'name'  => 'BC Break',
                     'color' => 'abcabc',
-                    'url'   => 'http://example.com/bc-break',
+                    'url'   => 'https://example.com/bc-break',
                 ]),
                 Label::fromPayload([
                     'name'  => 'Question',
                     'color' => 'defdef',
-                    'url'   => 'http://example.com/question',
+                    'url'   => 'https://example.com/question',
                 ]),
             ],
             $issue->labels()

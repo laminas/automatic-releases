@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Value;
 
 use Laminas\Diactoros\Uri;
+use Psl;
+use Psl\Regex;
+use Psl\Str;
+use Psl\Type;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
-
-use function explode;
-use function strtolower;
 
 /** @psalm-immutable */
 final class RepositoryName
@@ -30,23 +30,26 @@ final class RepositoryName
         $this->name  = $name;
     }
 
-    /** @psalm-pure */
+    /**
+     * @psalm-pure
+     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\non_empty_string()} API is pure by design
+     * @psalm-suppress ImpureMethodCall the {@see \Psl\Type\TypeInterface::assert()} API is conditionally pure
+     */
     public static function fromFullName(string $fullName): self
     {
-        Assert::stringNotEmpty($fullName);
-        Assert::regex($fullName, '~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~');
+        Psl\invariant(Regex\matches($fullName, '~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~'), 'Invalid repository name.');
 
-        [$owner, $name] = explode('/', $fullName);
+        [$owner, $name] = Str\split($fullName, '/');
 
-        Assert::notEmpty($owner);
-        Assert::notEmpty($name);
-
-        return new self($owner, $name);
+        return new self(
+            Type\non_empty_string()->assert($owner),
+            Type\non_empty_string()->assert($name),
+        );
     }
 
     public function assertMatchesOwner(string $owner): void
     {
-        Assert::same(strtolower($owner), strtolower($this->owner));
+        Psl\invariant(Str\lowercase($owner) === Str\lowercase($this->owner), 'Failed asserting that "%s" matches repository name owner.', $owner);
     }
 
     /** @psalm-param non-empty-string $token */

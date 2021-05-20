@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Changelog\ChangelogExists;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
@@ -15,17 +14,14 @@ use Lcobucci\Clock\Clock;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use Phly\KeepAChangelog\Common\ChangelogParser;
 use Phly\KeepAChangelog\Exception\ExceptionInterface;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
+use Psl;
+use Psl\Iter;
+use Psl\Regex;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
 
-use function array_reduce;
-use function count;
-use function explode;
-use function implode;
-use function preg_match;
 use function preg_quote;
-use function preg_replace;
-use function sprintf;
 
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
@@ -60,7 +56,8 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         );
 
         $contents = $changelogEntry->contents();
-        Assert::stringNotEmpty($contents, 'Detected changelog entry for version, but retrieval failed');
+
+        Psl\invariant(! Str\is_empty($contents), 'Detected changelog entry for version, but retrieval failed');
 
         return new ChangelogReleaseNotes(
             $this->updateReleaseDate(
@@ -89,10 +86,8 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
                     $semVerVersion->fullReleaseName()
                 );
 
-            Assert::notEmpty($changelog);
-
-            return true;
-        } catch (ExceptionInterface | InvalidArgumentException $e) {
+            return ! Str\is_empty($changelog);
+        } catch (ExceptionInterface) {
             return false;
         }
     }
@@ -105,13 +100,9 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): string {
-        $process = new Process(['git', 'show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
-        $process->mustRun();
+        $contents = Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
 
-        $contents = $process->getOutput();
-        Assert::notEmpty($contents);
-
-        return $contents;
+        return Type\non_empty_string()->assert($contents);
     }
 
     /**
@@ -121,14 +112,16 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
      */
     private function updateReleaseDate(string $changelog, string $version): string
     {
-        $lines = explode("\n", $changelog);
-        Assert::greaterThan(count($lines), 0);
+        $lines = Str\Byte\split($changelog, "\n");
+
+        Psl\invariant(Iter\count($lines) >= 0, 'Empty changelog detected.');
 
         $releaseLine = $lines[0];
-        $regex       = sprintf('/^(## (?:%1$s|\[%1$s\])).*$/i', preg_quote($version));
-        $lines[0]    = preg_replace($regex, '$1 - ' . $this->clock->now()->format('Y-m-d'), $releaseLine);
+        $regex       = Type\non_empty_string()
+            ->assert(Str\format('/^(## (?:%1$s|\[%1$s\])).*$/i', preg_quote($version)));
+        $lines[0]    = Regex\replace($releaseLine, $regex, '$1 - ' . $this->clock->now()->format('Y-m-d'));
 
-        return implode("\n", $lines);
+        return Type\non_empty_string()->assert(Str\join($lines, "\n"));
     }
 
     /**
@@ -137,18 +130,17 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
      */
     private function removeDefaultContents(string $changelog): string
     {
-        $contents = array_reduce(
+        $contents = Iter\reduce(
             self::DEFAULT_SECTIONS,
-            static fn (string $changelog, string $section): string => preg_replace(
+            static fn (string $changelog, string $section): string => Regex\replace(
+                $changelog,
                 "/\n\#{3} " . $section . "\n\n- Nothing.\n/s",
                 '',
-                $changelog
             ),
             $changelog
         );
-        Assert::notEmpty($contents);
 
-        return $contents;
+        return Type\non_empty_string()->assert($contents);
     }
 
     /**
@@ -198,17 +190,18 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         $entryIndex    = null;
         $entryLength   = 0;
         $boundaryRegex = '/^(?:## (?:\d+\.\d+\.\d+|\[\d+\.\d+\.\d+\])|\[.*?\]:\s*\S+)/i';
-        $regex         = sprintf('/^## (?:%1$s|\[%1$s\])/i', preg_quote($version));
+        $regex         = Type\non_empty_string()
+            ->assert(Str\format('/^## (?:%1$s|\[%1$s\])/i', preg_quote($version)));
 
-        foreach (explode("\n", $contents) as $index => $line) {
+        foreach (Str\Byte\split($contents, "\n") as $index => $line) {
             // If we identified an entry for our version previously, and have
             // now reached a boundary, we are done.
-            if ($entryIndex && preg_match($boundaryRegex, $line)) {
+            if ($entryIndex && Regex\matches($line, $boundaryRegex)) {
                 break;
             }
 
             // Did we identify the starting line for the requested version?
-            if (preg_match($regex, $line)) {
+            if (Regex\matches($line, $regex)) {
                 $entryContents[] = $line;
                 $entryIndex      = $index;
                 $entryLength     = 1;
@@ -221,16 +214,15 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
                 continue;
             }
 
-            // Update the conttents for this version, and increase the line
+            // Update the contents for this version, and increase the line
             // count discovered.
             $entryContents[] = $line;
             $entryLength    += 1;
         }
 
-        Assert::integer($entryIndex, 'Could not find entry for version ' . $version . ' in project CHANGELOG.md file');
+        Psl\invariant($entryIndex !== null, 'Could not find entry for version ' . $version . ' in project CHANGELOG.md file');
 
-        $entryContents = implode("\n", $entryContents);
-        Assert::stringNotEmpty($entryContents);
+        $entryContents = Str\join($entryContents, "\n");
 
         $entry           = new ChangelogEntry();
         $entry->contents = $entryContents;

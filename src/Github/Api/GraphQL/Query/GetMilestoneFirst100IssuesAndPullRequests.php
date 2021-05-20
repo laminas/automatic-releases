@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use Webmozart\Assert\Assert;
+use Psl\Type;
 
 final class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
 {
@@ -86,10 +86,11 @@ GRAPHQL;
             ]
         );
 
-        Assert::keyExists($queryResult, 'repository');
-        Assert::isMap($queryResult['repository']);
-        Assert::keyExists($queryResult['repository'], 'milestone');
-        Assert::isMap($queryResult['repository']['milestone']);
+        $queryResult = Type\shape([
+            'repository' => Type\shape([
+                'milestone' => Type\dict(Type\string(), Type\mixed()),
+            ]),
+        ])->coerce($queryResult);
 
         return Milestone::fromPayload($queryResult['repository']['milestone']);
     }

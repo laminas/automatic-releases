@@ -11,19 +11,17 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Webmozart\Assert\Assert;
-
-use function uniqid;
 
 final class CreateReleaseTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
-    private $httpClient;
+    private ClientInterface $httpClient;
     /** @var RequestFactoryInterface&MockObject */
-    private $messageFactory;
+    private MockObject | RequestFactoryInterface $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
     private CreateReleaseThroughApiCall $createRelease;
@@ -34,12 +32,8 @@ final class CreateReleaseTest extends TestCase
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $apiToken             = uniqid('apiToken', true);
-
-        Assert::notEmpty($apiToken);
-
-        $this->apiToken      = $apiToken;
-        $this->createRelease = new CreateReleaseThroughApiCall(
+        $this->apiToken       = 'apiToken' . SecureRandom\string(8);
+        $this->createRelease  = new CreateReleaseThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken
@@ -49,7 +43,6 @@ final class CreateReleaseTest extends TestCase
     public function testSuccessfulRequest(): void
     {
         $this->messageFactory
-            ->expects(self::any())
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/repos/foo/bar/releases')
             ->willReturn(new Request('https://the-domain.com/the-path'));
@@ -59,7 +52,7 @@ final class CreateReleaseTest extends TestCase
         $validResponse->getBody()->write(
             <<<'JSON'
             {
-                "html_url": "http://another-domain.com/the-pr"
+                "html_url": "https://another-domain.com/the-pr"
             }
             JSON
         );
@@ -94,7 +87,7 @@ final class CreateReleaseTest extends TestCase
             ->willReturn($validResponse);
 
         self::assertEquals(
-            'http://another-domain.com/the-pr',
+            'https://another-domain.com/the-pr',
             $this->createRelease->__invoke(
                 RepositoryName::fromFullName('foo/bar'),
                 SemVerVersion::fromMilestoneName('1.2.3'),

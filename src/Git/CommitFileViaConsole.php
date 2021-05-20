@@ -6,11 +6,9 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
-use function trim;
+use Psl;
+use Psl\Shell;
+use Psl\Str;
 
 final class CommitFileViaConsole implements CommitFile
 {
@@ -23,13 +21,8 @@ final class CommitFileViaConsole implements CommitFile
     ): void {
         $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
-        (new Process(['git', 'add', $filename], $repositoryDirectory))
-            ->mustRun();
-
-        (new Process(
-            ['git', 'commit', '-m', $commitMessage, '--gpg-sign=' . $keyId->id()],
-            $repositoryDirectory
-        ))->mustRun();
+        Shell\execute('git', ['add', $filename], $repositoryDirectory);
+        Shell\execute('git', ['commit', '-m', $commitMessage, '--gpg-sign=' . $keyId->id()], $repositoryDirectory);
     }
 
     /**
@@ -41,12 +34,9 @@ final class CommitFileViaConsole implements CommitFile
         string $repositoryDirectory,
         string $filename
     ): void {
-        $process = new Process(['git', 'branch', '--show-current'], $repositoryDirectory);
-        $process->mustRun();
+        $output = Str\trim(Shell\execute('git', ['branch', '--show-current'], $repositoryDirectory));
 
-        $output = trim($process->getOutput());
-
-        Assert::same($output, $expectedBranch->name(), sprintf(
+        Psl\invariant($output === $expectedBranch->name(), Str\format(
             'CommitFile: Cannot commit file %s to branch %s, as a different branch is currently checked out (%s).',
             $filename,
             $expectedBranch->name(),

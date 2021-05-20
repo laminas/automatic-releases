@@ -7,13 +7,12 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\Diactoros\Uri;
+use Psl;
+use Psl\Json;
+use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
-
-use function Safe\json_decode;
-use function Safe\json_encode;
 
 final class CreateReleaseThroughApiCall implements CreateRelease
 {
@@ -53,7 +52,7 @@ final class CreateReleaseThroughApiCall implements CreateRelease
 
         $request
             ->getBody()
-            ->write(json_encode([
+            ->write(Json\encode([
                 'tag_name' => $version->fullReleaseName(),
                 'name'     => $version->fullReleaseName(),
                 'body'     => $releaseNotes,
@@ -61,18 +60,15 @@ final class CreateReleaseThroughApiCall implements CreateRelease
 
         $response = $this->client->sendRequest($request);
 
+        Psl\invariant($response->getStatusCode() >= 200 || $response->getStatusCode() <= 299, 'Failed to create release through GitHub API.');
+
         $responseBody = $response
             ->getBody()
             ->__toString();
 
-        Assert::greaterThanEq($response->getStatusCode(), 200);
-        Assert::lessThanEq($response->getStatusCode(), 299);
-
-        $responseData = json_decode($responseBody, true);
-
-        Assert::isMap($responseData);
-        Assert::keyExists($responseData, 'html_url');
-        Assert::stringNotEmpty($responseData['html_url']);
+        $responseData = Json\typed($responseBody, Type\shape([
+            'html_url' => Type\non_empty_string(),
+        ]));
 
         return new Uri($responseData['html_url']);
     }

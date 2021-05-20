@@ -20,19 +20,15 @@ use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Env;
+use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
-use function file_get_contents;
-use function mkdir;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
-
 final class SwitchDefaultBranchToNextMinorTest extends TestCase
 {
-    /** @var Variables&MockObject */
+    /** @var MockObject&Variables */
     private Variables $variables;
     /** @var LoadCurrentGithubEvent&MockObject */
     private LoadCurrentGithubEvent $loadEvent;
@@ -40,9 +36,9 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
     private Fetch $fetch;
     /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var Push&MockObject */
+    /** @var MockObject&Push */
     private Push $push;
-    /** @var SetDefaultBranch&MockObject */
+    /** @var MockObject&SetDefaultBranch */
     private SetDefaultBranch $setDefaultBranch;
     /** @var BumpAndCommitChangelogVersion&MockObject */
     private BumpAndCommitChangelogVersion $bumpChangelogVersion;
@@ -86,7 +82,7 @@ JSON
         );
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $this->variables->method('signingSecretKey')->willReturn($key);
 
@@ -101,11 +97,11 @@ JSON
 
     public function testWillSwitchToExistingNewestDefaultBranch(): void
     {
-        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
 
-        unlink($workspace);
-        mkdir($workspace);
-        mkdir($workspace . '/.git');
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
 
         $this->variables->method('githubWorkspacePath')
             ->willReturn($workspace);
@@ -144,11 +140,11 @@ JSON
 
     public function testWillSwitchToNewlyCreatedDefaultBranchWhenNoNewerReleaseBranchExists(): void
     {
-        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
 
-        unlink($workspace);
-        mkdir($workspace);
-        mkdir($workspace . '/.git');
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
 
         $this->variables->method('githubWorkspacePath')
             ->willReturn($workspace);
@@ -193,11 +189,11 @@ JSON
 
     public function testWillNotSwitchDefaultBranchIfNoBranchesExist(): void
     {
-        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
 
-        unlink($workspace);
-        mkdir($workspace);
-        mkdir($workspace . '/.git');
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
 
         $this->variables->method('githubWorkspacePath')
             ->willReturn($workspace);

@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Environment;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
-
-use function array_combine;
-use function array_map;
-use function array_walk;
-use function Safe\putenv;
-use function uniqid;
+use Psl\Dict;
+use Psl\Env;
+use Psl\Exception\InvariantViolationException;
+use Psl\SecureRandom;
 
 final class EnvironmentVariablesTest extends TestCase
 {
@@ -30,58 +27,54 @@ final class EnvironmentVariablesTest extends TestCase
         'GITHUB_WORKSPACE',
     ];
 
-    /** @var array<string, string|false> */
+    /** @var array<string, ?string> */
     private array $originalValues = [];
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->originalValues = array_combine(
+        $this->originalValues = Dict\associate(self::RESET_ENVIRONMENT_VARIABLES, Dict\map(
             self::RESET_ENVIRONMENT_VARIABLES,
-            array_map('getenv', self::RESET_ENVIRONMENT_VARIABLES)
-        );
+            static fn (string $variable) => Env\get_var($variable),
+        ));
     }
 
     protected function tearDown(): void
     {
         $originalValues = $this->originalValues;
 
-        array_walk(
-            $originalValues,
-            /** @param string|false $value */
-            static function ($value, string $key): void {
-                if ($value === false) {
-                    putenv($key . '=');
+        Dict\map_with_key($originalValues, static function (string $key, ?string $value): void {
+            if ($value === null) {
+                Env\remove_var($key);
 
-                    return;
-                }
-
-                putenv($key . '=' . $value);
+                return;
             }
-        );
+
+            Env\set_var($key, $value);
+        });
 
         parent::tearDown();
     }
 
     public function testReadsEnvironmentVariables(): void
     {
-        $signingSecretKey   = uniqid('signingSecretKey', true);
+        $signingSecretKey   = 'signingSecretKey' . SecureRandom\string(8);
         $signingSecretKeyId = SecretKeyId::fromBase16String('aabbccdd');
-        $githubToken        = uniqid('githubToken', true);
-        $githubOrganisation = uniqid('githubOrganisation', true);
-        $gitAuthorName      = uniqid('gitAuthorName', true);
-        $gitAuthorEmail     = uniqid('gitAuthorEmail', true);
-        $githubEventPath    = uniqid('githubEventPath', true);
-        $githubWorkspace    = uniqid('githubWorkspace', true);
+        $githubToken        = 'githubToken' . SecureRandom\string(8);
+        $githubOrganisation = 'githubOrganisation' . SecureRandom\string(8);
+        $gitAuthorName      = 'gitAuthorName' . SecureRandom\string(8);
+        $gitAuthorEmail     = 'gitAuthorEmail' . SecureRandom\string(8);
+        $githubEventPath    = 'githubEventPath' . SecureRandom\string(8);
+        $githubWorkspace    = 'githubWorkspace' . SecureRandom\string(8);
 
-        putenv('GITHUB_TOKEN=' . $githubToken);
-        putenv('SIGNING_SECRET_KEY=' . $signingSecretKey);
-        putenv('GITHUB_ORGANISATION=' . $githubOrganisation);
-        putenv('GIT_AUTHOR_NAME=' . $gitAuthorName);
-        putenv('GIT_AUTHOR_EMAIL=' . $gitAuthorEmail);
-        putenv('GITHUB_EVENT_PATH=' . $githubEventPath);
-        putenv('GITHUB_WORKSPACE=' . $githubWorkspace);
+        Env\set_var('GITHUB_TOKEN', $githubToken);
+        Env\set_var('SIGNING_SECRET_KEY', $signingSecretKey);
+        Env\set_var('GITHUB_ORGANISATION', $githubOrganisation);
+        Env\set_var('GIT_AUTHOR_NAME', $gitAuthorName);
+        Env\set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
+        Env\set_var('GITHUB_EVENT_PATH', $githubEventPath);
+        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
@@ -101,20 +94,20 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testFailsOnMissingEnvironmentVariables(): void
     {
-        putenv('GITHUB_TOKEN=');
-        putenv('SIGNING_SECRET_KEY=aaa');
-        putenv('GITHUB_ORGANISATION=bbb');
-        putenv('GIT_AUTHOR_NAME=ccc');
-        putenv('GIT_AUTHOR_EMAIL=ddd@eee.ff');
-        putenv('GITHUB_EVENT_PATH=/tmp/event');
-        putenv('GITHUB_WORKSPACE=/tmp');
+        Env\set_var('GITHUB_TOKEN', '');
+        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
+        Env\set_var('GITHUB_ORGANISATION', 'bbb');
+        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
+        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        Env\set_var('GITHUB_WORKSPACE', '/tmp');
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
         $importKey->method('__invoke')
             ->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvariantViolationException::class);
         $this->expectExceptionMessage('Could not find a value for environment variable "GITHUB_TOKEN"');
 
         EnvironmentVariables::fromEnvironment($importKey);

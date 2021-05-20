@@ -41,14 +41,12 @@ final class CreateMilestones extends Command
         return 0;
     }
 
-    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version): bool
+    private function createMilestoneIfNotExists(RepositoryName $repositoryName, SemVerVersion $version): void
     {
         try {
             ($this->createMilestone)($repositoryName, $version);
-        } catch (CreateMilestoneFailed $e) {
-            return false;
+        } catch (CreateMilestoneFailed) {
+            return;
         }
-
-        return true;
     }
 }

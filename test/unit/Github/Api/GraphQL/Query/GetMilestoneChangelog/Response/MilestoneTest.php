@@ -24,9 +24,9 @@ final class MilestoneTest extends TestCase
                         'title'  => 'Issue',
                         'author' => [
                             'login' => 'Magoo',
-                            'url'   => 'http://example.com/author',
+                            'url'   => 'https://example.com/author',
                         ],
-                        'url'    => 'http://example.com/issue',
+                        'url'    => 'https://example.com/issue',
                         'closed' => true,
                         'labels' => [
                             'nodes' => [],
@@ -41,9 +41,9 @@ final class MilestoneTest extends TestCase
                         'title'  => 'PR',
                         'author' => [
                             'login' => 'Magoo',
-                            'url'   => 'http://example.com/author',
+                            'url'   => 'https://example.com/author',
                         ],
-                        'url'    => 'http://example.com/issue',
+                        'url'    => 'https://example.com/issue',
                         'merged' => true,
                         'closed' => false,
                         'labels' => [
@@ -52,7 +52,7 @@ final class MilestoneTest extends TestCase
                     ],
                 ],
             ],
-            'url'          => 'http://example.com/milestone',
+            'url'          => 'https://example.com/milestone',
         ]);
 
         self::assertEquals(
@@ -62,9 +62,9 @@ final class MilestoneTest extends TestCase
                     'title'  => 'Issue',
                     'author' => [
                         'login' => 'Magoo',
-                        'url'   => 'http://example.com/author',
+                        'url'   => 'https://example.com/author',
                     ],
-                    'url'    => 'http://example.com/issue',
+                    'url'    => 'https://example.com/issue',
                     'closed' => true,
                     'labels' => [
                         'nodes' => [],
@@ -75,9 +75,9 @@ final class MilestoneTest extends TestCase
                     'title'  => 'PR',
                     'author' => [
                         'login' => 'Magoo',
-                        'url'   => 'http://example.com/author',
+                        'url'   => 'https://example.com/author',
                     ],
-                    'url'    => 'http://example.com/issue',
+                    'url'    => 'https://example.com/issue',
                     'merged' => true,
                     'closed' => false,
                     'labels' => [
@@ -90,9 +90,11 @@ final class MilestoneTest extends TestCase
 
         self::assertSame(123, $milestone->number());
         self::assertTrue($milestone->closed());
-        self::assertSame('http://example.com/milestone', $milestone->url()->__toString());
+        self::assertSame('https://example.com/milestone', $milestone->url()->__toString());
         self::assertSame('The title', $milestone->title());
         self::assertSame('The description', $milestone->description());
+
+        /** @psalm-suppress UnusedMethodCall */
         $milestone->assertAllIssuesAreClosed();
     }
 }

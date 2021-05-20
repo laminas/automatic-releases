@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Changelog;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
-use Symfony\Component\Process\Process;
+use Psl\Shell;
 
 class ChangelogExistsViaConsole implements ChangelogExists
 {
@@ -16,9 +16,12 @@ class ChangelogExistsViaConsole implements ChangelogExists
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): bool {
-        $process = new Process(['git', 'show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
-        $process->run();
+        try {
+            Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
 
-        return $process->isSuccessful();
+            return true;
+        } catch (Shell\Exception\FailedExecutionException) {
+            return false;
+        }
     }
 }
