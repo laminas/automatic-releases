@@ -197,6 +197,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     /**
      * @psalm-param non-empty-string $origin
+     *
      * @psalm-return non-empty-string
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string

@@ -96,6 +96,7 @@ class EnvironmentVariables implements Variables
 
     /**
      * @psalm-param  non-empty-string $key
+     *
      * @psalm-return non-empty-string
      */
     private static function getenv(string $key): string
@@ -109,6 +110,7 @@ class EnvironmentVariables implements Variables
 
     /**
      * @psalm-param  non-empty-string $default
+     *
      * @psalm-return non-empty-string
      */
     private static function getenvWithFallback(string $key, string $default): string

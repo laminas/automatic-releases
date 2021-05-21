@@ -20,7 +20,6 @@ final class MergeTargetCandidateBranches
 
     /**
      * @param BranchName[] $sortedBranches
-     *
      * @psalm-param list<BranchName> $sortedBranches
      */
     private function __construct(array $sortedBranches)

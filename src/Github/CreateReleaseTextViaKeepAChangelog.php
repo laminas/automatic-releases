@@ -94,6 +94,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 
     /**
      * @psalm-param non-empty-string $repositoryDirectory
+     *
      * @psalm-return non-empty-string
      */
     private function fetchChangelogContentsFromBranch(
@@ -108,6 +109,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
     /**
      * @psalm-param non-empty-string $changelog
      * @psalm-param non-empty-string $version
+     *
      * @psalm-return non-empty-string
      */
     private function updateReleaseDate(string $changelog, string $version): string
@@ -126,6 +128,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 
     /**
      * @psalm-param non-empty-string $changelog
+     *
      * @psalm-return non-empty-string
      */
     private function removeDefaultContents(string $changelog): string
