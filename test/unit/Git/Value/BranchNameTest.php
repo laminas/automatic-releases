@@ -57,7 +57,6 @@ final class BranchNameTest extends TestCase
 
     /**
      * @return array<int, array<int, int|string>>
-     *
      * @psalm-return array<int, array{0: string, 1: int, 2: int}>
      */
     public function releaseBranches(): array
@@ -90,7 +89,6 @@ final class BranchNameTest extends TestCase
 
     /**
      * @return array<int, array<int, bool|string>>
-     *
      * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
      */
     public function versionEqualityProvider(): array
@@ -120,7 +118,6 @@ final class BranchNameTest extends TestCase
 
     /**
      * @return array<int, array<int, bool|string>>
-     *
      * @psalm-return array<int, array{0: string, 1: string, 2: bool}>
      */
     public function newerVersionComparisonProvider(): array
@@ -151,7 +148,6 @@ final class BranchNameTest extends TestCase
 
     /**
      * @return string[][]
-     *
      * @psalm-return list<array{0: string, 1: string}>
      */
     public function targetVersionProvider(): array

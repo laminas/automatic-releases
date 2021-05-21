@@ -43,7 +43,6 @@ final class BranchName
 
     /**
      * @return array<int, int>
-     *
      * @psalm-return array{0: int, 1: int}
      *
      * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\int()} and {@see \Psl\Type\shape()} APIs are pure by design

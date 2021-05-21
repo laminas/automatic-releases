@@ -29,7 +29,6 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return array<int, array<int, int|string>>
-     *
      * @psalm-return array<int, array{0: string, 1: int, 2: int, 3: string}>
      */
     public function detectableReleases(): array
@@ -104,7 +103,6 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return array<int, array<int, string|bool>>
-     *
      * @psalm-return array<int, array{0: string, 1: bool}>
      */
     public function newMinorReleasesProvider(): array
@@ -133,7 +131,6 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return array<int, array<int, string|bool>>
-     *
      * @psalm-return array<int, array{0: string, 1: bool}>
      */
     public function newMajorReleasesProvider(): array
@@ -165,7 +162,6 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return string[][]|bool[][]
-     *
      * @psalm-return non-empty-list<array{string, string, bool}>
      */
     public function lessThanEqualProvider(): array
@@ -198,11 +194,12 @@ final class SemVerVersionTest extends TestCase
     }
 
     /**
-     * @dataProvider nextVersionsProvider
      * @psalm-param non-empty-string $version
      * @psalm-param non-empty-string $patch
      * @psalm-param non-empty-string $minor
      * @psalm-param non-empty-string $major
+     *
+     * @dataProvider nextVersionsProvider
      */
     public function testNextVersions(string $version, string $patch, string $minor, string $major): void
     {
@@ -213,7 +210,6 @@ final class SemVerVersionTest extends TestCase
 
     /**
      * @return string[][]
-     *
      * @psalm-return non-empty-list<array{non-empty-string, non-empty-string, non-empty-string, non-empty-string}>
      */
     public function nextVersionsProvider(): array

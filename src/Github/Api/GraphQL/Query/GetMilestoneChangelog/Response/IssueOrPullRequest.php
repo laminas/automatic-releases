@@ -27,6 +27,7 @@ final class IssueOrPullRequest
     /**
      * @psalm-param non-empty-string $title
      * @psalm-param list<Label> $labels
+     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
@@ -95,7 +96,6 @@ final class IssueOrPullRequest
 
     /**
      * @return array<int, Label>
-     *
      * @psalm-return list<Label>
      */
     public function labels(): array
