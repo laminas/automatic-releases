@@ -6,12 +6,11 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Psl;
+use Psl\Json;
+use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Webmozart\Assert\Assert;
-
-use function Safe\json_decode;
-use function Safe\json_encode;
 
 final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 {
@@ -49,21 +48,18 @@ final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 
         $request
             ->getBody()
-            ->write(json_encode(['default_branch' => $defaultBranch->name()]));
+            ->write(Json\encode(['default_branch' => $defaultBranch->name()]));
 
         $response = $this->client->sendRequest($request);
+
+        Psl\invariant($response->getStatusCode() >= 200 || $response->getStatusCode() <= 299, 'Failed to set default branch through GitHub API.');
 
         $responseBody = $response
             ->getBody()
             ->__toString();
 
-        Assert::greaterThanEq($response->getStatusCode(), 200);
-        Assert::lessThanEq($response->getStatusCode(), 299);
-
-        $responseData = json_decode($responseBody, true);
-
-        Assert::isMap($responseData);
-        Assert::keyExists($responseData, 'default_branch');
-        Assert::same($defaultBranch->name(), $responseData['default_branch']);
+        Json\typed($responseBody, Type\shape([
+            'default_branch' => Type\literal_scalar($defaultBranch->name()),
+        ]));
     }
 }

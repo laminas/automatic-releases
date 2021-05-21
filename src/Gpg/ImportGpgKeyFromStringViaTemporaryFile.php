@@ -4,35 +4,27 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Gpg;
 
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function Safe\file_put_contents;
-use function Safe\preg_match;
-use function Safe\tempnam;
-use function sys_get_temp_dir;
-use function unlink;
+use Psl;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Regex;
+use Psl\Shell;
 
 final class ImportGpgKeyFromStringViaTemporaryFile implements ImportGpgKeyFromString
 {
     public function __invoke(string $keyContents): SecretKeyId
     {
-        $keyFileName = tempnam(sys_get_temp_dir(), 'imported-key');
+        $keyFileName = Filesystem\create_temporary_file(Env\temp_dir(), 'imported-key');
+        Filesystem\write_file($keyFileName, $keyContents);
 
-        file_put_contents($keyFileName, $keyContents);
+        // redirect output from STDERR to STDOUT since Shell\execute only returns STDOUT content.
+        $output = Shell\execute('gpg', ['--import', Shell\escape_argument($keyFileName), '2>&1'], null, [], false);
 
-        $output = (new Process(['gpg', '--import', $keyFileName]))
-            ->mustRun()
-            ->getErrorOutput();
+        $matches = Regex\first_match($output, '/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im', Regex\capture_groups([1]));
 
-        Assert::regex($output, '/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im');
+        Psl\invariant($matches !== null, 'unexpected output.');
 
-        preg_match('/key\\s+([A-F0-9]+):\\s+secret\\s+key\\s+imported/im', $output, $matches);
-
-        unlink($keyFileName);
-
-        Assert::isList($matches);
-        Assert::allString($matches);
+        Filesystem\delete_file($keyFileName);
 
         return SecretKeyId::fromBase16String($matches[1]);
     }

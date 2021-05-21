@@ -6,11 +6,9 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Symfony\Component\Process\Process;
-
-use function Safe\file_put_contents;
-use function Safe\tempnam;
-use function sys_get_temp_dir;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
 
 final class CreateTagViaConsole implements CreateTag
 {
@@ -21,16 +19,11 @@ final class CreateTagViaConsole implements CreateTag
         string $changelog,
         SecretKeyId $keyId
     ): void {
-        $tagFileName = tempnam(sys_get_temp_dir(), 'created_tag');
+        $tagFileName = Filesystem\create_temporary_file(Env\temp_dir(), 'created_tag');
 
-        file_put_contents($tagFileName, $changelog);
+        Filesystem\write_file($tagFileName, $changelog);
 
-        (new Process(['git', 'checkout', $sourceBranch->name()], $repositoryDirectory))
-            ->mustRun();
-
-        (new Process(
-            ['git', 'tag', $tagName, '-F', $tagFileName, '--cleanup=whitespace', '--local-user=' . $keyId->id()],
-            $repositoryDirectory
-        ))->mustRun();
+        Shell\execute('git', ['checkout', $sourceBranch->name()], $repositoryDirectory);
+        Shell\execute('git', ['tag', $tagName, '-F', $tagFileName, '--cleanup=whitespace', '--local-user=' . $keyId->id()], $repositoryDirectory);
     }
 }

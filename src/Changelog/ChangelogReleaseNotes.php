@@ -6,10 +6,9 @@ namespace Laminas\AutomaticReleases\Changelog;
 
 use Phly\KeepAChangelog\Common\ChangelogEditor;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
+use Psl;
+use Psl\Str;
 use RuntimeException;
-use Webmozart\Assert\Assert;
-
-use function rtrim;
 
 /**
  * @psalm-immutable
@@ -33,9 +32,9 @@ class ChangelogReleaseNotes
             return;
         }
 
-        Assert::notNull($releaseNotes->changelogEntry);
+        Psl\invariant($releaseNotes->changelogEntry !== null, 'Release does not contain a changelog entry.');
 
-        $changelogEntry = rtrim($releaseNotes->contents, "\n") . "\n\n";
+        $changelogEntry = Str\trim_right($releaseNotes->contents, "\n") . "\n\n";
 
         $editor = new ChangelogEditor();
         $editor->update(

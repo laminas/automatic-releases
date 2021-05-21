@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL;
 
+use Psl\Json;
+use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Webmozart\Assert\Assert;
-
-use function Safe\json_decode;
-use function Safe\json_encode;
 
 final class RunGraphQLQuery implements RunQuery
 {
@@ -45,7 +43,7 @@ final class RunGraphQLQuery implements RunQuery
 
         $request
             ->getBody()
-            ->write(json_encode([
+            ->write(Json\encode([
                 'query'     => $query,
                 'variables' => $variables,
             ]));
@@ -56,15 +54,10 @@ final class RunGraphQLQuery implements RunQuery
             ->getBody()
             ->__toString();
 
-        Assert::same($response->getStatusCode(), 200);
+        Type\literal_scalar(200)->assert($response->getStatusCode());
 
-        $responseData = json_decode($responseBody, true);
-
-        Assert::isMap($responseData);
-        Assert::keyNotExists($responseData, 'errors');
-        Assert::keyExists($responseData, 'data');
-        Assert::isArray($responseData['data']);
-
-        return $responseData['data'];
+        return Json\typed($responseBody, Type\shape([
+            'data' => Type\dict(Type\string(), Type\mixed()),
+        ]))['data'];
     }
 }

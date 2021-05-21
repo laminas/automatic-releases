@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
 use Laminas\Diactoros\Uri;
+use Psl;
+use Psl\Iter;
+use Psl\Type;
+use Psl\Vec;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
-
-use function array_map;
-use function array_merge;
-use function Safe\array_combine;
 
 /** @psalm-immutable */
 final class Milestone
@@ -55,47 +54,33 @@ final class Milestone
      *
      * @psalm-pure
      *
-     * @psalm-suppress ImpureMethodCall the {@see Uri} constructor is pure
+     * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
+     * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromPayload(array $payload): self
     {
-        Assert::keyExists($payload, 'number');
-        Assert::keyExists($payload, 'closed');
-        Assert::keyExists($payload, 'title');
-        Assert::keyExists($payload, 'description');
-        Assert::keyExists($payload, 'issues');
-        Assert::keyExists($payload, 'pullRequests');
-        Assert::keyExists($payload, 'url');
-
-        Assert::integer($payload['number']);
-        Assert::greaterThan($payload['number'], 0);
-        Assert::boolean($payload['closed']);
-        Assert::stringNotEmpty($payload['title']);
-        Assert::nullOrString($payload['description']);
-        Assert::stringNotEmpty($payload['url']);
-
-        Assert::isMap($payload['issues']);
-        Assert::keyExists($payload['issues'], 'nodes');
-
-        Assert::isMap($payload['pullRequests']);
-        Assert::keyExists($payload['pullRequests'], 'nodes');
-
-        $issues       = $payload['issues']['nodes'];
-        $pullRequests = $payload['pullRequests']['nodes'];
-
-        Assert::isList($issues);
-        Assert::isList($pullRequests);
-        Assert::allIsMap($issues);
-        Assert::allIsMap($pullRequests);
+        $payload = Type\shape([
+            'number' => Type\positive_int(),
+            'closed' => Type\bool(),
+            'title' => Type\non_empty_string(),
+            'description' => Type\union(Type\null(), Type\string()),
+            'url' => Type\non_empty_string(),
+            'issues' => Type\shape([
+                'nodes' => Type\vec(Type\dict(Type\string(), Type\mixed())),
+            ]),
+            'pullRequests' => Type\shape([
+                'nodes' => Type\vec(Type\dict(Type\string(), Type\mixed())),
+            ]),
+        ])->coerce($payload);
 
         return new self(
             $payload['number'],
             $payload['closed'],
             $payload['title'],
             $payload['description'],
-            array_merge(
-                array_map([IssueOrPullRequest::class, 'fromPayload'], $issues),
-                array_map([IssueOrPullRequest::class, 'fromPayload'], $pullRequests)
+            Vec\concat(
+                Vec\map($payload['issues']['nodes'], [IssueOrPullRequest::class, 'fromPayload']),
+                Vec\map($payload['pullRequests']['nodes'], [IssueOrPullRequest::class, 'fromPayload'])
             ),
             new Uri($payload['url'])
         );
@@ -134,19 +119,12 @@ final class Milestone
     }
 
     /**
-     * @psalm-suppress ImpureMethodCall the {@see UriInterface} API is pure by design
-     * @psalm-suppress ImpureFunctionCall the {@see \Safe\array_combine()} API is pure by design
+     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\all()} API is conditionally pure
      */
     public function assertAllIssuesAreClosed(): void
     {
-        Assert::allTrue(array_combine(
-            array_map(static function (IssueOrPullRequest $entry): string {
-                return $entry->url()
-                    ->__toString();
-            }, $this->entries),
-            array_map(static function (IssueOrPullRequest $entry): bool {
-                return $entry->closed();
-            }, $this->entries)
-        ));
+        Psl\invariant(Iter\all($this->entries, static function (IssueOrPullRequest $entry): bool {
+            return $entry->closed();
+        }), 'Failed asserting that all milestone issues are closed.');
     }
 }

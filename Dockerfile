@@ -15,9 +15,12 @@ LABEL "maintainer"="https://github.com/laminas/technical-steering-committee/"
 
 WORKDIR /app
 
-RUN apk add --no-cache git gnupg libzip \
+RUN apk add --no-cache git gnupg libzip icu-dev \
     && apk add --no-cache --virtual .build-deps libzip-dev \
     && docker-php-ext-install zip \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl \
     && apk del .build-deps
 
 COPY composer.* /app/

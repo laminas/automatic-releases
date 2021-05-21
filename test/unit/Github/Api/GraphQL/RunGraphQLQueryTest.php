@@ -9,20 +9,15 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Webmozart\Assert\Assert;
-
-use function uniqid;
 
 final class RunGraphQLQueryTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
     private ClientInterface $httpClient;
-
-    /** @var RequestFactoryInterface&MockObject */
-    private RequestFactoryInterface $messageFactory;
 
     /** @psalm-var non-empty-string */
     private string $apiToken;
@@ -33,22 +28,17 @@ final class RunGraphQLQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->httpClient     = $this->createMock(ClientInterface::class);
-        $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $apiToken             = uniqid('apiToken', true);
+        $this->httpClient = $this->createMock(ClientInterface::class);
+        $messageFactory   = $this->createMock(RequestFactoryInterface::class);
 
-        Assert::notEmpty($apiToken);
-
-        $this->apiToken = $apiToken;
+        $this->apiToken = 'apiToken' . SecureRandom\string(8);
         $this->runQuery = new RunGraphQLQuery(
-            $this->messageFactory,
+            $messageFactory,
             $this->httpClient,
             $this->apiToken
         );
 
-        $this
-            ->messageFactory
-            ->expects(self::any())
+        $messageFactory
             ->method('createRequest')
             ->with('POST', 'https://api.github.com/graphql')
             ->willReturn(new Request('https://the-domain.com/the-path'));

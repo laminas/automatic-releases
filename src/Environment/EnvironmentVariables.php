@@ -6,14 +6,33 @@ namespace Laminas\AutomaticReleases\Environment;
 
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Webmozart\Assert\Assert;
-
-use function getenv;
-use function sprintf;
+use Psl;
+use Psl\Env;
+use Psl\Iter;
+use Psl\Str;
 
 /** @psalm-immutable */
 class EnvironmentVariables implements Variables
 {
+    private const LOG_LEVELS = [
+        '100',
+        '200',
+        '250',
+        '300',
+        '400',
+        '500',
+        '550',
+        '600',
+        'DEBUG',
+        'INFO',
+        'NOTICE',
+        'WARNING',
+        'ERROR',
+        'CRITICAL',
+        'ALERT',
+        'EMERGENCY',
+    ];
+
     /** @psalm-var non-empty-string */
     private string $githubToken;
     private SecretKeyId $signingSecretKey;
@@ -52,29 +71,13 @@ class EnvironmentVariables implements Variables
         $this->githubEventPath  = $githubEventPath;
         $this->workspacePath    = $workspacePath;
 
-        Assert::inArray(
-            $logLevel,
-            [
-                '100',
-                '200',
-                '250',
-                '300',
-                '400',
-                '500',
-                '550',
-                '600',
-                'DEBUG',
-                'INFO',
-                'NOTICE',
-                'WARNING',
-                'ERROR',
-                'CRITICAL',
-                'ALERT',
-                'EMERGENCY',
-            ],
+        /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
+        Psl\invariant(
+            Iter\contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
             . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
         );
+
         $this->logLevel = $logLevel;
     }
 
@@ -97,9 +100,9 @@ class EnvironmentVariables implements Variables
      */
     private static function getenv(string $key): string
     {
-        $value = getenv($key);
+        $value = Env\get_var($key);
 
-        Assert::stringNotEmpty($value, sprintf('Could not find a value for environment variable "%s"', $key));
+        Psl\invariant($value !== null && $value !== '', Str\format('Could not find a value for environment variable "%s"', $key));
 
         return $value;
     }
@@ -110,9 +113,9 @@ class EnvironmentVariables implements Variables
      */
     private static function getenvWithFallback(string $key, string $default): string
     {
-        $value = getenv($key);
+        $value = Env\get_var($key);
 
-        return $value === false || $value === '' ? $default : $value;
+        return $value === null || $value === '' ? $default : $value;
     }
 
     public function githubToken(): string

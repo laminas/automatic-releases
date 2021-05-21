@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Git\Value;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use PHPUnit\Framework\TestCase;
+use Psl\Exception\InvariantViolationException;
 
 final class SemVerVersionTest extends TestCase
 {
@@ -47,7 +47,7 @@ final class SemVerVersionTest extends TestCase
      */
     public function testRejectsInvalidReleaseStrings(string $invalid): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvariantViolationException::class);
 
         SemVerVersion::fromMilestoneName($invalid);
     }

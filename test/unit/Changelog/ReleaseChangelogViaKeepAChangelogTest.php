@@ -15,28 +15,22 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\FrozenClock;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Dict;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Str;
+use Psl\Type;
+use Psl\Vec;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function array_slice;
-use function explode;
-use function file_get_contents;
-use function file_put_contents;
-use function implode;
-use function Safe\tempnam;
-use function sprintf;
-use function sys_get_temp_dir;
-use function unlink;
 
 class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
-    private Clock $clock;
+    private FrozenClock $frozenClock;
 
     /** @var CheckoutBranch&MockObject */
     private CheckoutBranch $checkoutBranch;
@@ -44,7 +38,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     /** @var CommitFile&MockObject */
     private CommitFile $commitFile;
 
-    /** @var Push&MockObject */
+    /** @var MockObject&Push */
     private Push $push;
 
     /** @var LoggerInterface&MockObject */
@@ -55,7 +49,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->clock          = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
+        $this->frozenClock    = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
         $this->checkoutBranch = $this->createMock(CheckoutBranch::class);
         $this->commitFile     = $this->createMock(CommitFile::class);
         $this->push           = $this->createMock(Push::class);
@@ -70,7 +64,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
@@ -148,9 +142,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     public function testWritesCommitsAndPushesChangelogWhenFoundAndReadyToRelease(): void
     {
-        $existingChangelog = sprintf(self::READY_CHANGELOG, 'TBD');
-        $expectedChangelog = sprintf(self::READY_CHANGELOG, $this->clock->now()->format('Y-m-d'));
-        $expectedChangelog = sprintf(
+        $existingChangelog = Str\format(self::READY_CHANGELOG, 'TBD');
+        $expectedChangelog = Type\non_empty_string()->assert(Str\format(
             <<< 'CHANGELOG'
                 ## 1.0.0 - %s
                 
@@ -175,13 +168,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 - Nothing.
                 
                 CHANGELOG,
-            $this->clock->now()->format('Y-m-d')
-        );
+            $this->frozenClock->now()->format('Y-m-d')
+        ));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $checkout          = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
         $sourceBranch      = BranchName::fromName('1.0.x');
-
-        Assert::stringNotEmpty($expectedChangelog);
 
         $this->checkoutBranch
             ->expects($this->once())
@@ -223,15 +214,11 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         );
 
         $changelogFile = $checkout . '/CHANGELOG.md';
-        $contents      = file_get_contents($changelogFile);
+        $contents      = Filesystem\read_file($changelogFile);
         $this->assertStringContainsString(
-            implode(
+            Str\join(
+                Vec\values(Dict\take(Str\split(self::READY_CHANGELOG, "\n"), 4)),
                 "\n",
-                array_slice(
-                    explode("\n", self::READY_CHANGELOG),
-                    0,
-                    4
-                )
             ),
             $contents
         );
@@ -246,23 +233,22 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         string $template,
         string $filename = 'CHANGELOG.md'
     ): string {
-        $repo = tempnam(sys_get_temp_dir(), 'ReleaseChangelogViaKeepAChangelog');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Type\non_empty_string()
+            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'ReleaseChangelogViaKeepAChangelog'));
 
-        (new Process(['mkdir', '-p', $repo]))->mustRun();
-
-        file_put_contents(
-            sprintf('%s/%s', $repo, $filename),
+        Filesystem\delete_file($repo);
+        Filesystem\create_directory($repo);
+        Filesystem\write_file(
+            Str\format('%s/%s', $repo, $filename),
             $template
         );
 
-        (new Process(['git', 'init', '.'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $repo))->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $repo))->mustRun();
-        (new Process(['git', 'add', '.'], $repo))->mustRun();
-        (new Process(['git', 'commit', '-m', 'Initial import'], $repo))->mustRun();
-        (new Process(['git', 'switch', '-c', '1.0.x'], $repo))->mustRun();
+        Shell\execute('git', ['init', '.'], $repo);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $repo);
+        Shell\execute('git', ['add', '.'], $repo);
+        Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
+        Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
 
         return $repo;
     }
@@ -273,11 +259,12 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = tempnam(sys_get_temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
-        Assert::notEmpty($repo);
-        unlink($repo);
+        $repo = Type\non_empty_string()
+            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog'));
 
-        (new Process(['git', 'clone', $origin, $repo]))->mustRun();
+        Filesystem\delete_file($repo);
+
+        Shell\execute('git', ['clone', $origin, $repo]);
 
         return $repo;
     }

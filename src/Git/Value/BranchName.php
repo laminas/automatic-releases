@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git\Value;
 
-use Webmozart\Assert\Assert;
-
-use function array_map;
-use function assert;
-use function is_array;
-use function Safe\preg_match;
+use Psl;
+use Psl\Regex;
+use Psl\Type;
 
 /** @psalm-immutable */
 final class BranchName
@@ -23,12 +20,14 @@ final class BranchName
         $this->name = $name;
     }
 
-    /** @psalm-pure */
+    /**
+     * @pure
+     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\non_empty_string()} API is pure by design
+     * @psalm-suppress ImpureMethodCall the {@see \Psl\Type\TypeInterface::assert()} API is conditionally pure
+     */
     public static function fromName(string $name): self
     {
-        Assert::stringNotEmpty($name);
-
-        return new self($name);
+        return new self(Type\non_empty_string()->assert($name));
     }
 
     /** @psalm-return non-empty-string */
@@ -37,12 +36,9 @@ final class BranchName
         return $this->name;
     }
 
-    /**
-     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
-     */
     public function isReleaseBranch(): bool
     {
-        return preg_match('/^(v)?\d+\\.\d+(\\.x)?$/', $this->name) === 1;
+        return Regex\matches($this->name, '/^(v)?\d+\\.\d+(\\.x)?$/');
     }
 
     /**
@@ -50,19 +46,18 @@ final class BranchName
      *
      * @psalm-return array{0: int, 1: int}
      *
-     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
+     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\int()} and {@see \Psl\Type\shape()} APIs are pure by design
+     * @psalm-suppress ImpureMethodCall the {@see \Psl\Type\TypeInterface::assert()} API is conditionally pure
      */
     public function majorAndMinor(): array
     {
-        Assert::regex($this->name, '/^(v)?\d+\\.\d+(\\.x)?$/');
+        $match = Regex\first_match($this->name, '/^(?:v)?(\d+)\\.(\d+)(?:\\.x)?$/', Regex\capture_groups([0, 1, 2]));
 
-        preg_match('/^(?:v)?(\d+)\\.(\d+)(?:\\.x)?$/', $this->name, $matches);
+        Psl\invariant($match !== null, 'Invalid branch name.');
 
-        assert(is_array($matches));
+        [, $major, $minor] = $match;
 
-        [, $major, $minor] = array_map('intval', $matches);
-
-        return [$major, $minor];
+        return Type\shape([Type\int(), Type\int()])->coerce([$major, $minor]);
     }
 
     public function targetMinorReleaseVersion(): SemVerVersion

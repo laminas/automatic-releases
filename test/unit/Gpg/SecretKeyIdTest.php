@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Gpg;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
+use Psl\Exception\InvariantViolationException;
 
 final class SecretKeyIdTest extends TestCase
 {
@@ -15,7 +15,7 @@ final class SecretKeyIdTest extends TestCase
      */
     public function testRejectsInvalidKeyIds(string $invalid): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvariantViolationException::class);
 
         SecretKeyId::fromBase16String($invalid);
     }

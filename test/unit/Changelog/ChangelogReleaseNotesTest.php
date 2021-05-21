@@ -7,18 +7,14 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use PHPUnit\Framework\TestCase;
+use Psl\Dict;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Str;
+use Psl\Type;
+use Psl\Vec;
 use ReflectionProperty;
 use RuntimeException;
-use Webmozart\Assert\Assert;
-
-use function array_slice;
-use function explode;
-use function file_get_contents;
-use function file_put_contents;
-use function implode;
-use function Safe\tempnam;
-use function sprintf;
-use function sys_get_temp_dir;
 
 /**
  * @covers \Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes
@@ -55,9 +51,11 @@ class ChangelogReleaseNotesTest extends TestCase
 
     public function testWriteChangelogIsNoOpIfNoUpdatesAreRequired(): void
     {
-        $filename = tempnam(sys_get_temp_dir(), 'ChangelogReleaseNotes');
-        Assert::stringNotEmpty($filename);
-        file_put_contents($filename, 'Original contents');
+        $filename = Type\non_empty_string()->assert(
+            Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogReleaseNotes')
+        );
+
+        Filesystem\write_file($filename, 'Original contents');
 
         $entry           = new ChangelogEntry();
         $entry->contents = 'Changelog contents';
@@ -70,24 +68,20 @@ class ChangelogReleaseNotesTest extends TestCase
 
     public function testWriteChangelogRewritesFileWithNewContents(): void
     {
-        $filename = tempnam(sys_get_temp_dir(), 'ChangelogReleaseNotes');
-        Assert::stringNotEmpty($filename);
-        file_put_contents($filename, self::CHANGELOG_STUB);
+        $filename = Type\non_empty_string()
+            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogReleaseNotes'));
 
-        $requiredString = implode(
+        Filesystem\write_file($filename, self::CHANGELOG_STUB);
+
+        $requiredString = Str\join(
+            Vec\values(Dict\take(Str\split(self::CHANGELOG_STUB, "\n"), 4)),
             "\n",
-            array_slice(
-                explode("\n", self::CHANGELOG_STUB),
-                0,
-                4
-            )
         );
 
-        $contents = sprintf(self::CHANGELOG_ENTRY, '2020-01-01');
-        Assert::stringNotEmpty($contents);
+        $contents = Type\non_empty_string()->assert(Str\format(self::CHANGELOG_ENTRY, '2020-01-01'));
 
         $entry           = new ChangelogEntry();
-        $entry->contents = sprintf(self::CHANGELOG_ENTRY, 'TBD');
+        $entry->contents = Str\format(self::CHANGELOG_ENTRY, 'TBD');
         $entry->index    = 4;
         $entry->length   = 22;
 
@@ -95,7 +89,7 @@ class ChangelogReleaseNotesTest extends TestCase
 
         $releaseNotes::writeChangelogFile($filename, $releaseNotes);
 
-        $contents = file_get_contents($filename);
+        $contents = Filesystem\read_file($filename);
 
         $this->assertStringContainsString($requiredString, $contents);
         $this->assertStringContainsString($releaseNotes->contents() . "\n", $contents);
@@ -110,6 +104,8 @@ class ChangelogReleaseNotesTest extends TestCase
         $toMerge  = new ChangelogReleaseNotes('Other contents', $entry);
 
         $this->expectException(RuntimeException::class);
+
+        /** @psalm-suppress UnusedMethodCall */
         $original->merge($toMerge);
     }
 

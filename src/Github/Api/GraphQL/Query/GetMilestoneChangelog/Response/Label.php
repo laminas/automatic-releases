@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response;
 
 use Laminas\Diactoros\Uri;
+use Psl;
+use Psl\Regex;
+use Psl\Type;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
 
 /** @psalm-immutable */
 final class Label
@@ -37,17 +39,18 @@ final class Label
      *
      * @psalm-pure
      *
-     * @psalm-suppress ImpureMethodCall the {@see UriInterface} API is pure by design
+     * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
+     * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromPayload(array $payload): self
     {
-        Assert::keyExists($payload, 'color');
-        Assert::keyExists($payload, 'name');
-        Assert::keyExists($payload, 'url');
-        Assert::stringNotEmpty($payload['color']);
-        Assert::regex($payload['color'], '/^[0-9a-f]{6}$/i');
-        Assert::stringNotEmpty($payload['name']);
-        Assert::stringNotEmpty($payload['url']);
+        $payload = Type\shape([
+            'color' => Type\non_empty_string(),
+            'name' => Type\non_empty_string(),
+            'url' => Type\non_empty_string(),
+        ])->coerce($payload);
+
+        Psl\invariant(Regex\matches($payload['color'], '/^[0-9a-f]{6}$/i'), 'Malformed label color.');
 
         return new self(
             $payload['color'],

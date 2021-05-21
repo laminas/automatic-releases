@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
 {
     /** @var RunQuery&MockObject */
-    private $runQuery;
+    private RunQuery $runQuery;
 
     private GetMilestoneFirst100IssuesAndPullRequests $query;
 

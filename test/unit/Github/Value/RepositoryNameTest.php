@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Value;
 
-use InvalidArgumentException;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
+use Psl\Exception\InvariantViolationException;
 
 final class RepositoryNameTest extends TestCase
 {
@@ -23,10 +23,12 @@ final class RepositoryNameTest extends TestCase
                 ->__toString()
         );
 
+        /** @psalm-suppress UnusedMethodCall */
         $repositoryName->assertMatchesOwner('foo');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvariantViolationException::class);
 
+        /** @psalm-suppress UnusedMethodCall */
         $repositoryName->assertMatchesOwner('potato');
     }
 }

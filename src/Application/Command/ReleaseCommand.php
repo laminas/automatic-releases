@@ -14,12 +14,12 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Psl;
+use Psl\Filesystem;
+use Psl\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
 
 final class ReleaseCommand extends Command
 {
@@ -67,7 +67,7 @@ final class ReleaseCommand extends Command
         $repositoryCloneUri   = $repositoryName->uriWithTokenAuthentication($this->environment->githubToken());
         $repositoryPath       = $this->environment->githubWorkspacePath();
 
-        Assert::directory($repositoryPath . '/.git');
+        Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
         ($this->fetch)($repositoryCloneUri, $repositoryPath);
 
@@ -75,14 +75,12 @@ final class ReleaseCommand extends Command
         $releaseVersion  = $milestoneClosedEvent->version();
         $milestone       = ($this->getMilestone)($repositoryName, $milestoneClosedEvent->milestoneNumber());
 
+        /** @psalm-suppress UnusedMethodCall */
         $milestone->assertAllIssuesAreClosed();
 
         $releaseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
 
-        Assert::notNull(
-            $releaseBranch,
-            sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
-        );
+        Psl\invariant($releaseBranch !== null, Str\format('No valid release branch found for version %s', $releaseVersion->fullReleaseName()));
 
         $changelogReleaseNotes = ($this->createChangelogText)(
             $milestone,

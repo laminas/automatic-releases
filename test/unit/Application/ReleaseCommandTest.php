@@ -25,17 +25,14 @@ use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Env;
+use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
-use function mkdir;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
-
 final class ReleaseCommandTest extends TestCase
 {
-    /** @var Variables&MockObject */
+    /** @var MockObject&Variables */
     private Variables $variables;
     /** @var LoadCurrentGithubEvent&MockObject */
     private LoadCurrentGithubEvent $loadEvent;
@@ -51,7 +48,7 @@ final class ReleaseCommandTest extends TestCase
     private CreateReleaseText $createReleaseText;
     /** @var CreateTag&MockObject */
     private CreateTag $createTag;
-    /** @var Push&MockObject */
+    /** @var MockObject&Push */
     private Push $push;
     /** @var CreateRelease&MockObject */
     private CreateRelease $createRelease;
@@ -122,7 +119,7 @@ JSON
             'pullRequests' => [
                 'nodes' => [],
             ],
-            'url'          => 'http://example.com/milestone',
+            'url'          => 'https://example.com/milestone',
         ]);
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');
@@ -141,11 +138,11 @@ JSON
 
     public function testWillRelease(): void
     {
-        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
 
-        unlink($workspace);
-        mkdir($workspace);
-        mkdir($workspace . '/.git');
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
 
         $this->variables->method('githubWorkspacePath')
             ->willReturn($workspace);
@@ -168,7 +165,7 @@ JSON
         /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
         $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
         $releaseNotes
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('contents')
             ->willReturn('text of the changelog');
 

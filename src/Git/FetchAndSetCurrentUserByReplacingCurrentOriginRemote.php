@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Psl\Shell;
 use Psr\Http\Message\UriInterface;
-use Symfony\Component\Process\Process;
 
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
@@ -21,19 +21,14 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetc
         UriInterface $repositoryUri,
         string $repositoryRootDirectory
     ): void {
-        (new Process(['git', 'remote', 'rm', 'origin'], $repositoryRootDirectory))
-            ->run();
+        try {
+            Shell\execute('git', ['remote', 'rm', 'origin'], $repositoryRootDirectory);
+        } catch (Shell\Exception\FailedExecutionException) {
+        }
 
-        (new Process(['git', 'remote', 'add', 'origin', $repositoryUri->__toString()], $repositoryRootDirectory))
-            ->mustRun();
-
-        (new Process(['git', 'fetch', 'origin'], $repositoryRootDirectory))
-            ->mustRun();
-
-        (new Process(['git', 'config', 'user.email', $this->variables->gitAuthorEmail()], $repositoryRootDirectory))
-            ->mustRun();
-
-        (new Process(['git', 'config', 'user.name', $this->variables->gitAuthorName()], $repositoryRootDirectory))
-            ->mustRun();
+        Shell\execute('git', ['remote', 'add', 'origin', $repositoryUri->__toString()], $repositoryRootDirectory);
+        Shell\execute('git', ['fetch', 'origin'], $repositoryRootDirectory);
+        Shell\execute('git', ['config', 'user.email', $this->variables->gitAuthorEmail()], $repositoryRootDirectory);
+        Shell\execute('git', ['config', 'user.name', $this->variables->gitAuthorName()], $repositoryRootDirectory);
     }
 }

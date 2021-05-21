@@ -13,9 +13,8 @@ use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
-use function assert;
-use function range;
+use Psl\Type;
+use Psl\Vec;
 
 final class MergeMultipleReleaseNotesTest extends TestCase
 {
@@ -52,24 +51,26 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         $this->version        = SemVerVersion::fromMilestoneName('1.0.1');
     }
 
+    /**
+     * @psalm-suppress UnusedVariable
+     */
     public function testIndicatesCannotCreateReleaseTextIfNoGeneratorCan(): void
     {
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */
         $generators = [];
-        foreach (range(0, 4) as $index) {
-            $generator = $this->createMock(CreateReleaseText::class);
-            assert($generator instanceof CreateReleaseText);
-            assert($generator instanceof MockObject);
+        foreach (Vec\range(0, 4) as $index) {
+            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseText::class));
 
             $generator
-                ->expects($this->once())
+                ->expects(self::once())
                 ->method('canCreateReleaseText')
                 ->with(
-                    $this->equalTo($this->milestone),
-                    $this->equalTo($this->repositoryName),
-                    $this->equalTo($this->version),
-                    $this->equalTo($this->sourceBranch),
-                    $this->equalTo($this->repositoryPath)
+                    self::equalTo($this->milestone),
+                    self::equalTo($this->repositoryName),
+                    self::equalTo($this->version),
+                    self::equalTo($this->sourceBranch),
+                    self::equalTo($this->repositoryPath)
                 )
                 ->willReturn(false);
             $generators[] = $generator;
@@ -92,10 +93,10 @@ final class MergeMultipleReleaseNotesTest extends TestCase
     {
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */
         $generators = [];
-        foreach (range(0, 4) as $index) {
-            $generator = $this->createMock(CreateReleaseText::class);
-            assert($generator instanceof CreateReleaseText);
-            assert($generator instanceof MockObject);
+        /** @var 0|1|2|3|4 $index */
+        foreach (Vec\range(0, 4) as $index) {
+            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseText::class));
 
             if ($index < 2) {
                 $generator
@@ -152,10 +153,11 @@ final class MergeMultipleReleaseNotesTest extends TestCase
     {
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */
         $generators = [];
-        foreach (range(0, 4) as $index) {
-            $generator = $this->createMock(CreateReleaseText::class);
-            assert($generator instanceof CreateReleaseText);
-            assert($generator instanceof MockObject);
+
+        /** @var 0|1|2|3|4 $index */
+        foreach (Vec\range(0, 4) as $index) {
+            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseText::class));
 
             switch ($index) {
                 case 0:

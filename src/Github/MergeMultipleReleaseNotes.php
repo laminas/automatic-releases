@@ -9,11 +9,9 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use Webmozart\Assert\Assert;
-
-use function array_filter;
-use function array_map;
-use function array_reduce;
+use Psl\Iter;
+use Psl\Type;
+use Psl\Vec;
 
 final class MergeMultipleReleaseNotes implements CreateReleaseText
 {
@@ -33,22 +31,21 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): ChangelogReleaseNotes {
-        $items = array_map(
-            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
-            array_filter(
+        $items = Vec\map(
+            Vec\filter(
                 $this->releaseTextGenerators,
                 static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
-            )
+            ),
+            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
         );
 
-        $releaseNotes = array_reduce(
+        $releaseNotes = Iter\reduce(
             $items,
-            static fn (?ChangelogReleaseNotes $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item
+            static fn (?ChangelogReleaseNotes $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item,
+            null
         );
 
-        Assert::isInstanceOf($releaseNotes, ChangelogReleaseNotes::class);
-
-        return $releaseNotes;
+        return Type\object(ChangelogReleaseNotes::class)->assert($releaseNotes);
     }
 
     public function canCreateReleaseText(

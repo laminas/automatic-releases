@@ -6,12 +6,11 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Psl;
+use Psl\Json;
+use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Webmozart\Assert\Assert;
-
-use function Safe\json_decode;
-use function Safe\json_encode;
 
 final class CreatePullRequestThroughApiCall implements CreatePullRequest
 {
@@ -52,7 +51,7 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
 
         $request
             ->getBody()
-            ->write(json_encode([
+            ->write(Json\encode([
                 'title'                 => $title,
                 'head'                  => $head->name(),
                 'base'                  => $target->name(),
@@ -63,16 +62,14 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
 
         $response = $this->client->sendRequest($request);
 
+        Psl\invariant($response->getStatusCode() >= 200 || $response->getStatusCode() <= 299, 'Failed to create pull request through GitHub API.');
+
         $responseBody = $response
             ->getBody()
             ->__toString();
 
-        Assert::greaterThanEq($response->getStatusCode(), 200);
-        Assert::lessThanEq($response->getStatusCode(), 299);
-
-        $responseData = json_decode($responseBody, true);
-
-        Assert::isMap($responseData);
-        Assert::keyExists($responseData, 'url');
+        Json\typed($responseBody, Type\shape([
+            'url' => Type\mixed(),
+        ]));
     }
 }

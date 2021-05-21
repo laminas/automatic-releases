@@ -6,14 +6,12 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Psl\Json;
+use Psl\Str;
+use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Webmozart\Assert\Assert;
-
-use function Safe\json_decode;
-use function Safe\json_encode;
-use function sprintf;
 
 final class CreateMilestoneThroughApiCall implements CreateMilestone
 {
@@ -43,7 +41,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 
     public function __invoke(RepositoryName $repository, SemVerVersion $version): void
     {
-        $this->logger->info(sprintf(
+        $this->logger->info(Str\format(
             '[CreateMilestoneThroughApiCall] Creating milestone "%s" for "%s/%s"',
             $version->fullReleaseName(),
             $repository->owner(),
@@ -61,7 +59,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 
         $request
             ->getBody()
-            ->write(json_encode([
+            ->write(Json\encode([
                 'title' => $version->fullReleaseName(),
                 'description' => $this->milestoneDescription($version),
             ]));
@@ -72,12 +70,11 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             ->getBody()
             ->__toString();
 
-        $responseData = json_decode($responseBody, true);
-        Assert::isMap($responseData);
+        $responseData = Json\typed($responseBody, Type\dict(Type\string(), Type\mixed()));
 
         if ($response->getStatusCode() !== 201) {
             $this->logger->error(
-                sprintf(
+                Str\format(
                     '[CreateMilestoneThroughApiCall] Failed to create milestone "%s"',
                     $version->fullReleaseName()
                 ),
@@ -87,9 +84,9 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             throw CreateMilestoneFailed::forVersion($version->fullReleaseName());
         }
 
-        Assert::eq($response->getStatusCode(), 201);
+        Type\literal_scalar(201)->assert($response->getStatusCode());
 
-        $this->logger->info(sprintf(
+        $this->logger->info(Str\format(
             '[CreateMilestoneThroughApiCall] Milestone "%s" created',
             $version->fullReleaseName()
         ));
@@ -105,6 +102,6 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             return 'Feature release (minor)';
         }
 
-        return sprintf('%s bugfix release (patch)', $version->targetReleaseBranchName()->name());
+        return Str\format('%s bugfix release (patch)', $version->targetReleaseBranchName()->name());
     }
 }

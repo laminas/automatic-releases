@@ -9,18 +9,13 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Psl\Regex;
+use Psl\Str;
+use Psl\Type;
+use Psl\Vec;
 use Psr\Http\Message\UriInterface;
-use Webmozart\Assert\Assert;
 
-use function array_keys;
-use function explode;
-use function implode;
-use function preg_match;
 use function preg_quote;
-use function preg_replace;
-use function str_replace;
-use function strtr;
-use function trim;
 
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
@@ -47,7 +42,7 @@ MARKDOWN;
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): ChangelogReleaseNotes {
-        $replacements = [
+        $text = Str\replace_every(self::TEMPLATE, [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
             '%description%'  => (string) $milestone->description(),
             '%changelogText%' => $this->normalizeChangelog(
@@ -57,15 +52,9 @@ MARKDOWN;
                 ),
                 $semVerVersion->fullReleaseName()
             ),
-        ];
+        ]);
 
-        $text = str_replace(
-            array_keys($replacements),
-            $replacements,
-            self::TEMPLATE
-        );
-
-        Assert::stringNotEmpty($text);
+        Type\non_empty_string()->assert($text);
 
         return new ChangelogReleaseNotes($text);
     }
@@ -89,9 +78,8 @@ MARKDOWN;
     {
         $changelog = $this->normalizeChangelogHeadings($changelog);
         $changelog = $this->removeRedundantVersionHeadings($changelog, $version);
-        $changelog = $this->collapseMultiLineBreaks($changelog);
 
-        return $changelog;
+        return $this->collapseMultiLineBreaks($changelog);
     }
 
     /**
@@ -109,14 +97,13 @@ MARKDOWN;
      */
     private function normalizeChangelogHeadings(string $changelog): string
     {
-        $lines         = explode("\n", trim($changelog));
+        $lines         = Str\split(Str\trim($changelog), "\n");
         $linesToRemove = [];
         foreach ($lines as $i => $line) {
-            $matches = [];
-
             // Does the line match one of the delimiter line types? If so,
             // capture that in $matches.
-            if (! preg_match('/^(?P<delim>-{3,}|={3,})$/', $line, $matches)) {
+            $matches = Regex\first_match($line, '/^(?P<delimiter>-{3,}|={3,})$/', Regex\capture_groups(['delimiter']));
+            if ($matches === null) {
                 continue;
             }
 
@@ -136,9 +123,9 @@ MARKDOWN;
             // We will then remove the current line, as the delimiter is no
             // longer necessary.
             /** @psalm-var "-"|"=" $delimiter */
-            $delimiter = $matches['delim'][0];
+            $delimiter = $matches['delimiter'][0];
             /** @psalm-var non-empty-string $heading */
-            $heading         = strtr($delimiter, ['-' => '####', '=' => '###']);
+            $heading         = Str\replace_every($delimiter, ['-' => '####', '=' => '###']);
             $lines[$i - 1]   = $heading . ' ' . $previousLine;
             $linesToRemove[] = $i;
         }
@@ -147,16 +134,16 @@ MARKDOWN;
             unset($lines[$index]);
         }
 
-        return implode("\n", $lines);
+        return Str\join(Vec\values($lines), "\n");
     }
 
     private function collapseMultiLineBreaks(string $text): string
     {
-        return preg_replace("/\n\n\n+/s", "\n\n", $text);
+        return Regex\replace($text, "/\n\n\n+/s", "\n\n");
     }
 
     private function removeRedundantVersionHeadings(string $changelog, string $version): string
     {
-        return preg_replace("/\n\#{3,} " . preg_quote($version, '/') . "\n/s", '', $changelog);
+        return Regex\replace($changelog, "/\n\#{3,} " . preg_quote($version, '/') . "\n/s", '');
     }
 }

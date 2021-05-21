@@ -8,10 +8,8 @@ use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use PHPUnit\Framework\TestCase;
-
-use function file_put_contents;
-use function sys_get_temp_dir;
-use function tempnam;
+use Psl\Env;
+use Psl\Filesystem;
 
 /** @covers \Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
 final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
@@ -32,9 +30,9 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
     "action": "closed"
 }
 JSON;
-        $event     = tempnam(sys_get_temp_dir(), 'github_event');
+        $event     = Filesystem\create_temporary_file(Env\temp_dir(), 'github_event');
 
-        file_put_contents($event, $eventData);
+        Filesystem\write_file($event, $eventData);
 
         $variables->method('githubEventPath')
             ->willReturn($event);

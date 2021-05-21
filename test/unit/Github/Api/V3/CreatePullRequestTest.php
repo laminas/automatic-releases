@@ -11,19 +11,17 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Webmozart\Assert\Assert;
-
-use function uniqid;
 
 final class CreatePullRequestTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
     private ClientInterface $httpClient;
 
-    /** @var RequestFactoryInterface&MockObject */
+    /** @var MockObject&RequestFactoryInterface */
     private RequestFactoryInterface $messageFactory;
 
     /** @psalm-var non-empty-string */
@@ -37,11 +35,8 @@ final class CreatePullRequestTest extends TestCase
 
         $this->httpClient     = $this->createMock(ClientInterface::class);
         $this->messageFactory = $this->createMock(RequestFactoryInterface::class);
-        $apiToken             = uniqid('apiToken', true);
 
-        Assert::notEmpty($apiToken);
-
-        $this->apiToken          = $apiToken;
+        $this->apiToken          = 'apiToken' . SecureRandom\string(8);
         $this->createPullRequest = new CreatePullRequestThroughApiCall(
             $this->messageFactory,
             $this->httpClient,

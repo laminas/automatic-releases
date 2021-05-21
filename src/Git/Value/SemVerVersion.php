@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git\Value;
 
-use Webmozart\Assert\Assert;
-
-use function Safe\preg_match;
+use Psl;
+use Psl\Regex;
 
 /** @psalm-immutable */
 final class SemVerVersion
@@ -24,16 +23,15 @@ final class SemVerVersion
 
     /**
      * @psalm-pure
-     * @psalm-suppress ImpureFunctionCall the {@see \Safe\preg_match()} API is pure by design
+     * @psalm-suppress ImpureFunctionCall {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromMilestoneName(string $name): self
     {
-        Assert::notEmpty($name);
-        Assert::regex($name, '/^(v)?\\d+\\.\\d+\\.\\d+$/');
+        Psl\invariant(Regex\matches($name, '/^(v)?\\d+\\.\\d+\\.\\d+$/'), 'Milestone name is malformed.');
 
-        preg_match('/(\\d+)\\.(\\d+)\\.(\\d+)/', $name, $matches);
+        $matches = Regex\first_match($name, '/(\\d+)\\.(\\d+)\\.(\\d+)/', Regex\capture_groups([1, 2, 3]));
 
-        Assert::isList($matches);
+        Psl\invariant($matches !== null, 'Expected milestone name to match.');
 
         return new self((int) $matches[1], (int) $matches[2], (int) $matches[3]);
     }

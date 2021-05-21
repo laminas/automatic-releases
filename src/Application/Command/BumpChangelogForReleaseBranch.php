@@ -9,12 +9,12 @@ use Laminas\AutomaticReleases\Environment\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Psl;
+use Psl\Filesystem;
+use Psl\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
 
 final class BumpChangelogForReleaseBranch extends Command
 {
@@ -47,7 +47,7 @@ final class BumpChangelogForReleaseBranch extends Command
         $repositoryCloneUri   = $repositoryName->uriWithTokenAuthentication($this->environment->githubToken());
         $repositoryPath       = $this->environment->githubWorkspacePath();
 
-        Assert::directory($repositoryPath . '/.git');
+        Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
         ($this->fetch)($repositoryCloneUri, $repositoryPath);
 
@@ -55,10 +55,7 @@ final class BumpChangelogForReleaseBranch extends Command
         $releaseVersion  = $milestoneClosedEvent->version();
         $releaseBranch   = $mergeCandidates->targetBranchFor($releaseVersion);
 
-        Assert::notNull(
-            $releaseBranch,
-            sprintf('No valid release branch found for version %s', $releaseVersion->fullReleaseName())
-        );
+        Psl\invariant($releaseBranch !== null, Str\format('No valid release branch found for version %s', $releaseVersion->fullReleaseName()));
 
         ($this->bumpChangelogVersion)(
             BumpAndCommitChangelogVersion::BUMP_PATCH,

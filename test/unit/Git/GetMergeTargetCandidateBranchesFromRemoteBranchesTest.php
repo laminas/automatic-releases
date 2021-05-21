@@ -8,13 +8,10 @@ use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranc
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function mkdir;
-use function Safe\tempnam;
-use function sys_get_temp_dir;
-use function unlink;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Type;
 
 /** @covers \Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
@@ -28,45 +25,33 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
     {
         parent::setUp();
 
-        $source      = tempnam(sys_get_temp_dir(), 'GetMergeTargetSource');
-        $destination = tempnam(sys_get_temp_dir(), 'GetMergeTargetDestination');
+        $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetSource');
+        $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetDestination');
 
-        Assert::notEmpty($source);
-        Assert::notEmpty($destination);
+        Type\non_empty_string()->assert($source);
+        Type\non_empty_string()->assert($destination);
 
         $this->source      = $source;
         $this->destination = $destination;
 
-        unlink($this->source);
-        unlink($this->destination);
-        mkdir($this->source);
+        Filesystem\delete_file($this->source);
+        Filesystem\delete_file($this->destination);
+        Filesystem\create_directory($this->source);
 
-        (new Process(['git', 'init'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'remote', 'add', 'origin', $this->destination], $this->source))
-            ->mustRun();
-        (new Process(['git', 'commit', '--allow-empty', '-m', 'a commit'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'ignored-branch'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', '1.0.x'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', '2.1.x'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'clone', $this->source, $this->destination]))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'new-ignored-branch'], $this->source))
-            ->mustRun();
+        Shell\execute('git', ['init'], $this->source);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $this->source);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $this->source);
+        Shell\execute('git', ['remote', 'add', 'origin', $this->destination], $this->source);
+        Shell\execute('git', ['commit', '--allow-empty', '-m', 'a commit'], $this->source);
+        Shell\execute('git', ['checkout', '-b', 'ignored-branch'], $this->source);
+        Shell\execute('git', ['checkout', '-b', '1.0.x'], $this->source);
+        Shell\execute('git', ['checkout', '-b', '2.1.x'], $this->source);
+        Shell\execute('git', ['clone', $this->source, $this->destination]);
+        Shell\execute('git', ['checkout', '-b', 'new-ignored-branch'], $this->source);
         // Ignored - wasn't fetched
-        (new Process(['git', 'checkout', '-b', '3.0.x'], $this->source))
-            ->mustRun();
+        Shell\execute('git', ['checkout', '-b', '3.0.x'], $this->source);
         // Ignored - not on remote
-        (new Process(['git', 'checkout', '-b', '4.0.x'], $this->destination))
-            ->mustRun();
+        Shell\execute('git', ['checkout', '-b', '4.0.x'], $this->destination);
     }
 
     public function testFetchesMergeTargetCandidates(): void

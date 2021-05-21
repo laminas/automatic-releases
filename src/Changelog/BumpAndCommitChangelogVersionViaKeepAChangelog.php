@@ -11,10 +11,9 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Phly\KeepAChangelog\Bump\ChangelogBump;
+use Psl\Str;
+use Psl\Type;
 use Psr\Log\LoggerInterface;
-use Webmozart\Assert\Assert;
-
-use function sprintf;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitChangelogVersion
 {
@@ -62,16 +61,15 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
 
         ($this->checkoutBranch)($repositoryDirectory, $sourceBranch);
 
-        $changelogFile = sprintf('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
+        $changelogFile = Str\format('%s/%s', $repositoryDirectory, self::CHANGELOG_FILE);
         $versionString = $version->fullReleaseName();
         $bumper        = new ChangelogBump($changelogFile);
-        $newVersion    = $bumper->$bumpType($versionString);
+        $newVersion    = Type\non_empty_string()->assert($bumper->$bumpType($versionString));
 
-        Assert::stringNotEmpty($newVersion);
         $bumper->updateChangelog($newVersion);
 
-        $message = sprintf(self::COMMIT_TEMPLATE, $newVersion, self::CHANGELOG_FILE, $newVersion);
-        Assert::notEmpty($message);
+        $message = Type\non_empty_string()
+            ->assert(Str\format(self::COMMIT_TEMPLATE, $newVersion, self::CHANGELOG_FILE, $newVersion));
 
         ($this->commitFile)(
             $repositoryDirectory,
@@ -83,7 +81,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
 
-        $this->logger->info(sprintf(
+        $this->logger->info(Str\format(
             'BumpAndCommitChangelogVersion: bumped %s to version %s in branch %s',
             self::CHANGELOG_FILE,
             $newVersion,

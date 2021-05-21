@@ -6,13 +6,10 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\PushViaConsole;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
-use Webmozart\Assert\Assert;
-
-use function mkdir;
-use function Safe\tempnam;
-use function sys_get_temp_dir;
-use function unlink;
+use Psl\Env;
+use Psl\Filesystem;
+use Psl\Shell;
+use Psl\Type;
 
 /** @covers \Laminas\AutomaticReleases\Git\PushViaConsole */
 final class PushViaConsoleTest extends TestCase
@@ -26,45 +23,31 @@ final class PushViaConsoleTest extends TestCase
     {
         parent::setUp();
 
-        $source      = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestSource');
-        $destination = tempnam(sys_get_temp_dir(), 'PushViaConsoleTestDestination');
+        $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestSource');
+        $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestDestination');
 
-        Assert::notEmpty($source);
-        Assert::notEmpty($destination);
+        $this->source      = Type\non_empty_string()->assert($source);
+        $this->destination = Type\non_empty_string()->assert($destination);
 
-        $this->source      = $source;
-        $this->destination = $destination;
-
-        unlink($this->source);
-        unlink($this->destination);
-        mkdir($this->source);
+        Filesystem\delete_file($this->source);
+        Filesystem\delete_file($this->destination);
+        Filesystem\create_directory($this->source);
 
         // @TODO check if we need to set the git author and email here (will likely fail in CI)
-        (new Process(['git', 'init'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.email', 'me@example.com'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'config', 'user.name', 'Just Me'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'remote', 'add', 'origin', $this->destination], $this->source))
-            ->mustRun();
-        (new Process(['git', 'commit', '--allow-empty', '-m', 'a commit'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'initial-branch'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'clone', $this->source, $this->destination]))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'pushed-branch'], $this->source))
-            ->mustRun();
-        (new Process(['git', 'checkout', '-b', 'ignored-branch'], $this->source))
-            ->mustRun();
+        Shell\execute('git', ['init'], $this->source);
+        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $this->source);
+        Shell\execute('git', ['config', 'user.name', 'Just Me'], $this->source);
+        Shell\execute('git', ['remote', 'add', 'origin', $this->destination], $this->source);
+        Shell\execute('git', ['commit', '--allow-empty', '-m', 'a commit'], $this->source);
+        Shell\execute('git', ['checkout', '-b', 'initial-branch'], $this->source);
+        Shell\execute('git', ['clone', $this->source, $this->destination]);
+        Shell\execute('git', ['checkout', '-b', 'pushed-branch'], $this->source);
+        Shell\execute('git', ['checkout', '-b', 'ignored-branch'], $this->source);
     }
 
     protected function tearDown(): void
     {
-        $sourceBranches = (new Process(['git', 'branch'], $this->source))
-            ->mustRun()
-            ->getOutput();
+        $sourceBranches = Shell\execute('git', ['branch'], $this->source);
 
         self::assertStringNotContainsString('temporary-branch', $sourceBranches);
 
@@ -76,9 +59,7 @@ final class PushViaConsoleTest extends TestCase
         (new PushViaConsole())
             ->__invoke($this->source, 'pushed-branch');
 
-        $destinationBranches = (new Process(['git', 'branch'], $this->destination))
-            ->mustRun()
-            ->getOutput();
+        $destinationBranches = Shell\execute('git', ['branch'], $this->destination);
 
         self::assertStringContainsString('pushed-branch', $destinationBranches);
         self::assertStringNotContainsString('ignored-branch', $destinationBranches);
@@ -89,9 +70,7 @@ final class PushViaConsoleTest extends TestCase
         (new PushViaConsole())
             ->__invoke($this->source, 'pushed-branch', 'pushed-alias');
 
-        $destinationBranches = (new Process(['git', 'branch'], $this->destination))
-            ->mustRun()
-            ->getOutput();
+        $destinationBranches = Shell\execute('git', ['branch'], $this->destination);
 
         self::assertStringContainsString('pushed-alias', $destinationBranches);
         self::assertStringNotContainsString('pushed-branch', $destinationBranches);
@@ -100,30 +79,24 @@ final class PushViaConsoleTest extends TestCase
 
     public function testPushesSelectedTag(): void
     {
-        (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
-            ->mustRun();
+        Shell\execute('git', ['tag', 'tag-name', '-m', 'pushed tag'], $this->source);
 
         (new PushViaConsole())
             ->__invoke($this->source, 'tag-name');
 
-        $destinationBranches = (new Process(['git', 'tag'], $this->destination))
-            ->mustRun()
-            ->getOutput();
+        $destinationBranches = Shell\execute('git', ['tag'], $this->destination);
 
         self::assertStringContainsString('tag-name', $destinationBranches);
     }
 
     public function testPushesSelectedTagAsAliasBranch(): void
     {
-        (new Process(['git', 'tag', 'tag-name', '-m', 'pushed tag'], $this->source))
-            ->mustRun();
+        Shell\execute('git', ['tag', 'tag-name', '-m', 'pushed tag'], $this->source);
 
         (new PushViaConsole())
             ->__invoke($this->source, 'tag-name', 'pushed-alias');
 
-        $destinationBranches = (new Process(['git', 'branch'], $this->destination))
-            ->mustRun()
-            ->getOutput();
+        $destinationBranches = Shell\execute('git', ['branch'], $this->destination);
 
         self::assertStringContainsString('pushed-alias', $destinationBranches);
         self::assertStringNotContainsString('tag-name', $destinationBranches);

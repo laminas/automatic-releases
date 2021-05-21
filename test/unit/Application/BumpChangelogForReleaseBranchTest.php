@@ -17,27 +17,23 @@ use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Env;
+use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
-
-use function file_get_contents;
-use function mkdir;
-use function sys_get_temp_dir;
-use function tempnam;
-use function unlink;
 
 class BumpChangelogForReleaseBranchTest extends TestCase
 {
     /** @var Variables&MockObject */
-    private $environment;
+    private Variables $environment;
     /** @var LoadCurrentGithubEvent&MockObject */
-    private $loadEvent;
+    private LoadCurrentGithubEvent $loadEvent;
     /** @var Fetch&MockObject */
-    private $fetch;
+    private Fetch $fetch;
     /** @var GetMergeTargetCandidateBranches&MockObject */
-    private $getMergeTargets;
+    private GetMergeTargetCandidateBranches $getMergeTargets;
     /** @var BumpAndCommitChangelogVersion&MockObject */
-    private $bumpChangelogVersion;
+    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
     private MilestoneClosedEvent $event;
     private BumpChangelogForReleaseBranch $command;
 
@@ -71,18 +67,18 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             JSON);
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(file_get_contents(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $this->environment->method('signingSecretKey')->willReturn($key);
     }
 
     public function testWillBumpChangelogVersion(): void
     {
-        $workspace = tempnam(sys_get_temp_dir(), 'workspace');
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
 
-        unlink($workspace);
-        mkdir($workspace);
-        mkdir($workspace . '/.git');
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
 
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1.x'),

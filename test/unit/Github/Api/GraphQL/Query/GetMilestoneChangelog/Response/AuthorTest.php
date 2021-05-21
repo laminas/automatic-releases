@@ -13,10 +13,10 @@ final class AuthorTest extends TestCase
     {
         $author = Author::fromPayload([
             'login' => 'Magoo',
-            'url'   => 'http://example.com/',
+            'url'   => 'https://example.com/',
         ]);
 
         self::assertSame('Magoo', $author->name());
-        self::assertSame('http://example.com/', $author->url()->__toString());
+        self::assertSame('https://example.com/', $author->url()->__toString());
     }
 }

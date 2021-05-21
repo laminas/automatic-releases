@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Gpg;
 
-use Webmozart\Assert\Assert;
+use Psl;
+use Psl\Regex;
+use Psl\Str;
 
 /** @psalm-immutable */
 final class SecretKeyId
@@ -21,8 +23,8 @@ final class SecretKeyId
     /** @psalm-pure */
     public static function fromBase16String(string $keyId): self
     {
-        Assert::notEmpty($keyId);
-        Assert::regex($keyId, '/^[A-F0-9]+$/i');
+        Psl\invariant(! Str\is_empty($keyId), 'Expected a non-empty key id.');
+        Psl\invariant(Regex\matches($keyId, '/^[A-F0-9]+$/i'), 'Key id is malformed.');
 
         return new self($keyId);
     }
