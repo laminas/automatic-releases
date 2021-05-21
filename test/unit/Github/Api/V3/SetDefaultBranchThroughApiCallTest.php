@@ -23,7 +23,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
     /** @var ClientInterface&MockObject */
     private ClientInterface $httpClient;
     /** @var RequestFactoryInterface&MockObject */
-    private MockObject | RequestFactoryInterface $messageFactory;
+    private RequestFactoryInterface $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
     private SetDefaultBranchThroughApiCall $createRelease;

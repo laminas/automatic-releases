@@ -21,7 +21,7 @@ final class CreateReleaseTest extends TestCase
     /** @var ClientInterface&MockObject */
     private ClientInterface $httpClient;
     /** @var RequestFactoryInterface&MockObject */
-    private MockObject | RequestFactoryInterface $messageFactory;
+    private RequestFactoryInterface $messageFactory;
     /** @psalm-var non-empty-string */
     private string $apiToken;
     private CreateReleaseThroughApiCall $createRelease;

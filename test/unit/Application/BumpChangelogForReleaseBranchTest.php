@@ -33,7 +33,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
     /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
     /** @var BumpAndCommitChangelogVersion&MockObject */
-    private MockObject | BumpAndCommitChangelogVersion $bumpChangelogVersion;
+    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
     private MilestoneClosedEvent $event;
     private BumpChangelogForReleaseBranch $command;
 

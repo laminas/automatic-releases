@@ -27,11 +27,11 @@ use Psr\Log\LoggerInterface;
 class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 {
     /** @var CheckoutBranch&MockObject */
-    private MockObject | CheckoutBranch $checkoutBranch;
+    private CheckoutBranch $checkoutBranch;
     /** @var CommitFile&MockObject */
-    private MockObject | CommitFile $commitFile;
+    private CommitFile $commitFile;
     /** @var Push&MockObject */
-    private MockObject | Push $push;
+    private Push $push;
     /** @var LoggerInterface&MockObject */
     private LoggerInterface $logger;
     private BumpAndCommitChangelogVersionViaKeepAChangelog $bumpAndCommitChangelog;
