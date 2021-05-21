@@ -2,27 +2,37 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.12.0 - TBD
+## 1.12.0 - 2021-05-21
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.12.0](https://github.com/laminas/automatic-releases/milestone/30)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.12.0
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **5**
+- Total contributors: **5**
 
-### Removed
+#### Enhancement
 
-- Nothing.
+ - [138: replace `thecodingmachine/safe`, `webmozart/assert`, and `symfony/process` by `azjezz/psl`](https://github.com/laminas/automatic-releases/pull/138) thanks to @azjezz
+ - [132: build(deps-dev): Bump doctrine/coding-standard from 8.2.0 to 9.0.0](https://github.com/laminas/automatic-releases/pull/132) thanks to @dependabot-preview[bot]
 
-### Fixed
+#### Bug,Documentation
 
-- Nothing.
+ - [137: Fix typo in README.md](https://github.com/laminas/automatic-releases/pull/137) thanks to @Jean-Beru
+
+#### Enhancement,dependencies
+
+ - [136: Normalize composer](https://github.com/laminas/automatic-releases/pull/136) thanks to @ghostwriter
+
+#### Enhancement,Feature Request
+
+ - [125: Set shell verbosity to debug by default](https://github.com/laminas/automatic-releases/pull/125) thanks to @ostrolucky
 
 ## 1.11.1 - 2021-03-29
 
