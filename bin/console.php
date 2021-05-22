@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\WebApplication;
 
+use ChangelogGenerator\GitHubOAuthToken;
 use DateTimeZone;
 use ErrorException;
 use Http\Discovery\HttpClientDiscovery;
@@ -86,7 +87,8 @@ use const STDERR;
     );
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
-        $httpClient
+        $httpClient,
+        new GitHubOAuthToken($githubToken)
     ));
     $createReleaseText    = new MergeMultipleReleaseNotes([
         new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock(new DateTimeZone('UTC'))),

@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
 use ChangelogGenerator\ChangelogConfig;
 use ChangelogGenerator\ChangelogGenerator;
+use ChangelogGenerator\GitHubOAuthToken;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
@@ -16,10 +17,13 @@ final class JwageGenerateChangelogTest extends TestCase
 {
     public function testGenerateChangelog(): void
     {
+        $githubCredentials = new GitHubOAuthToken('token');
+
         $config = (new ChangelogConfig())
             ->setUser('laminas')
             ->setRepository('repository-name')
-            ->setMilestone('1.0.0');
+            ->setMilestone('1.0.0')
+            ->setGitHubCredentials($githubCredentials);
 
         $output = new BufferedOutput();
 
@@ -32,7 +36,7 @@ final class JwageGenerateChangelogTest extends TestCase
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
         $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');
 
-        (new JwageGenerateChangelog($changelogGenerator))
+        (new JwageGenerateChangelog($changelogGenerator, $githubCredentials))
             ->__invoke($repositoryName, $semVerVersion);
     }
 }
