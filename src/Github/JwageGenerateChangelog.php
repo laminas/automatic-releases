@@ -7,7 +7,6 @@ namespace Laminas\AutomaticReleases\Github;
 use ChangelogGenerator\ChangelogConfig;
 use ChangelogGenerator\ChangelogGenerator;
 use ChangelogGenerator\GitHubCredentials;
-use ChangelogGenerator\GitHubOAuthToken;
 use ChangelogGenerator\IssueClient;
 use ChangelogGenerator\IssueFactory;
 use ChangelogGenerator\IssueFetcher;
