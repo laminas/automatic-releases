@@ -6,6 +6,7 @@ namespace Laminas\AutomaticReleases\Github;
 
 use ChangelogGenerator\ChangelogConfig;
 use ChangelogGenerator\ChangelogGenerator;
+use ChangelogGenerator\GitHubCredentials;
 use ChangelogGenerator\IssueClient;
 use ChangelogGenerator\IssueFactory;
 use ChangelogGenerator\IssueFetcher;
@@ -20,15 +21,18 @@ use Symfony\Component\Console\Output\BufferedOutput;
 final class JwageGenerateChangelog implements GenerateChangelog
 {
     private ChangelogGenerator $changelogGenerator;
+    private GitHubCredentials $gitHubCredentials;
 
-    public function __construct(ChangelogGenerator $changelogGenerator)
+    public function __construct(ChangelogGenerator $changelogGenerator, GitHubCredentials $gitHubCredentials)
     {
         $this->changelogGenerator = $changelogGenerator;
+        $this->gitHubCredentials  = $gitHubCredentials;
     }
 
     public static function create(
         RequestFactoryInterface $messageFactory,
-        ClientInterface $client
+        ClientInterface $client,
+        GitHubCredentials $gitHubCredentials
     ): self {
         $issueClient     = new IssueClient($messageFactory, $client);
         $issueFactory    = new IssueFactory();
@@ -36,7 +40,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
         $issueRepository = new IssueRepository($issueFetcher, $issueFactory);
         $issueGrouper    = new IssueGrouper();
 
-        return new self(new ChangelogGenerator($issueRepository, $issueGrouper));
+        return new self(new ChangelogGenerator($issueRepository, $issueGrouper), $gitHubCredentials);
     }
 
     public function __invoke(
@@ -46,7 +50,8 @@ final class JwageGenerateChangelog implements GenerateChangelog
         $config = (new ChangelogConfig())
             ->setUser($repositoryName->owner())
             ->setRepository($repositoryName->name())
-            ->setMilestone($semVerVersion->fullReleaseName());
+            ->setMilestone($semVerVersion->fullReleaseName())
+            ->setGitHubCredentials($this->gitHubCredentials);
 
         $output = new BufferedOutput();
 
