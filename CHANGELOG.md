@@ -2,27 +2,24 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.12.1 - TBD
+## 1.12.1 - 2021-05-23
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.12.1](https://github.com/laminas/automatic-releases/milestone/32)
 
-- Nothing.
+1.12.x bugfix release (patch)
 
-### Deprecated
+### 1.12.1
 
-- Nothing.
+- Total issues resolved: **1**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
 
-### Removed
+#### Bug
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [140: Private repository release support](https://github.com/laminas/automatic-releases/pull/140) thanks to @Lansoweb
 
 ## 1.12.0 - 2021-05-21
 
