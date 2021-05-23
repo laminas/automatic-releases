@@ -6,11 +6,16 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github;
 
 use ChangelogGenerator\ChangelogConfig;
 use ChangelogGenerator\ChangelogGenerator;
+use ChangelogGenerator\GitHubCredentials;
 use ChangelogGenerator\GitHubOAuthToken;
+use Http\Client\HttpClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestFactoryInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 final class JwageGenerateChangelogTest extends TestCase
@@ -38,5 +43,20 @@ final class JwageGenerateChangelogTest extends TestCase
 
         (new JwageGenerateChangelog($changelogGenerator, $githubCredentials))
             ->__invoke($repositoryName, $semVerVersion);
+    }
+
+    public function testCreateGenerateChangelog(): void
+    {
+        $makeRequests = $this->createMock(RequestFactoryInterface::class);
+        $httpClient   = $this->createMock(HttpClient::class);
+        $githubToken  = $this->createMock(GitHubCredentials::class);
+
+        $changeLogGenerator = JwageGenerateChangelog::create(
+            $makeRequests,
+            $httpClient,
+            $githubToken
+        );
+
+        $this->assertInstanceOf(JwageGenerateChangelog::class, $changeLogGenerator);
     }
 }
