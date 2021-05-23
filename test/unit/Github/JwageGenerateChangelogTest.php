@@ -9,8 +9,6 @@ use ChangelogGenerator\ChangelogGenerator;
 use ChangelogGenerator\GitHubCredentials;
 use ChangelogGenerator\GitHubOAuthToken;
 use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
