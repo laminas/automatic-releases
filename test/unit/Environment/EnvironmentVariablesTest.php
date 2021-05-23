@@ -63,18 +63,18 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testReadsEnvironmentVariables(): void
     {
-        $signingSecretKey   = 'signingSecretKey' . SecureRandom\string(8);
-        $signingSecretKeyId = SecretKeyId::fromBase16String('aabbccdd');
-        $githubToken        = 'githubToken' . SecureRandom\string(8);
-        $githubOrganisation = 'githubOrganisation' . SecureRandom\string(8);
-        $gitAuthorName      = 'gitAuthorName' . SecureRandom\string(8);
-        $gitAuthorEmail     = 'gitAuthorEmail' . SecureRandom\string(8);
-        $githubEventPath    = 'githubEventPath' . SecureRandom\string(8);
-        $githubWorkspace    = 'githubWorkspace' . SecureRandom\string(8);
+        $signingSecretKey         = 'signingSecretKey' . SecureRandom\string(8);
+        $signingSecretKeyId       = SecretKeyId::fromBase16String('aabbccdd');
+        $githubToken              = 'githubToken' . SecureRandom\string(8);
+        $githubOrganisation       = 'githubOrganisation' . SecureRandom\string(8);
+        $gitAuthorName            = 'gitAuthorName' . SecureRandom\string(8);
+        $gitAuthorEmail           = 'gitAuthorEmail' . SecureRandom\string(8);
+        $githubEventPath          = 'githubEventPath' . SecureRandom\string(8);
+        $githubWorkspace          = 'githubWorkspace' . SecureRandom\string(8);
         $twitterConsumerApiKey    = 'twitterConsumerApiKey' . SecureRandom\string(8);
-        $twitterConsumerApiSecret    = 'twitterConsumerApiSecret' . SecureRandom\string(8);
-        $twitterAaccessToken    = 'twitterAaccessToken' . SecureRandom\string(8);
-        $twitterAccessTokenSecret    = 'twitterAccessTokenSecret' . SecureRandom\string(8);
+        $twitterConsumerApiSecret = 'twitterConsumerApiSecret' . SecureRandom\string(8);
+        $twitterAaccessToken      = 'twitterAaccessToken' . SecureRandom\string(8);
+        $twitterAccessTokenSecret = 'twitterAccessTokenSecret' . SecureRandom\string(8);
 
         Env\set_var('GITHUB_TOKEN', $githubToken);
         Env\set_var('SIGNING_SECRET_KEY', $signingSecretKey);
