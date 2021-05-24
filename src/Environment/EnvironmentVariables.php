@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Environment;
 
+use Laminas\AutomaticReleases\Environment\Traits\EnvTrait;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Psl;
-use Psl\Env;
-use Psl\Iter;
-use Psl\Str;
+use function Psl\invariant;
+use function Psl\Iter\contains;
 
 /** @psalm-immutable */
 class EnvironmentVariables implements Variables
 {
+    use EnvTrait;
+
     private const LOG_LEVELS = [
         '100',
         '200',
@@ -92,8 +93,8 @@ class EnvironmentVariables implements Variables
         $this->twitterAccessTokenSecret = $twitterAccessTokenSecret;
 
         /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
-        Psl\invariant(
-            Iter\contains(self::LOG_LEVELS, $logLevel),
+        invariant(
+            contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
             . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
         );
