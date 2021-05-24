@@ -34,13 +34,12 @@ JSON;
 
         Filesystem\write_file($event, $eventData);
 
-        $variables->method('githubEventPath')
+        $variables->method('eventPath')
             ->willReturn($event);
 
         self::assertEquals(
             MilestoneClosedEvent::fromEventJson($eventData),
-            (new LoadCurrentGithubEventFromGithubActionPath($variables))
-                ->__invoke()
+            (new LoadCurrentGithubEventFromGithubActionPath($variables))()
         );
     }
 }
