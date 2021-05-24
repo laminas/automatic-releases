@@ -20,7 +20,7 @@ use function Psl\SecureRandom\string;
 
 final class EnvironmentVariablesTest extends TestCase
 {
-    private const RESET_ENVIRONMENT_VARIABLES     = [
+    private const RESET_ENVIRONMENT_VARIABLES = [
         'GIT_AUTHOR_EMAIL',
         'GIT_AUTHOR_NAME',
         'GITHUB_EVENT_PATH',
@@ -80,14 +80,13 @@ final class EnvironmentVariablesTest extends TestCase
         set_var('GITHUB_EVENT_PATH', $githubEventPath);
         set_var('GITHUB_WORKSPACE', $githubWorkspace);
 
-
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
         $importKey->method('__invoke')
             ->with($signingSecretKey)
             ->willReturn($signingSecretKeyId);
 
-        $variables = EnvironmentVariables::fromEnvironment($importKey);
+        $variables = EnvironmentVariables::fromEnvironmentWithGpgKey($importKey);
 
         self::assertEquals($signingSecretKeyId, $variables->signingSecretKey());
         self::assertSame($githubToken, $variables->githubToken());
@@ -115,6 +114,6 @@ final class EnvironmentVariablesTest extends TestCase
         $this->expectException(InvariantViolationException::class);
         $this->expectExceptionMessage('Could not find a value for environment variable "GITHUB_TOKEN"');
 
-        EnvironmentVariables::fromEnvironment($importKey);
+        EnvironmentVariables::fromEnvironmentWithGpgKey($importKey);
     }
 }

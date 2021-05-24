@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Environment;
 
+use Laminas\AutomaticReleases\Environment\Contracts\GithubVariablesInterface;
 use Laminas\AutomaticReleases\Environment\Traits\EnvTrait;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
@@ -12,7 +13,7 @@ use function Psl\invariant;
 use function Psl\Iter\contains;
 
 /** @psalm-immutable */
-class EnvironmentVariables implements Variables
+class EnvironmentVariables extends GithubEnvironmentVariables implements Variables, GithubVariablesInterface
 {
     use EnvTrait;
 
@@ -83,17 +84,24 @@ class EnvironmentVariables implements Variables
         $this->logLevel = $logLevel;
     }
 
-    public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
+    public static function fromEnvironment(): self
     {
         return new self(
             self::getEnv('GITHUB_TOKEN'),
-            $importKey->__invoke(self::getEnv('SIGNING_SECRET_KEY')),
+            SecretKeyId::fromBase16String(self::getEnv('GPG_KEY_ID')),
             self::getEnv('GIT_AUTHOR_NAME'),
             self::getEnv('GIT_AUTHOR_EMAIL'),
             self::getEnv('GITHUB_EVENT_PATH'),
             self::getEnv('GITHUB_WORKSPACE'),
             self::getenvWithFallback('LOG_LEVEL', 'INFO')
         );
+    }
+
+    public static function fromEnvironmentWithGpgKey(ImportGpgKeyFromString $importKey): self
+    {
+        self::setEnv('GPG_KEY_ID', ($importKey)(self::getEnv('SIGNING_SECRET_KEY'))->id());
+
+        return self::fromEnvironment();
     }
 
     public function githubToken(): string
