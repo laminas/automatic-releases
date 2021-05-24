@@ -64,7 +64,6 @@ use const STDERR;
     $loadEvent = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $logger    = new Logger('automatic-releases');
     $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
-    $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
     $makeRequests         = Psr17FactoryDiscovery::findRequestFactory();

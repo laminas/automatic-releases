@@ -9,6 +9,9 @@ use function Psl\Env\set_var;
 use function Psl\invariant;
 use function Psl\Str\format;
 
+/**
+ * @psalm-immutable
+ */
 trait EnvTrait
 {
     /**
@@ -18,22 +21,14 @@ trait EnvTrait
      */
     private static function getEnv(string $key): string
     {
+        $value = get_var($key);
+
         invariant(
-            self::hasEnv($key),
+            $value !== null && $value !== '',
             format('Could not find a value for environment variable "%s"', $key)
         );
 
-        return get_var($key);
-    }
-
-    /**
-     * @psalm-param  non-empty-string $key
-     */
-    private static function hasEnv(string $key): bool
-    {
-        $value = get_var($key);
-
-        return $value !== null && $value !== '';
+        return $value;
     }
 
     /**
@@ -52,6 +47,8 @@ trait EnvTrait
      */
     private static function getEnvWithFallback(string $key, string $default): string
     {
-        return self::hasEnv($key) ? self::getEnv($key) : $default;
+        $value = get_var($key);
+
+        return $value !== null && $value !== '' ? $value : $default;
     }
 }
