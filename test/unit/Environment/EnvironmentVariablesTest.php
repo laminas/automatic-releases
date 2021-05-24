@@ -8,27 +8,27 @@ use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
-use Psl\Dict;
-use Psl\Env;
 use Psl\Exception\InvariantViolationException;
-use Psl\SecureRandom;
+
+use function Psl\Dict\associate;
+use function Psl\Dict\map;
+use function Psl\Dict\map_with_key;
+use function Psl\Env\get_var;
+use function Psl\Env\remove_var;
+use function Psl\Env\set_var;
+use function Psl\SecureRandom\string;
 
 final class EnvironmentVariablesTest extends TestCase
 {
-    private const RESET_ENVIRONMENT_VARIABLES = [
-        'GITHUB_HOOK_SECRET',
-        'GITHUB_TOKEN',
-        'SIGNING_SECRET_KEY',
-        'GITHUB_ORGANISATION',
-        'GITHUB_ORGANISATION',
-        'GIT_AUTHOR_NAME',
+    private const RESET_ENVIRONMENT_VARIABLES     = [
         'GIT_AUTHOR_EMAIL',
+        'GIT_AUTHOR_NAME',
         'GITHUB_EVENT_PATH',
+        'GITHUB_HOOK_SECRET',
+        'GITHUB_ORGANISATION',
+        'GITHUB_TOKEN',
         'GITHUB_WORKSPACE',
-        'TWITTER_CONSUMER_API_KEY',
-        'TWITTER_CONSUMER_API_SECRET',
-        'TWITTER_ACCESS_TOKEN',
-        'TWITTER_ACCESS_TOKEN_SECRET',
+        'SIGNING_SECRET_KEY',
     ];
 
     /** @var array<string, ?string> */
@@ -38,9 +38,9 @@ final class EnvironmentVariablesTest extends TestCase
     {
         parent::setUp();
 
-        $this->originalValues = Dict\associate(self::RESET_ENVIRONMENT_VARIABLES, Dict\map(
+        $this->originalValues = associate(self::RESET_ENVIRONMENT_VARIABLES, map(
             self::RESET_ENVIRONMENT_VARIABLES,
-            static fn (string $variable) => Env\get_var($variable),
+            static fn (string $variable) => get_var($variable),
         ));
     }
 
@@ -48,14 +48,14 @@ final class EnvironmentVariablesTest extends TestCase
     {
         $originalValues = $this->originalValues;
 
-        Dict\map_with_key($originalValues, static function (string $key, ?string $value): void {
+        map_with_key($originalValues, static function (string $key, ?string $value): void {
             if ($value === null) {
-                Env\remove_var($key);
+                remove_var($key);
 
                 return;
             }
 
-            Env\set_var($key, $value);
+            set_var($key, $value);
         });
 
         parent::tearDown();
@@ -63,33 +63,23 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testReadsEnvironmentVariables(): void
     {
-        $signingSecretKey         = 'signingSecretKey' . SecureRandom\string(8);
-        $signingSecretKeyId       = SecretKeyId::fromBase16String('aabbccdd');
-        $githubToken              = 'githubToken' . SecureRandom\string(8);
-        $githubOrganisation       = 'githubOrganisation' . SecureRandom\string(8);
-        $gitAuthorName            = 'gitAuthorName' . SecureRandom\string(8);
-        $gitAuthorEmail           = 'gitAuthorEmail' . SecureRandom\string(8);
-        $githubEventPath          = 'githubEventPath' . SecureRandom\string(8);
-        $githubWorkspace          = 'githubWorkspace' . SecureRandom\string(8);
-        $twitterConsumerApiKey    = 'twitterConsumerApiKey' . SecureRandom\string(8);
-        $twitterConsumerApiSecret = 'twitterConsumerApiSecret' . SecureRandom\string(8);
-        $twitterAaccessToken      = 'twitterAaccessToken' . SecureRandom\string(8);
-        $twitterAccessTokenSecret = 'twitterAccessTokenSecret' . SecureRandom\string(8);
+        $signingSecretKey   = 'signingSecretKey' . string(8);
+        $signingSecretKeyId = SecretKeyId::fromBase16String('aabbccdd');
+        $githubToken        = 'githubToken' . string(8);
+        $githubOrganisation = 'githubOrganisation' . string(8);
+        $gitAuthorName      = 'gitAuthorName' . string(8);
+        $gitAuthorEmail     = 'gitAuthorEmail' . string(8);
+        $githubEventPath    = 'githubEventPath' . string(8);
+        $githubWorkspace    = 'githubWorkspace' . string(8);
 
-        Env\set_var('GITHUB_TOKEN', $githubToken);
-        Env\set_var('SIGNING_SECRET_KEY', $signingSecretKey);
-        Env\set_var('GITHUB_ORGANISATION', $githubOrganisation);
-        Env\set_var('GIT_AUTHOR_NAME', $gitAuthorName);
-        Env\set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
-        Env\set_var('GITHUB_EVENT_PATH', $githubEventPath);
-        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
-        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
-        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
-        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
-        Env\set_var('TWITTER_CONSUMER_API_KEY', $twitterConsumerApiKey);
-        Env\set_var('TWITTER_CONSUMER_API_SECRET', $twitterConsumerApiSecret);
-        Env\set_var('TWITTER_ACCESS_TOKEN', $twitterAaccessToken);
-        Env\set_var('TWITTER_ACCESS_TOKEN_SECRET', $twitterAccessTokenSecret);
+        set_var('GITHUB_TOKEN', $githubToken);
+        set_var('SIGNING_SECRET_KEY', $signingSecretKey);
+        set_var('GITHUB_ORGANISATION', $githubOrganisation);
+        set_var('GIT_AUTHOR_NAME', $gitAuthorName);
+        set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
+        set_var('GITHUB_EVENT_PATH', $githubEventPath);
+        set_var('GITHUB_WORKSPACE', $githubWorkspace);
+
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
@@ -109,13 +99,13 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testFailsOnMissingEnvironmentVariables(): void
     {
-        Env\set_var('GITHUB_TOKEN', '');
-        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
-        Env\set_var('GITHUB_ORGANISATION', 'bbb');
-        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
-        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
-        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
-        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+        set_var('GITHUB_TOKEN', '');
+        set_var('SIGNING_SECRET_KEY', 'aaa');
+        set_var('GITHUB_ORGANISATION', 'bbb');
+        set_var('GIT_AUTHOR_NAME', 'ccc');
+        set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        set_var('GITHUB_WORKSPACE', '/tmp');
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
