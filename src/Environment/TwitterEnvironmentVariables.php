@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Environment;
 
 use Laminas\AutomaticReleases\Environment\Contracts\TwitterVariablesInterface;
-use Laminas\AutomaticReleases\Environment\Contracts\VariablesInterface;
 use Laminas\AutomaticReleases\Environment\Traits\EnvTrait;
 
 /** @psalm-immutable */
@@ -40,7 +39,7 @@ class TwitterEnvironmentVariables implements TwitterVariablesInterface
         $this->consumerApiSecret = $consumerApiSecret;
     }
 
-    public static function fromEnvironment(): VariablesInterface
+    public static function fromEnvironment(): self
     {
         return new self(
             self::getEnv('TWITTER_ACCESS_TOKEN'),

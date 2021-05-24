@@ -7,5 +7,5 @@ namespace Laminas\AutomaticReleases\Environment\Contracts;
 /** @psalm-immutable */
 interface VariablesInterface
 {
-    public static function fromEnvironment(): VariablesInterface;
+    public static function fromEnvironment(): self;
 }
