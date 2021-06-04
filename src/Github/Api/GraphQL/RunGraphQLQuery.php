@@ -66,8 +66,6 @@ final class RunGraphQLQuery implements RunQuery
 
         Psl\invariant(! array_key_exists('errors', $response), 'GraphQL query execution failed');
 
-        return Type\shape([
-            'data' => Type\dict(Type\string(), Type\mixed()),
-        ])->coerce($response)['data'];
+        return $response['data'];
     }
 }
