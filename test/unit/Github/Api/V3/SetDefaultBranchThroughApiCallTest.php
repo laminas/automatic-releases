@@ -11,6 +11,7 @@ use Laminas\Diactoros\Request;
 use Laminas\Diactoros\Response;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psl\Exception\InvariantViolationException;
 use Psl\Json\Exception\DecodeException;
 use Psl\SecureRandom;
 use Psr\Http\Client\ClientInterface;
@@ -42,14 +43,20 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
         );
     }
 
-    public function testSuccessfulRequest(): void
+    /**
+     * @psalm-param positive-int $responseCode
+     *
+     * @dataProvider exampleValidResponseCodes
+     */
+    public function testSuccessfulRequest(int $responseCode): void
     {
         $this->messageFactory
             ->method('createRequest')
             ->with('PATCH', 'https://api.github.com/repos/foo/bar')
             ->willReturn(new Request('https://the-domain.com/the-path'));
 
-        $validResponse = new Response();
+        $validResponse = (new Response())
+            ->withStatus($responseCode);
 
         $validResponse->getBody()
             ->write('{"default_branch": "foo-bar-baz"}');
@@ -82,6 +89,16 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
             RepositoryName::fromFullName('foo/bar'),
             BranchName::fromName('foo-bar-baz')
         );
+    }
+
+    /** @psalm-return non-empty-list<array{positive-int}> */
+    public function exampleValidResponseCodes(): array
+    {
+        return [
+            [200],
+            [201],
+            [204],
+        ];
     }
 
     public function testRequestFailedToSwitchBranch(): void
@@ -127,5 +144,67 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
             RepositoryName::fromFullName('foo/bar'),
             BranchName::fromName('foo-bar-baz')
         );
+    }
+
+    /**
+     * @psalm-param positive-int $responseCode
+     *
+     * @dataProvider exampleFailureResponseCodes
+     */
+    public function testRequestFailedToSwitchBranchDueToInvalidResponseCode(int $responseCode): void
+    {
+        $this->messageFactory
+            ->method('createRequest')
+            ->with('PATCH', 'https://api.github.com/repos/foo/bar')
+            ->willReturn(new Request('https://the-domain.com/the-path'));
+
+        $validResponse = (new Response())
+            ->withStatus($responseCode);
+
+        $validResponse->getBody()
+            ->write('{"default_branch": "foo-bar-baz"}');
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('sendRequest')
+            ->with(self::callback(function (RequestInterface $request): bool {
+                self::assertSame(
+                    [
+                        'Host'          => ['the-domain.com'],
+                        'Content-Type'  => ['application/json'],
+                        'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
+                        'Authorization' => ['token ' . $this->apiToken],
+                    ],
+                    $request->getHeaders()
+                );
+
+                self::assertJsonStringEqualsJsonString(
+                    '{"default_branch": "foo-bar-baz"}',
+                    $request->getBody()
+                        ->__toString()
+                );
+
+                return true;
+            }))
+            ->willReturn($validResponse);
+
+        $this->expectException(InvariantViolationException::class);
+        $this->expectExceptionMessage('Failed to set default branch through GitHub API.');
+
+        $this->createRelease->__invoke(
+            RepositoryName::fromFullName('foo/bar'),
+            BranchName::fromName('foo-bar-baz')
+        );
+    }
+
+    /** @psalm-return non-empty-list<array{positive-int}> */
+    public function exampleFailureResponseCodes(): array
+    {
+        return [
+            [199],
+            [400],
+            [401],
+            [500],
+        ];
     }
 }

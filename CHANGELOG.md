@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+
 ## 1.13.0 - TBD
 
 ### Added
@@ -24,6 +25,24 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
+## 1.12.2 - 2021-06-04
+
+
+-----
+
+### Release Notes for [1.12.2](https://github.com/laminas/automatic-releases/milestone/34)
+
+1.12.x bugfix release (patch)
+
+### 1.12.2
+
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
+
+#### Bug
+
+ - [148: Hardening scenarios around failed Github API and GraphQL calls](https://github.com/laminas/automatic-releases/pull/148) thanks to @Ocramius
 
 ## 1.12.1 - 2021-05-23
 
