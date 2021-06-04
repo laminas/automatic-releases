@@ -52,7 +52,7 @@ final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 
         $response = $this->client->sendRequest($request);
 
-        Psl\invariant($response->getStatusCode() >= 200 || $response->getStatusCode() <= 299, 'Failed to set default branch through GitHub API.');
+        Psl\invariant($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299, 'Failed to set default branch through GitHub API.');
 
         $responseBody = $response
             ->getBody()

@@ -62,7 +62,7 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
 
         $response = $this->client->sendRequest($request);
 
-        Psl\invariant($response->getStatusCode() >= 200 || $response->getStatusCode() <= 299, 'Failed to create pull request through GitHub API.');
+        Psl\invariant($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299, 'Failed to create pull request through GitHub API.');
 
         $responseBody = $response
             ->getBody()

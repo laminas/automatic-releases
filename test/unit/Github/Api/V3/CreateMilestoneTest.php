@@ -18,6 +18,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 
+/** @covers \Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneThroughApiCall */
 class CreateMilestoneTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
