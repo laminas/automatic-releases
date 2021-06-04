@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL;
 
+use Psl;
 use Psl\Json;
 use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+
+use function array_key_exists;
 
 final class RunGraphQLQuery implements RunQuery
 {
@@ -56,8 +59,13 @@ final class RunGraphQLQuery implements RunQuery
 
         Type\literal_scalar(200)->assert($response->getStatusCode());
 
-        return Json\typed($responseBody, Type\shape([
-            'data' => Type\dict(Type\string(), Type\mixed()),
-        ]))['data'];
+        $response = Json\typed($responseBody, Type\shape([
+            'data'   => Type\dict(Type\string(), Type\mixed()),
+            'errors' => Type\optional(Type\mixed()),
+        ]));
+
+        Psl\invariant(! array_key_exists('errors', $response), 'GraphQL query execution failed');
+
+        return $response['data'];
     }
 }

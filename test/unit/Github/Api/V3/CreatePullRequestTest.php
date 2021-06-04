@@ -16,6 +16,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 
+/** @covers \Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestThroughApiCall */
 final class CreatePullRequestTest extends TestCase
 {
     /** @var ClientInterface&MockObject */
