@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Environment;
 
+use Laminas\AutomaticReleases\Environment\Contracts\GithubVariablesInterface;
+use Laminas\AutomaticReleases\Environment\Traits\EnvTrait;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use Psl;
-use Psl\Env;
-use Psl\Iter;
-use Psl\Str;
+
+use function Psl\invariant;
+use function Psl\Iter\contains;
 
 /** @psalm-immutable */
-class EnvironmentVariables implements Variables
+class EnvironmentVariables extends GithubEnvironmentVariables implements Variables, GithubVariablesInterface
 {
+    use EnvTrait;
+
     private const LOG_LEVELS = [
         '100',
         '200',
@@ -72,8 +75,8 @@ class EnvironmentVariables implements Variables
         $this->workspacePath    = $workspacePath;
 
         /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
-        Psl\invariant(
-            Iter\contains(self::LOG_LEVELS, $logLevel),
+        invariant(
+            contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
             . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
         );
@@ -81,43 +84,24 @@ class EnvironmentVariables implements Variables
         $this->logLevel = $logLevel;
     }
 
-    public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
+    public static function fromEnvironment(): self
     {
         return new self(
-            self::getenv('GITHUB_TOKEN'),
-            $importKey->__invoke(self::getenv('SIGNING_SECRET_KEY')),
-            self::getenv('GIT_AUTHOR_NAME'),
-            self::getenv('GIT_AUTHOR_EMAIL'),
-            self::getenv('GITHUB_EVENT_PATH'),
-            self::getenv('GITHUB_WORKSPACE'),
-            self::getenvWithFallback('LOG_LEVEL', 'INFO'),
+            self::getEnv('GITHUB_TOKEN'),
+            SecretKeyId::fromBase16String(self::getEnv('GPG_KEY_ID')),
+            self::getEnv('GIT_AUTHOR_NAME'),
+            self::getEnv('GIT_AUTHOR_EMAIL'),
+            self::getEnv('GITHUB_EVENT_PATH'),
+            self::getEnv('GITHUB_WORKSPACE'),
+            self::getenvWithFallback('LOG_LEVEL', 'INFO')
         );
     }
 
-    /**
-     * @psalm-param  non-empty-string $key
-     *
-     * @psalm-return non-empty-string
-     */
-    private static function getenv(string $key): string
+    public static function fromEnvironmentWithGpgKey(ImportGpgKeyFromString $importKey): self
     {
-        $value = Env\get_var($key);
+        self::setEnv('GPG_KEY_ID', ($importKey)(self::getEnv('SIGNING_SECRET_KEY'))->id());
 
-        Psl\invariant($value !== null && $value !== '', Str\format('Could not find a value for environment variable "%s"', $key));
-
-        return $value;
-    }
-
-    /**
-     * @psalm-param  non-empty-string $default
-     *
-     * @psalm-return non-empty-string
-     */
-    private static function getenvWithFallback(string $key, string $default): string
-    {
-        $value = Env\get_var($key);
-
-        return $value === null || $value === '' ? $default : $value;
+        return self::fromEnvironment();
     }
 
     public function githubToken(): string

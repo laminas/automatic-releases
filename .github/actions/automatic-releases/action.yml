@@ -9,6 +9,7 @@ inputs:
     description: |
       Command to execute: one of
        * `laminas:automatic-releases:release`
+       * `laminas:automatic-releases:tweet-release`
        * `laminas:automatic-releases:create-merge-up-pull-request`
        * `laminas:automatic-releases:switch-default-branch-to-next-minor`
     required: true

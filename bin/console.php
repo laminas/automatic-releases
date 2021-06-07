@@ -60,10 +60,10 @@ use const STDERR;
         E_STRICT | E_NOTICE | E_WARNING
     );
 
-    $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $variables = EnvironmentVariables::fromEnvironmentWithGpgKey(new ImportGpgKeyFromStringViaTemporaryFile());
+    $loadEvent = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $logger    = new Logger('automatic-releases');
     $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
-    $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
     $makeRequests         = Psr17FactoryDiscovery::findRequestFactory();
