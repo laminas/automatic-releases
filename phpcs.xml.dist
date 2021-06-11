@@ -9,7 +9,7 @@
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="80"/>
 
-    <!-- Show progress -->
+    <!-- Ignore warnings and show progress of the run -->
     <arg value="np"/>
     <arg value="s"/>
 
