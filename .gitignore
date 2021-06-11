@@ -7,3 +7,4 @@ phpcs.xml
 phpstan.neon
 phpunit.xml
 psalm.xml
+.phpcs-cache

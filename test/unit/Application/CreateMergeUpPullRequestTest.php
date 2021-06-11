@@ -6,18 +6,18 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestoneInterface;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequest;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestInterface;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
@@ -31,22 +31,22 @@ use Symfony\Component\Console\Output\NullOutput;
 
 final class CreateMergeUpPullRequestTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
-    private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
-    private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var GetGithubMilestone&MockObject */
-    private GetGithubMilestone $getMilestone;
-    /** @var CreateReleaseText&MockObject */
-    private CreateReleaseText $createReleaseText;
-    /** @var MockObject&Push */
-    private Push $push;
-    /** @var CreatePullRequest&MockObject */
-    private CreatePullRequest $createPullRequest;
+    /** @var MockObject&VariablesInterface */
+    private VariablesInterface $variables;
+    /** @var LoadCurrentGithubEventInterface&MockObject */
+    private LoadCurrentGithubEventInterface $loadEvent;
+    /** @var FetchInterface&MockObject */
+    private FetchInterface $fetch;
+    /** @var GetMergeTargetCandidateBranchesInterface&MockObject */
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    /** @var GetGithubMilestoneInterface&MockObject */
+    private GetGithubMilestoneInterface $getMilestone;
+    /** @var CreateReleaseTextInterface&MockObject */
+    private CreateReleaseTextInterface $createReleaseText;
+    /** @var MockObject&PushInterface */
+    private PushInterface $push;
+    /** @var CreatePullRequestInterface&MockObject */
+    private CreatePullRequestInterface $createPullRequest;
     private CreateMergeUpPullRequest $command;
     private MilestoneClosedEvent $event;
     private MergeTargetCandidateBranches $branches;
@@ -57,14 +57,14 @@ final class CreateMergeUpPullRequestTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables         = $this->createMock(Variables::class);
-        $this->loadEvent         = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->fetch             = $this->createMock(Fetch::class);
-        $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
-        $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
-        $this->createReleaseText = $this->createMock(CreateReleaseText::class);
-        $this->push              = $this->createMock(Push::class);
-        $this->createPullRequest = $this->createMock(CreatePullRequest::class);
+        $this->variables         = $this->createMock(VariablesInterface::class);
+        $this->loadEvent         = $this->createMock(LoadCurrentGithubEventInterface::class);
+        $this->fetch             = $this->createMock(FetchInterface::class);
+        $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranchesInterface::class);
+        $this->getMilestone      = $this->createMock(GetGithubMilestoneInterface::class);
+        $this->createReleaseText = $this->createMock(CreateReleaseTextInterface::class);
+        $this->push              = $this->createMock(PushInterface::class);
+        $this->createPullRequest = $this->createMock(CreatePullRequestInterface::class);
 
         $this->command = new CreateMergeUpPullRequest(
             $this->variables,
@@ -240,8 +240,7 @@ JSON
             <<<OUTPUT
 No merge-up candidate for release 1.2.3 - skipping pull request creation
 
-OUTPUT
-            ,
+OUTPUT,
             $output->fetch()
         );
     }

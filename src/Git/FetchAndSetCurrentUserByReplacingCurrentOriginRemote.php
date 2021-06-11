@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Git\FetchInterface;
 use Psl\Shell;
 use Psr\Http\Message\UriInterface;
 
-final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
+final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements FetchInterface
 {
     private EnvironmentVariables $variables;
 

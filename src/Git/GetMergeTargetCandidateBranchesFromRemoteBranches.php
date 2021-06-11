@@ -11,7 +11,7 @@ use Psl\Shell;
 use Psl\Str;
 use Psl\Vec;
 
-final class GetMergeTargetCandidateBranchesFromRemoteBranches implements GetMergeTargetCandidateBranches
+final class GetMergeTargetCandidateBranchesFromRemoteBranches implements GetMergeTargetCandidateBranchesInterface
 {
     public function __invoke(string $repositoryRootDirectory): MergeTargetCandidateBranches
     {

@@ -17,7 +17,7 @@ use Psr\Http\Message\UriInterface;
 
 use function preg_quote;
 
-final class CreateReleaseTextThroughChangelog implements CreateReleaseText
+final class CreateReleaseTextThroughChangelog implements CreateReleaseTextInterface
 {
     private const TEMPLATE = <<<'MARKDOWN'
 ### Release Notes for %release%
@@ -28,9 +28,9 @@ final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 
 MARKDOWN;
 
-    private GenerateChangelog $generateChangelog;
+    private GenerateChangelogInterface $generateChangelog;
 
-    public function __construct(GenerateChangelog $generateChangelog)
+    public function __construct(GenerateChangelogInterface $generateChangelog)
     {
         $this->generateChangelog = $generateChangelog;
     }
@@ -43,8 +43,8 @@ MARKDOWN;
         string $repositoryDirectory
     ): ChangelogReleaseNotes {
         $text = Str\replace_every(self::TEMPLATE, [
-            '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
-            '%description%'  => (string) $milestone->description(),
+            '%release%'       => $this->markdownLink($milestone->title(), $milestone->url()),
+            '%description%'   => (string) $milestone->description(),
             '%changelogText%' => $this->normalizeChangelog(
                 $this->generateChangelog->__invoke(
                     $repositoryName,

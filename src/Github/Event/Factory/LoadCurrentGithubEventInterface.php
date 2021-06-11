@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Github\Event\Factory;
 
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 
-interface LoadCurrentGithubEvent
+interface LoadCurrentGithubEventInterface
 {
     public function __invoke(): MilestoneClosedEvent;
 }

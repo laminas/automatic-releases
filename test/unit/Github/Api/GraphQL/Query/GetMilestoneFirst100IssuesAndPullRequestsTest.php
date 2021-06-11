@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query;
 
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQueryInterface;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -13,8 +13,8 @@ use PHPUnit\Framework\TestCase;
 /** @covers \Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests */
 final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
 {
-    /** @var RunQuery&MockObject */
-    private RunQuery $runQuery;
+    /** @var RunQueryInterface&MockObject */
+    private RunQueryInterface $runQuery;
 
     private GetMilestoneFirst100IssuesAndPullRequests $query;
 
@@ -22,7 +22,7 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
     {
         parent::setUp();
 
-        $this->runQuery = $this->createMock(RunQuery::class);
+        $this->runQuery = $this->createMock(RunQueryInterface::class);
         $this->query    = new GetMilestoneFirst100IssuesAndPullRequests($this->runQuery);
     }
 

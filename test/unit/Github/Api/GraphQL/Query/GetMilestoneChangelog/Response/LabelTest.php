@@ -38,7 +38,6 @@ final class LabelTest extends TestCase
 
     /**
      * @param array<string, mixed> $payload
-     *
      * @dataProvider provideInvalidPayload
      */
     public function testInvalidPayload(array $payload): void

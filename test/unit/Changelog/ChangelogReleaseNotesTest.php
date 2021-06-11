@@ -167,7 +167,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $this->assertEquals($expectedEntry, $r->getValue($merged));
     }
 
-    private const CHANGELOG_ENTRY = <<< 'ENTRY'
+    private const CHANGELOG_ENTRY = <<<'ENTRY'
         ## 1.0.1 - %s
         
         ### Added
@@ -192,7 +192,7 @@ class ChangelogReleaseNotesTest extends TestCase
 
         ENTRY;
 
-    private const CHANGELOG_STUB = <<< 'CHANGELOG'
+    private const CHANGELOG_STUB = <<<'CHANGELOG'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

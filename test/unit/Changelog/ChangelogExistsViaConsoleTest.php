@@ -44,14 +44,14 @@ class ChangelogExistsViaConsoleTest extends TestCase
      */
     private function createMockRepositoryWithChangelog(): string
     {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExists');
+        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExistsInterface');
         Filesystem\delete_file($repo);
 
         Filesystem\create_directory($repo);
 
         Filesystem\write_file(
             Str\format('%s/%s', $repo, 'CHANGELOG.md'),
-            <<< 'CHANGELOG'
+            <<<'CHANGELOG'
                 # Changelog
                 
                 All notable changes to this project will be documented in this file, in reverse chronological order by release.
@@ -93,7 +93,6 @@ class ChangelogExistsViaConsoleTest extends TestCase
 
     /**
      * @psalm-param non-empty-string $origin
-     *
      * @psalm-return non-empty-string
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string

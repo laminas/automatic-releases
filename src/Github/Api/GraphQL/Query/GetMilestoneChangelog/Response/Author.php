@@ -26,7 +26,7 @@ final class Author
     {
         $payload = Type\shape([
             'login' => Type\non_empty_string(),
-            'url' => Type\non_empty_string(),
+            'url'   => Type\non_empty_string(),
         ])->coerce($payload);
 
         return new self($payload['login'], new Uri($payload['url']));

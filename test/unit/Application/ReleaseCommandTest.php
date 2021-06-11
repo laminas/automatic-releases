@@ -6,20 +6,20 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
-use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\CreateTag;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\CreateTagInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestoneInterface;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseInterface;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
@@ -32,26 +32,26 @@ use Symfony\Component\Console\Output\NullOutput;
 
 final class ReleaseCommandTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
-    private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
-    private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var GetGithubMilestone&MockObject */
-    private GetGithubMilestone $getMilestone;
-    /** @var CommitReleaseChangelog&MockObject */
-    private CommitReleaseChangelog $commitChangelog;
-    /** @var CreateReleaseText&MockObject */
-    private CreateReleaseText $createReleaseText;
-    /** @var CreateTag&MockObject */
-    private CreateTag $createTag;
-    /** @var MockObject&Push */
-    private Push $push;
-    /** @var CreateRelease&MockObject */
-    private CreateRelease $createRelease;
+    /** @var MockObject&VariablesInterface */
+    private VariablesInterface $variables;
+    /** @var LoadCurrentGithubEventInterface&MockObject */
+    private LoadCurrentGithubEventInterface $loadEvent;
+    /** @var FetchInterface&MockObject */
+    private FetchInterface $fetch;
+    /** @var GetMergeTargetCandidateBranchesInterface&MockObject */
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    /** @var GetGithubMilestoneInterface&MockObject */
+    private GetGithubMilestoneInterface $getMilestone;
+    /** @var CommitReleaseChangelogInterface&MockObject */
+    private CommitReleaseChangelogInterface $commitChangelog;
+    /** @var CreateReleaseTextInterface&MockObject */
+    private CreateReleaseTextInterface $createReleaseText;
+    /** @var CreateTagInterface&MockObject */
+    private CreateTagInterface $createTag;
+    /** @var MockObject&PushInterface */
+    private PushInterface $push;
+    /** @var CreateReleaseInterface&MockObject */
+    private CreateReleaseInterface $createRelease;
     private ReleaseCommand $command;
     private MilestoneClosedEvent $event;
     private MergeTargetCandidateBranches $branches;
@@ -63,16 +63,16 @@ final class ReleaseCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables         = $this->createMock(Variables::class);
-        $this->loadEvent         = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->fetch             = $this->createMock(Fetch::class);
-        $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
-        $this->getMilestone      = $this->createMock(GetGithubMilestone::class);
-        $this->commitChangelog   = $this->createMock(CommitReleaseChangelog::class);
-        $this->createReleaseText = $this->createMock(CreateReleaseText::class);
-        $this->createTag         = $this->createMock(CreateTag::class);
-        $this->push              = $this->createMock(Push::class);
-        $this->createRelease     = $this->createMock(CreateRelease::class);
+        $this->variables         = $this->createMock(VariablesInterface::class);
+        $this->loadEvent         = $this->createMock(LoadCurrentGithubEventInterface::class);
+        $this->fetch             = $this->createMock(FetchInterface::class);
+        $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranchesInterface::class);
+        $this->getMilestone      = $this->createMock(GetGithubMilestoneInterface::class);
+        $this->commitChangelog   = $this->createMock(CommitReleaseChangelogInterface::class);
+        $this->createReleaseText = $this->createMock(CreateReleaseTextInterface::class);
+        $this->createTag         = $this->createMock(CreateTagInterface::class);
+        $this->push              = $this->createMock(PushInterface::class);
+        $this->createRelease     = $this->createMock(CreateReleaseInterface::class);
 
         $this->command = new ReleaseCommand(
             $this->variables,

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
-use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
@@ -28,20 +28,20 @@ use Symfony\Component\Console\Output\NullOutput;
 
 final class SwitchDefaultBranchToNextMinorTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
-    private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
-    private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var MockObject&Push */
-    private Push $push;
-    /** @var MockObject&SetDefaultBranch */
-    private SetDefaultBranch $setDefaultBranch;
-    /** @var BumpAndCommitChangelogVersion&MockObject */
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
+    /** @var MockObject&VariablesInterface */
+    private VariablesInterface $variables;
+    /** @var LoadCurrentGithubEventInterface&MockObject */
+    private LoadCurrentGithubEventInterface $loadEvent;
+    /** @var FetchInterface&MockObject */
+    private FetchInterface $fetch;
+    /** @var GetMergeTargetCandidateBranchesInterface&MockObject */
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    /** @var MockObject&PushInterface */
+    private PushInterface $push;
+    /** @var MockObject&SetDefaultBranchInterface */
+    private SetDefaultBranchInterface $setDefaultBranch;
+    /** @var BumpAndCommitChangelogVersionInterface&MockObject */
+    private BumpAndCommitChangelogVersionInterface $bumpChangelogVersion;
     private SwitchDefaultBranchToNextMinor $command;
     private MilestoneClosedEvent $event;
 
@@ -49,13 +49,13 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables            = $this->createMock(Variables::class);
-        $this->loadEvent            = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->fetch                = $this->createMock(Fetch::class);
-        $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranches::class);
-        $this->push                 = $this->createMock(Push::class);
-        $this->setDefaultBranch     = $this->createMock(SetDefaultBranch::class);
-        $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersion::class);
+        $this->variables            = $this->createMock(VariablesInterface::class);
+        $this->loadEvent            = $this->createMock(LoadCurrentGithubEventInterface::class);
+        $this->fetch                = $this->createMock(FetchInterface::class);
+        $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranchesInterface::class);
+        $this->push                 = $this->createMock(PushInterface::class);
+        $this->setDefaultBranch     = $this->createMock(SetDefaultBranchInterface::class);
+        $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersionInterface::class);
 
         $this->command = new SwitchDefaultBranchToNextMinor(
             $this->variables,
@@ -171,7 +171,7 @@ JSON
         $this->bumpChangelogVersion->expects(self::once())
             ->method('__invoke')
             ->with(
-                BumpAndCommitChangelogVersion::BUMP_MINOR,
+                BumpAndCommitChangelogVersionInterface::BUMP_MINOR,
                 $workspace,
                 SemVerVersion::fromMilestoneName('1.2.3'),
                 BranchName::fromName('1.3.x')
@@ -228,8 +228,7 @@ JSON
             <<<OUTPUT
 No stable branches found: cannot switch default branch
 
-OUTPUT
-            ,
+OUTPUT,
             $output->fetch()
         );
     }

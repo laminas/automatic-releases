@@ -8,7 +8,7 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
-use Laminas\AutomaticReleases\Github\GenerateChangelog;
+use Laminas\AutomaticReleases\Github\GenerateChangelogInterface;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class CreateChangelogTextTest extends TestCase
 {
     public function testGeneratedReleaseText(): void
     {
-        $generatedReleaseNotes = <<< 'NOTES'
+        $generatedReleaseNotes = <<<'NOTES'
             -----
 
 
@@ -39,7 +39,7 @@ final class CreateChangelogTextTest extends TestCase
 
             NOTES;
 
-        $generateChangelog = $this->createMock(GenerateChangelog::class);
+        $generateChangelog = $this->createMock(GenerateChangelogInterface::class);
 
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
         $semVerVersion  = SemVerVersion::fromMilestoneName('2.12.3');
@@ -50,7 +50,7 @@ final class CreateChangelogTextTest extends TestCase
             ->willReturn($generatedReleaseNotes);
 
         self::assertSame(
-            <<< 'RELEASE'
+            <<<'RELEASE'
                 ### Release Notes for [The title](http://example.com/milestone)
                 
                 The description
@@ -129,7 +129,7 @@ final class CreateChangelogTextTest extends TestCase
 
     public function testCapableOfGeneratingReleaseTest(): void
     {
-        $generateChangelog = $this->createMock(GenerateChangelog::class);
+        $generateChangelog = $this->createMock(GenerateChangelogInterface::class);
 
         $repositoryName = RepositoryName::fromFullName('laminas/repository-name');
         $semVerVersion  = SemVerVersion::fromMilestoneName('1.0.0');

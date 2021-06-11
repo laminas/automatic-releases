@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 
-interface GetMergeTargetCandidateBranches
+interface GetMergeTargetCandidateBranchesInterface
 {
     /** @psalm-param non-empty-string $repositoryRootDirectory */
     public function __invoke(string $repositoryRootDirectory): MergeTargetCandidateBranches;

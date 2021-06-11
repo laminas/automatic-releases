@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Psr\Http\Message\UriInterface;
 
-interface Fetch
+interface FetchInterface
 {
     /** @psalm-param non-empty-string $repositoryRootDirectory */
     public function __invoke(

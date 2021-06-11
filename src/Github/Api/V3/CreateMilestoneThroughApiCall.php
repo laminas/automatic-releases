@@ -13,7 +13,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 
-final class CreateMilestoneThroughApiCall implements CreateMilestone
+final class CreateMilestoneThroughApiCall implements CreateMilestoneInterface
 {
     private const API_ROOT = 'https://api.github.com/';
 
@@ -60,7 +60,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
         $request
             ->getBody()
             ->write(Json\encode([
-                'title' => $version->fullReleaseName(),
+                'title'       => $version->fullReleaseName(),
                 'description' => $this->milestoneDescription($version),
             ]));
 
@@ -81,7 +81,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
                 ['exception' => $responseData]
             );
 
-            throw CreateMilestoneFailed::forVersion($version->fullReleaseName());
+            throw CreateMilestoneFailedException::forVersion($version->fullReleaseName());
         }
 
         Type\literal_scalar(201)->assert($response->getStatusCode());

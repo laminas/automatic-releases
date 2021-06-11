@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Changelog;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Psl\Shell;
 
-class ChangelogExistsViaConsole implements ChangelogExists
+class ChangelogExistsViaConsole implements ChangelogExistsInterface
 {
     /**
      * @param non-empty-string $repositoryDirectory

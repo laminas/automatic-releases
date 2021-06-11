@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Environment;
 
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
-use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringInterface;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use PHPUnit\Framework\TestCase;
 use Psl\Dict;
@@ -76,7 +76,7 @@ final class EnvironmentVariablesTest extends TestCase
         Env\set_var('GITHUB_EVENT_PATH', $githubEventPath);
         Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
 
-        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+        $importKey = $this->createMock(ImportGpgKeyFromStringInterface::class);
 
         $importKey->method('__invoke')
             ->with($signingSecretKey)
@@ -102,7 +102,7 @@ final class EnvironmentVariablesTest extends TestCase
         Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
         Env\set_var('GITHUB_WORKSPACE', '/tmp');
 
-        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+        $importKey = $this->createMock(ImportGpgKeyFromStringInterface::class);
 
         $importKey->method('__invoke')
             ->willReturn(SecretKeyId::fromBase16String('aabbccdd'));

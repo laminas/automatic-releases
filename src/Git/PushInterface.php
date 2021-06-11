@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git;
 
-interface Push
+interface PushInterface
 {
     /**
      * @psalm-param non-empty-string      $repositoryDirectory

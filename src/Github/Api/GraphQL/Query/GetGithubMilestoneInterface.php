@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 
-interface GetGithubMilestone
+interface GetGithubMilestoneInterface
 {
     public function __invoke(
         RepositoryName $repositoryName,

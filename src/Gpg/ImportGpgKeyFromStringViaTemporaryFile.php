@@ -10,7 +10,7 @@ use Psl\Filesystem;
 use Psl\Regex;
 use Psl\Shell;
 
-final class ImportGpgKeyFromStringViaTemporaryFile implements ImportGpgKeyFromString
+final class ImportGpgKeyFromStringViaTemporaryFile implements ImportGpgKeyFromStringInterface
 {
     public function __invoke(string $keyContents): SecretKeyId
     {

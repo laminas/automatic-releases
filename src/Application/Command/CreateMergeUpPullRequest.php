@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
-use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequest;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestoneInterface;
+use Laminas\AutomaticReleases\Github\Api\V3\CreatePullRequestInterface;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Psl;
 use Psl\Filesystem;
 use Psl\SecureRandom;
@@ -23,24 +23,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CreateMergeUpPullRequest extends Command
 {
-    private Variables $variables;
-    private LoadCurrentGithubEvent $loadGithubEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeCandidates;
-    private GetGithubMilestone $getMilestone;
-    private CreateReleaseText $createReleaseText;
-    private Push $push;
-    private CreatePullRequest $createPullRequest;
+    private VariablesInterface $variables;
+    private LoadCurrentGithubEventInterface $loadGithubEvent;
+    private FetchInterface $fetch;
+    private GetMergeTargetCandidateBranchesInterface $getMergeCandidates;
+    private GetGithubMilestoneInterface $getMilestone;
+    private CreateReleaseTextInterface $createReleaseText;
+    private PushInterface $push;
+    private CreatePullRequestInterface $createPullRequest;
 
     public function __construct(
-        Variables $variables,
-        LoadCurrentGithubEvent $loadGithubEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeCandidates,
-        GetGithubMilestone $getMilestone,
-        CreateReleaseText $createReleaseText,
-        Push $push,
-        CreatePullRequest $createPullRequest
+        VariablesInterface $variables,
+        LoadCurrentGithubEventInterface $loadGithubEvent,
+        FetchInterface $fetch,
+        GetMergeTargetCandidateBranchesInterface $getMergeCandidates,
+        GetGithubMilestoneInterface $getMilestone,
+        CreateReleaseTextInterface $createReleaseText,
+        PushInterface $push,
+        CreatePullRequestInterface $createPullRequest
     ) {
         parent::__construct('laminas:automatic-releases:create-merge-up-pull-request');
 

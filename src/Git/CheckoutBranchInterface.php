@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 
-interface CheckoutBranch
+interface CheckoutBranchInterface
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory

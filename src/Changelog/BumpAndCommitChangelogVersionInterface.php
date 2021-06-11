@@ -8,7 +8,7 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
-interface BumpAndCommitChangelogVersion
+interface BumpAndCommitChangelogVersionInterface
 {
     public const BUMP_MINOR = 'bumpMinorVersion';
     public const BUMP_PATCH = 'bumpPatchVersion';

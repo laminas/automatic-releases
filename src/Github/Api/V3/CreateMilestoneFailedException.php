@@ -8,7 +8,7 @@ use RuntimeException;
 
 use function sprintf;
 
-class CreateMilestoneFailed extends RuntimeException
+class CreateMilestoneFailedException extends RuntimeException
 {
     public static function forVersion(string $version): self
     {

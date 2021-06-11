@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Github\Api\GraphQL\Query;
 
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQueryInterface;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Psl\Type;
 
-final class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
+final class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestoneInterface
 {
     // @TODO this fetches ONLY the first 100 issues!!!
     private const QUERY = <<<'GRAPHQL'
@@ -66,9 +66,9 @@ query GetStuff($owner: String!, $repositoryName: String!, $milestoneNumber: Int!
 }
 GRAPHQL;
 
-    private RunQuery $runQuery;
+    private RunQueryInterface $runQuery;
 
-    public function __construct(RunQuery $runQuery)
+    public function __construct(RunQueryInterface $runQuery)
     {
         $this->runQuery = $runQuery;
     }

@@ -14,7 +14,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
-final class CreateReleaseThroughApiCall implements CreateRelease
+final class CreateReleaseThroughApiCall implements CreateReleaseInterface
 {
     private const API_ROOT = 'https://api.github.com/';
 

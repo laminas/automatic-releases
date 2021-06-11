@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Git;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
-interface CreateTag
+interface CreateTagInterface
 {
     public function __invoke(
         string $repositoryDirectory,

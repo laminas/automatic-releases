@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
-use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
-use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
+use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranchInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Psl;
 use Psl\Filesystem;
 use Symfony\Component\Console\Command\Command;
@@ -19,22 +19,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class SwitchDefaultBranchToNextMinor extends Command
 {
-    private Variables $variables;
-    private LoadCurrentGithubEvent $loadGithubEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeCandidates;
-    private Push $push;
-    private SetDefaultBranch $switchDefaultBranch;
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
+    private VariablesInterface $variables;
+    private LoadCurrentGithubEventInterface $loadGithubEvent;
+    private FetchInterface $fetch;
+    private GetMergeTargetCandidateBranchesInterface $getMergeCandidates;
+    private PushInterface $push;
+    private SetDefaultBranchInterface $switchDefaultBranch;
+    private BumpAndCommitChangelogVersionInterface $bumpChangelogVersion;
 
     public function __construct(
-        Variables $variables,
-        LoadCurrentGithubEvent $loadGithubEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeCandidates,
-        Push $push,
-        SetDefaultBranch $switchDefaultBranch,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion
+        VariablesInterface $variables,
+        LoadCurrentGithubEventInterface $loadGithubEvent,
+        FetchInterface $fetch,
+        GetMergeTargetCandidateBranchesInterface $getMergeCandidates,
+        PushInterface $push,
+        SetDefaultBranchInterface $switchDefaultBranch,
+        BumpAndCommitChangelogVersionInterface $bumpChangelogVersion
     ) {
         parent::__construct('laminas:automatic-releases:switch-default-branch-to-next-minor');
 
@@ -79,7 +79,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
                 $nextDefaultBranch->name()
             );
             ($this->bumpChangelogVersion)(
-                BumpAndCommitChangelogVersion::BUMP_MINOR,
+                BumpAndCommitChangelogVersionInterface::BUMP_MINOR,
                 $repositoryPath,
                 $releaseVersion,
                 $nextDefaultBranch,

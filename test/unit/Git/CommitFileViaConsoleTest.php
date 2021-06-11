@@ -78,7 +78,7 @@ final class CommitFileViaConsoleTest extends TestCase
         Filesystem\write_file($filename, "# README\n\nThis is a test file to test commits from laminas/automatic-releases.");
 
         $this->expectException(InvariantViolationException::class);
-        $this->expectExceptionMessage('CommitFile: Cannot commit file README.md to branch 1.0.x, as a different branch is currently checked out (1.1.x).');
+        $this->expectExceptionMessage('CommitFileInterface: Cannot commit file README.md to branch 1.0.x, as a different branch is currently checked out (1.1.x).');
         (new CommitFileViaConsole())
             ->__invoke(
                 $this->checkout,

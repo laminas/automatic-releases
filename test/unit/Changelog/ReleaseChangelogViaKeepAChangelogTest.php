@@ -8,9 +8,9 @@ use DateTimeImmutable;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogViaKeepAChangelog;
-use Laminas\AutomaticReleases\Git\CheckoutBranch;
-use Laminas\AutomaticReleases\Git\CommitFile;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\CheckoutBranchInterface;
+use Laminas\AutomaticReleases\Git\CommitFileInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
@@ -32,14 +32,14 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
     private FrozenClock $frozenClock;
 
-    /** @var CheckoutBranch&MockObject */
-    private CheckoutBranch $checkoutBranch;
+    /** @var CheckoutBranchInterface&MockObject */
+    private CheckoutBranchInterface $checkoutBranch;
 
-    /** @var CommitFile&MockObject */
-    private CommitFile $commitFile;
+    /** @var CommitFileInterface&MockObject */
+    private CommitFileInterface $commitFile;
 
-    /** @var MockObject&Push */
-    private Push $push;
+    /** @var MockObject&PushInterface */
+    private PushInterface $push;
 
     /** @var LoggerInterface&MockObject */
     private LoggerInterface $logger;
@@ -50,9 +50,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     protected function setUp(): void
     {
         $this->frozenClock    = new FrozenClock(new DateTimeImmutable('2020-08-05T00:00:01Z'));
-        $this->checkoutBranch = $this->createMock(CheckoutBranch::class);
-        $this->commitFile     = $this->createMock(CommitFile::class);
-        $this->push           = $this->createMock(Push::class);
+        $this->checkoutBranch = $this->createMock(CheckoutBranchInterface::class);
+        $this->commitFile     = $this->createMock(CommitFileInterface::class);
+        $this->push           = $this->createMock(PushInterface::class);
         $this->logger         = $this->createMock(LoggerInterface::class);
 
         $this->releaseChangelog = new CommitReleaseChangelogViaKeepAChangelog(
@@ -144,7 +144,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     {
         $existingChangelog = Str\format(self::READY_CHANGELOG, 'TBD');
         $expectedChangelog = Type\non_empty_string()->assert(Str\format(
-            <<< 'CHANGELOG'
+            <<<'CHANGELOG'
                 ## 1.0.0 - %s
                 
                 ### Added
@@ -255,7 +255,6 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
     /**
      * @psalm-param non-empty-string $origin
-     *
      * @psalm-return non-empty-string
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
@@ -270,7 +269,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         return $repo;
     }
 
-    private const INVALID_CHANGELOG = <<< 'END'
+    private const INVALID_CHANGELOG = <<<'END'
         # NOT A CHANGELOG
 
         This file is not a changelog.
@@ -281,7 +280,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         END;
 
-    private const READY_CHANGELOG = <<< 'END'
+    private const READY_CHANGELOG = <<<'END'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

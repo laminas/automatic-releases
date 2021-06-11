@@ -21,7 +21,7 @@
         "symfony/console": "^5.2.3"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^9.0.0",
+        "laminas/laminas-coding-standard": "^2.3.0",
         "php-standard-library/psalm-plugin": "^1.1.1",
         "phpunit/phpunit": "^9.5.0",
         "psalm/plugin-phpunit": "^0.15.1",
@@ -41,5 +41,10 @@
         "psr-4": {
             "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
         }
+    },
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always"
     }
 }

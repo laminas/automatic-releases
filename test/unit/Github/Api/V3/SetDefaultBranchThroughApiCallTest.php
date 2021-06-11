@@ -45,7 +45,6 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
     /**
      * @psalm-param positive-int $responseCode
-     *
      * @dataProvider exampleValidResponseCodes
      */
     public function testSuccessfulRequest(int $responseCode): void
@@ -148,7 +147,6 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
     /**
      * @psalm-param positive-int $responseCode
-     *
      * @dataProvider exampleFailureResponseCodes
      */
     public function testRequestFailedToSwitchBranchDueToInvalidResponseCode(int $responseCode): void
