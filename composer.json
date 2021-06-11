@@ -41,5 +41,10 @@
         "psr-4": {
             "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
         }
+    },
+    "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always"
     }
 }
