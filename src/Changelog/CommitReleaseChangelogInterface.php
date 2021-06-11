@@ -8,7 +8,7 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
-interface CommitReleaseChangelog
+interface CommitReleaseChangelogInterface
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory

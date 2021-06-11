@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
-use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Psl;
 use Psl\Filesystem;
 use Psl\Str;
@@ -18,18 +18,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class BumpChangelogForReleaseBranch extends Command
 {
-    private Variables $environment;
-    private LoadCurrentGithubEvent $loadEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
+    private VariablesInterface $environment;
+    private LoadCurrentGithubEventInterface $loadEvent;
+    private FetchInterface $fetch;
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    private BumpAndCommitChangelogVersionInterface $bumpChangelogVersion;
 
     public function __construct(
-        Variables $environment,
-        LoadCurrentGithubEvent $loadEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeTargets,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion
+        VariablesInterface $environment,
+        LoadCurrentGithubEventInterface $loadEvent,
+        FetchInterface $fetch,
+        GetMergeTargetCandidateBranchesInterface $getMergeTargets,
+        BumpAndCommitChangelogVersionInterface $bumpChangelogVersion
     ) {
         parent::__construct('laminas:automatic-releases:bump-changelog');
 
@@ -58,7 +58,7 @@ final class BumpChangelogForReleaseBranch extends Command
         Psl\invariant($releaseBranch !== null, Str\format('No valid release branch found for version %s', $releaseVersion->fullReleaseName()));
 
         ($this->bumpChangelogVersion)(
-            BumpAndCommitChangelogVersion::BUMP_PATCH,
+            BumpAndCommitChangelogVersionInterface::BUMP_PATCH,
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,

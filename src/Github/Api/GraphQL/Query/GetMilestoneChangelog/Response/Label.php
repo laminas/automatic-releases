@@ -22,7 +22,6 @@ final class Label
     /**
      * @psalm-param non-empty-string $colour
      * @psalm-param non-empty-string $name
-     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
@@ -37,9 +36,7 @@ final class Label
 
     /**
      * @param array<string, mixed> $payload
-     *
      * @psalm-pure
-     *
      * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
      * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
@@ -47,8 +44,8 @@ final class Label
     {
         $payload = Type\shape([
             'color' => Type\non_empty_string(),
-            'name' => Type\non_empty_string(),
-            'url' => Type\non_empty_string(),
+            'name'  => Type\non_empty_string(),
+            'url'   => Type\non_empty_string(),
         ])->coerce($payload);
 
         Psl\invariant(Regex\matches($payload['color'], '/^[0-9a-f]{6}$/i'), 'Malformed label color.');

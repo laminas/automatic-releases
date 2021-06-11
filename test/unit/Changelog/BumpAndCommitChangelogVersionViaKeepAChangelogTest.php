@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
-use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionInterface;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionViaKeepAChangelog;
-use Laminas\AutomaticReleases\Changelog\ChangelogExists;
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsInterface;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
-use Laminas\AutomaticReleases\Git\CheckoutBranch;
-use Laminas\AutomaticReleases\Git\CommitFile;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\CheckoutBranchInterface;
+use Laminas\AutomaticReleases\Git\CommitFileInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
@@ -26,12 +26,12 @@ use Psr\Log\LoggerInterface;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 {
-    /** @var CheckoutBranch&MockObject */
-    private CheckoutBranch $checkoutBranch;
-    /** @var CommitFile&MockObject */
-    private CommitFile $commitFile;
-    /** @var Push&MockObject */
-    private Push $push;
+    /** @var CheckoutBranchInterface&MockObject */
+    private CheckoutBranchInterface $checkoutBranch;
+    /** @var CommitFileInterface&MockObject */
+    private CommitFileInterface $commitFile;
+    /** @var PushInterface&MockObject */
+    private PushInterface $push;
     /** @var LoggerInterface&MockObject */
     private LoggerInterface $logger;
     private BumpAndCommitChangelogVersionViaKeepAChangelog $bumpAndCommitChangelog;
@@ -39,9 +39,9 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->checkoutBranch         = $this->createMock(CheckoutBranch::class);
-        $this->commitFile             = $this->createMock(CommitFile::class);
-        $this->push                   = $this->createMock(Push::class);
+        $this->checkoutBranch         = $this->createMock(CheckoutBranchInterface::class);
+        $this->commitFile             = $this->createMock(CommitFileInterface::class);
+        $this->push                   = $this->createMock(PushInterface::class);
         $this->logger                 = $this->createMock(LoggerInterface::class);
         $this->bumpAndCommitChangelog = new BumpAndCommitChangelogVersionViaKeepAChangelog(
             new ChangelogExistsViaConsole(),
@@ -71,7 +71,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->with(self::stringContains('No CHANGELOG.md file detected'));
 
         ($this->bumpAndCommitChangelog)(
-            BumpAndCommitChangelogVersion::BUMP_PATCH,
+            BumpAndCommitChangelogVersionInterface::BUMP_PATCH,
             $repoDir,
             $version,
             $sourceBranch,
@@ -94,15 +94,14 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
     public function bumpTypes(): iterable
     {
         // phpcs:enable
-        yield 'bump-patch' => [BumpAndCommitChangelogVersion::BUMP_PATCH, '1.0.x', '1.0.2'];
-        yield 'bump-minor' => [BumpAndCommitChangelogVersion::BUMP_MINOR, '1.1.x', '1.1.0'];
+        yield 'bump-patch' => [BumpAndCommitChangelogVersionInterface::BUMP_PATCH, '1.0.x', '1.0.2'];
+        yield 'bump-minor' => [BumpAndCommitChangelogVersionInterface::BUMP_MINOR, '1.1.x', '1.1.0'];
     }
 
     /**
-     * @param BumpAndCommitChangelogVersion::BUMP_* $bumpType
+     * @param BumpAndCommitChangelogVersionInterface::BUMP_* $bumpType
      * @param non-empty-string                      $branchName
      * @param non-empty-string                      $expectedVersion
-     *
      * @dataProvider bumpTypes
      */
     public function testAddsNewReleaseVersionUsingBumpTypeToChangelogFileAndCommitsAndPushes(
@@ -115,7 +114,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $sourceBranch  = BranchName::fromName($branchName);
         $version       = SemVerVersion::fromMilestoneName('1.0.1');
 
-        $changelogExists = $this->createMock(ChangelogExists::class);
+        $changelogExists = $this->createMock(ChangelogExistsInterface::class);
         $changelogExists
             ->expects(self::once())
             ->method('__invoke')
@@ -209,7 +208,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         return Type\non_empty_string()->assert($changelogFile);
     }
 
-    private const CHANGELOG_STUB = <<< 'CHANGELOG'
+    private const CHANGELOG_STUB = <<<'CHANGELOG'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

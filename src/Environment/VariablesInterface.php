@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Environment;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 /** @psalm-immutable */
-interface Variables
+interface VariablesInterface
 {
     /** @psalm-return non-empty-string */
     public function githubToken(): string;

@@ -45,7 +45,6 @@ final class CreatePullRequestThroughApiCallTest extends TestCase
 
     /**
      * @psalm-param positive-int $responseCode
-     *
      * @dataProvider exampleValidResponseCodes
      */
     public function testSuccessfulRequest(int $responseCode): void
@@ -85,8 +84,7 @@ final class CreatePullRequestThroughApiCallTest extends TestCase
     "maintainer_can_modify": true,
     "title": "My awesome pull request"
 }
-JSON
-                    ,
+JSON,
                     $request->getBody()
                         ->__toString()
                 );
@@ -116,7 +114,6 @@ JSON
 
     /**
      * @psalm-param positive-int $responseCode
-     *
      * @dataProvider exampleFailureResponseCodes
      */
     public function testRequestFailedToCreatePullRequestDueToInvalidResponseCode(int $responseCode): void

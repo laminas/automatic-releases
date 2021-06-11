@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git;
 
+use Laminas\AutomaticReleases\Git\CommitFileInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Psl;
 use Psl\Shell;
 use Psl\Str;
 
-final class CommitFileViaConsole implements CommitFile
+final class CommitFileViaConsole implements CommitFileInterface
 {
     public function __invoke(
         string $repositoryDirectory,
@@ -37,7 +38,7 @@ final class CommitFileViaConsole implements CommitFile
         $output = Str\trim(Shell\execute('git', ['branch', '--show-current'], $repositoryDirectory));
 
         Psl\invariant($output === $expectedBranch->name(), Str\format(
-            'CommitFile: Cannot commit file %s to branch %s, as a different branch is currently checked out (%s).',
+            'CommitFileInterface: Cannot commit file %s to branch %s, as a different branch is currently checked out (%s).',
             $filename,
             $expectedBranch->name(),
             $output

@@ -10,7 +10,7 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 
-interface CreateReleaseText
+interface CreateReleaseTextInterface
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory

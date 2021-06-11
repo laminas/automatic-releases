@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Changelog;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 
-interface ChangelogExists
+interface ChangelogExistsInterface
 {
     /**
      * @param non-empty-string $repositoryDirectory

@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Git;
 use Psl\SecureRandom;
 use Psl\Shell;
 
-final class PushViaConsole implements Push
+final class PushViaConsole implements PushInterface
 {
     public function __invoke(
         string $repositoryDirectory,

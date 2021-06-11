@@ -8,7 +8,7 @@ use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextInterface;
 use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -56,11 +56,11 @@ final class MergeMultipleReleaseNotesTest extends TestCase
      */
     public function testIndicatesCannotCreateReleaseTextIfNoGeneratorCan(): void
     {
-        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        /** @psalm-var non-empty-list<CreateReleaseTextInterface> $generators */
         $generators = [];
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
-                ->assert($this->createMock(CreateReleaseText::class));
+            $generator = Type\intersection(Type\object(CreateReleaseTextInterface::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseTextInterface::class));
 
             $generator
                 ->expects(self::once())
@@ -91,12 +91,12 @@ final class MergeMultipleReleaseNotesTest extends TestCase
 
     public function testIndicatesCanCreateReleaseTextIfAtLeastOneGeneratorCan(): void
     {
-        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        /** @psalm-var non-empty-list<CreateReleaseTextInterface> $generators */
         $generators = [];
         /** @var 0|1|2|3|4 $index */
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
-                ->assert($this->createMock(CreateReleaseText::class));
+            $generator = Type\intersection(Type\object(CreateReleaseTextInterface::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseTextInterface::class));
 
             if ($index < 2) {
                 $generator
@@ -151,13 +151,13 @@ final class MergeMultipleReleaseNotesTest extends TestCase
 
     public function testReturnsConcatenatedValuesFromGeneratorsThatCanCreateReleaseText(): void
     {
-        /** @psalm-var non-empty-list<CreateReleaseText> $generators */
+        /** @psalm-var non-empty-list<CreateReleaseTextInterface> $generators */
         $generators = [];
 
         /** @var 0|1|2|3|4 $index */
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
-                ->assert($this->createMock(CreateReleaseText::class));
+            $generator = Type\intersection(Type\object(CreateReleaseTextInterface::class), Type\object(MockObject::class))
+                ->assert($this->createMock(CreateReleaseTextInterface::class));
 
             switch ($index) {
                 case 0:
@@ -211,7 +211,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
 
         $createReleaseText = new MergeMultipleReleaseNotes($generators);
 
-        $expected = <<< 'END'
+        $expected = <<<'END'
             GENERATOR 0
             
             -----

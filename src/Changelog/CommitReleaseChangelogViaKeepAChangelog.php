@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Changelog;
 
-use Laminas\AutomaticReleases\Git\CheckoutBranch;
-use Laminas\AutomaticReleases\Git\CommitFile;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\CheckoutBranchInterface;
+use Laminas\AutomaticReleases\Git\CommitFileInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
@@ -14,27 +14,27 @@ use Psl\Str;
 use Psl\Type;
 use Psr\Log\LoggerInterface;
 
-final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
+final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelogInterface
 {
     private const CHANGELOG_FILE = 'CHANGELOG.md';
 
-    private const COMMIT_TEMPLATE = <<< 'COMMIT'
+    private const COMMIT_TEMPLATE = <<<'COMMIT'
         %s readiness
 
         Updates the %s to set the release date.
         COMMIT;
 
-    private ChangelogExists $changelogExists;
-    private CheckoutBranch $checkoutBranch;
-    private CommitFile $commitFile;
-    private Push $push;
+    private ChangelogExistsInterface $changelogExists;
+    private CheckoutBranchInterface $checkoutBranch;
+    private CommitFileInterface $commitFile;
+    private PushInterface $push;
     private LoggerInterface $logger;
 
     public function __construct(
-        ChangelogExists $changelogExists,
-        CheckoutBranch $checkoutBranch,
-        CommitFile $commitFile,
-        Push $push,
+        ChangelogExistsInterface $changelogExists,
+        CheckoutBranchInterface $checkoutBranch,
+        CommitFileInterface $commitFile,
+        PushInterface $push,
         LoggerInterface $logger
     ) {
         $this->changelogExists = $changelogExists;
@@ -56,14 +56,14 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
     ): void {
         if (! $releaseNotes->requiresUpdatingChangelogFile()) {
             // Nothing to commit
-            $this->logger->info('CommitReleaseChangelog: no changes to commit.');
+            $this->logger->info('CommitReleaseChangelogInterface: no changes to commit.');
 
             return;
         }
 
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
-            $this->logger->info('CommitReleaseChangelog: No CHANGELOG.md file detected');
+            $this->logger->info('CommitReleaseChangelogInterface: No CHANGELOG.md file detected');
 
             return;
         }

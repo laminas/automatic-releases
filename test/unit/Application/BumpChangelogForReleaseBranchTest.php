@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
-use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
+use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersionInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,26 +24,26 @@ use Symfony\Component\Console\Output\NullOutput;
 
 class BumpChangelogForReleaseBranchTest extends TestCase
 {
-    /** @var Variables&MockObject */
-    private Variables $environment;
-    /** @var LoadCurrentGithubEvent&MockObject */
-    private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
-    private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var BumpAndCommitChangelogVersion&MockObject */
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
+    /** @var VariablesInterface&MockObject */
+    private VariablesInterface $environment;
+    /** @var LoadCurrentGithubEventInterface&MockObject */
+    private LoadCurrentGithubEventInterface $loadEvent;
+    /** @var FetchInterface&MockObject */
+    private FetchInterface $fetch;
+    /** @var GetMergeTargetCandidateBranchesInterface&MockObject */
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    /** @var BumpAndCommitChangelogVersionInterface&MockObject */
+    private BumpAndCommitChangelogVersionInterface $bumpChangelogVersion;
     private MilestoneClosedEvent $event;
     private BumpChangelogForReleaseBranch $command;
 
     protected function setUp(): void
     {
-        $this->environment          = $this->createMock(Variables::class);
-        $this->loadEvent            = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->fetch                = $this->createMock(Fetch::class);
-        $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranches::class);
-        $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersion::class);
+        $this->environment          = $this->createMock(VariablesInterface::class);
+        $this->loadEvent            = $this->createMock(LoadCurrentGithubEventInterface::class);
+        $this->fetch                = $this->createMock(FetchInterface::class);
+        $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranchesInterface::class);
+        $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersionInterface::class);
 
         $this->command = new BumpChangelogForReleaseBranch(
             $this->environment,
@@ -53,7 +53,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             $this->bumpChangelogVersion
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<< 'JSON'
+        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
             {
                 "milestone": {
                     "title": "1.2.3",
@@ -103,7 +103,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
         $this->bumpChangelogVersion->expects(self::once())
             ->method('__invoke')
             ->with(
-                BumpAndCommitChangelogVersion::BUMP_PATCH,
+                BumpAndCommitChangelogVersionInterface::BUMP_PATCH,
                 $workspace,
                 self::equalTo(SemVerVersion::fromMilestoneName('1.2.3')),
                 self::equalTo(BranchName::fromName('1.2.x'))
