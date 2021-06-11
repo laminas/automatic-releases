@@ -79,13 +79,11 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         );
     }
 
-    // phpcs:disable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
-
     /**
      * @return iterable<
      *     string,
      *     array{
-     *         0: BumpAndCommitChangelogVersion::BUMP_*,
+     *         0: BumpAndCommitChangelogVersionInterface::BUMP_*,
      *         1: non-empty-string,
      *         2: non-empty-string
      *     }
@@ -93,7 +91,6 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
      */
     public function bumpTypes(): iterable
     {
-        // phpcs:enable
         yield 'bump-patch' => [BumpAndCommitChangelogVersionInterface::BUMP_PATCH, '1.0.x', '1.0.2'];
         yield 'bump-minor' => [BumpAndCommitChangelogVersionInterface::BUMP_MINOR, '1.1.x', '1.1.0'];
     }
