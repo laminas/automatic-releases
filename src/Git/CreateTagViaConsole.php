@@ -10,7 +10,7 @@ use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 
-final class CreateTagViaConsole implements CreateTag
+final class CreateTagViaConsole implements CreateTagInterface
 {
     public function __invoke(
         string $repositoryDirectory,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Environment;
 
-use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
+use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringInterface;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Psl;
 use Psl\Env;
@@ -12,7 +12,7 @@ use Psl\Iter;
 use Psl\Str;
 
 /** @psalm-immutable */
-class EnvironmentVariables implements Variables
+class EnvironmentVariables implements VariablesInterface
 {
     private const LOG_LEVELS = [
         '100',
@@ -81,7 +81,7 @@ class EnvironmentVariables implements Variables
         $this->logLevel = $logLevel;
     }
 
-    public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
+    public static function fromEnvironment(ImportGpgKeyFromStringInterface $importKey): self
     {
         return new self(
             self::getenv('GITHUB_TOKEN'),
@@ -96,7 +96,6 @@ class EnvironmentVariables implements Variables
 
     /**
      * @psalm-param  non-empty-string $key
-     *
      * @psalm-return non-empty-string
      */
     private static function getenv(string $key): string
@@ -110,7 +109,6 @@ class EnvironmentVariables implements Variables
 
     /**
      * @psalm-param  non-empty-string $default
-     *
      * @psalm-return non-empty-string
      */
     private static function getenvWithFallback(string $key, string $default): string

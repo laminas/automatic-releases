@@ -8,7 +8,7 @@ use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Psl\Filesystem;
 
-final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
+final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEventInterface
 {
     private EnvironmentVariables $variables;
 

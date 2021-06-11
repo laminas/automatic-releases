@@ -198,7 +198,6 @@ final class SemVerVersionTest extends TestCase
      * @psalm-param non-empty-string $patch
      * @psalm-param non-empty-string $minor
      * @psalm-param non-empty-string $major
-     *
      * @dataProvider nextVersionsProvider
      */
     public function testNextVersions(string $version, string $patch, string $minor, string $major): void

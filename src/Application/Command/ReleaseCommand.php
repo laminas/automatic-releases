@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
-use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
-use Laminas\AutomaticReleases\Environment\Variables;
-use Laminas\AutomaticReleases\Git\CreateTag;
-use Laminas\AutomaticReleases\Git\Fetch;
-use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
-use Laminas\AutomaticReleases\Git\Push;
-use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
-use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
-use Laminas\AutomaticReleases\Github\CreateReleaseText;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelogInterface;
+use Laminas\AutomaticReleases\Environment\VariablesInterface;
+use Laminas\AutomaticReleases\Git\CreateTagInterface;
+use Laminas\AutomaticReleases\Git\FetchInterface;
+use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestoneInterface;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseInterface;
+use Laminas\AutomaticReleases\Github\CreateReleaseTextInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Psl;
 use Psl\Filesystem;
 use Psl\Str;
@@ -23,28 +23,28 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ReleaseCommand extends Command
 {
-    private Variables $environment;
-    private LoadCurrentGithubEvent $loadEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    private GetGithubMilestone $getMilestone;
-    private CommitReleaseChangelog $commitChangelog;
-    private CreateReleaseText $createChangelogText;
-    private CreateTag $createTag;
-    private Push $push;
-    private CreateRelease $createRelease;
+    private VariablesInterface $environment;
+    private LoadCurrentGithubEventInterface $loadEvent;
+    private FetchInterface $fetch;
+    private GetMergeTargetCandidateBranchesInterface $getMergeTargets;
+    private GetGithubMilestoneInterface $getMilestone;
+    private CommitReleaseChangelogInterface $commitChangelog;
+    private CreateReleaseTextInterface $createChangelogText;
+    private CreateTagInterface $createTag;
+    private PushInterface $push;
+    private CreateReleaseInterface $createRelease;
 
     public function __construct(
-        Variables $environment,
-        LoadCurrentGithubEvent $loadEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeTargets,
-        GetGithubMilestone $getMilestone,
-        CommitReleaseChangelog $commitChangelog,
-        CreateReleaseText $createChangelogText,
-        CreateTag $createTag,
-        Push $push,
-        CreateRelease $createRelease
+        VariablesInterface $environment,
+        LoadCurrentGithubEventInterface $loadEvent,
+        FetchInterface $fetch,
+        GetMergeTargetCandidateBranchesInterface $getMergeTargets,
+        GetGithubMilestoneInterface $getMilestone,
+        CommitReleaseChangelogInterface $commitChangelog,
+        CreateReleaseTextInterface $createChangelogText,
+        CreateTagInterface $createTag,
+        PushInterface $push,
+        CreateReleaseInterface $createRelease
     ) {
         parent::__construct('laminas:automatic-releases:release');
 

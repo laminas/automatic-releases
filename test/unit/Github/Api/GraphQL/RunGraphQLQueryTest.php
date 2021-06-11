@@ -90,7 +90,6 @@ JSON
 
     /**
      * @psalm-param positive-int $responseCode
-     *
      * @dataProvider exampleFailureResponseCodes
      */
     public function testWillThrowIfGraphQLResponseIsNotSuccessful(int $responseCode): void

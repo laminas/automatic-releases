@@ -13,12 +13,12 @@ use Psl\Iter;
 use Psl\Type;
 use Psl\Vec;
 
-final class MergeMultipleReleaseNotes implements CreateReleaseText
+final class MergeMultipleReleaseNotes implements CreateReleaseTextInterface
 {
-    /** @psalm-var non-empty-list<CreateReleaseText> */
+    /** @psalm-var non-empty-list<CreateReleaseTextInterface> */
     private array $releaseTextGenerators;
 
-    /** @psalm-param non-empty-list<CreateReleaseText> $releaseTextGenerators */
+    /** @psalm-param non-empty-list<CreateReleaseTextInterface> $releaseTextGenerators */
     public function __construct(array $releaseTextGenerators)
     {
         $this->releaseTextGenerators = $releaseTextGenerators;
@@ -34,9 +34,9 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
         $items = Vec\map(
             Vec\filter(
                 $this->releaseTextGenerators,
-                static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
+                static fn (CreateReleaseTextInterface $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
             ),
-            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
+            static fn (CreateReleaseTextInterface $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
         );
 
         $releaseNotes = Iter\reduce(

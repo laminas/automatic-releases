@@ -95,7 +95,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $repositoryPath    = $this->createMockRepositoryWithChangelog($changelogContents);
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = Str\format(<<< 'END'
+        $expected = Str\format(<<<'END'
             ## 1.0.0 - %s
             
             ### Added
@@ -128,7 +128,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = Str\format(<<< 'END'
+        $expected = Str\format(<<<'END'
             ## 2.3.12 - %s
             
             ### Added
@@ -197,7 +197,6 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
     /**
      * @psalm-param non-empty-string $origin
-     *
      * @psalm-return non-empty-string
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
@@ -210,7 +209,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         return Type\non_empty_string()->assert($repo);
     }
 
-    private const INVALID_CHANGELOG = <<< 'END'
+    private const INVALID_CHANGELOG = <<<'END'
         # NOT A CHANGELOG
 
         This file is not a changelog.
@@ -221,7 +220,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         END;
 
-    private const READY_CHANGELOG = <<< 'END'
+    private const READY_CHANGELOG = <<<'END'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
@@ -272,7 +271,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         END;
 
-    private const CHANGELOG_MULTI_SECTION = <<< 'END'
+    private const CHANGELOG_MULTI_SECTION = <<<'END'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Git;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
-interface CommitFile
+interface CommitFileInterface
 {
     /**
      * @psalm-param non-empty-string $repositoryDirectory

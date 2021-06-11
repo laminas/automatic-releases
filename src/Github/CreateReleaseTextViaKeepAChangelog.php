@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Github;
 
-use Laminas\AutomaticReleases\Changelog\ChangelogExists;
+use Laminas\AutomaticReleases\Changelog\ChangelogExistsInterface;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
@@ -23,7 +23,7 @@ use Psl\Type;
 
 use function preg_quote;
 
-class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
+class CreateReleaseTextViaKeepAChangelog implements CreateReleaseTextInterface
 {
     /** @psalm-var list<string> */
     private const DEFAULT_SECTIONS = [
@@ -34,10 +34,10 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         'Fixed',
     ];
 
-    private ChangelogExists $changelogExists;
+    private ChangelogExistsInterface $changelogExists;
     private Clock $clock;
 
-    public function __construct(ChangelogExists $changelogExists, Clock $clock)
+    public function __construct(ChangelogExistsInterface $changelogExists, Clock $clock)
     {
         $this->changelogExists = $changelogExists;
         $this->clock           = $clock;
@@ -94,7 +94,6 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 
     /**
      * @psalm-param non-empty-string $repositoryDirectory
-     *
      * @psalm-return non-empty-string
      */
     private function fetchChangelogContentsFromBranch(
@@ -109,7 +108,6 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
     /**
      * @psalm-param non-empty-string $changelog
      * @psalm-param non-empty-string $version
-     *
      * @psalm-return non-empty-string
      */
     private function updateReleaseDate(string $changelog, string $version): string
@@ -128,7 +126,6 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 
     /**
      * @psalm-param non-empty-string $changelog
-     *
      * @psalm-return non-empty-string
      */
     private function removeDefaultContents(string $changelog): string
@@ -147,7 +144,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
     }
 
     /**
-     * Fetch a changelog entry for a given version from the changelog contents
+     * FetchInterface a changelog entry for a given version from the changelog contents
      *
      * Each entry starts with one of the following:
      *

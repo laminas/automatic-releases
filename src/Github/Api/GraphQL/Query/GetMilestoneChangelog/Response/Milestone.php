@@ -30,7 +30,6 @@ final class Milestone
      * @param array<int, IssueOrPullRequest> $entries
      * @psalm-param non-empty-string $title
      * @psalm-param list<IssueOrPullRequest> $entries
-     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
@@ -51,21 +50,19 @@ final class Milestone
 
     /**
      * @param array<string, mixed> $payload
-     *
      * @psalm-pure
-     *
      * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
      * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromPayload(array $payload): self
     {
         $payload = Type\shape([
-            'number' => Type\positive_int(),
-            'closed' => Type\bool(),
-            'title' => Type\non_empty_string(),
-            'description' => Type\union(Type\null(), Type\string()),
-            'url' => Type\non_empty_string(),
-            'issues' => Type\shape([
+            'number'       => Type\positive_int(),
+            'closed'       => Type\bool(),
+            'title'        => Type\non_empty_string(),
+            'description'  => Type\union(Type\null(), Type\string()),
+            'url'          => Type\non_empty_string(),
+            'issues'       => Type\shape([
                 'nodes' => Type\vec(Type\dict(Type\string(), Type\mixed())),
             ]),
             'pullRequests' => Type\shape([

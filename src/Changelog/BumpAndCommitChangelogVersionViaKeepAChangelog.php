@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Changelog;
 
-use Laminas\AutomaticReleases\Git\CheckoutBranch;
-use Laminas\AutomaticReleases\Git\CommitFile;
-use Laminas\AutomaticReleases\Git\Push;
+use Laminas\AutomaticReleases\Git\CheckoutBranchInterface;
+use Laminas\AutomaticReleases\Git\CommitFileInterface;
+use Laminas\AutomaticReleases\Git\PushInterface;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
@@ -15,27 +15,27 @@ use Psl\Str;
 use Psl\Type;
 use Psr\Log\LoggerInterface;
 
-class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitChangelogVersion
+class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitChangelogVersionInterface
 {
     private const CHANGELOG_FILE = 'CHANGELOG.md';
 
-    private const COMMIT_TEMPLATE = <<< 'COMMIT'
+    private const COMMIT_TEMPLATE = <<<'COMMIT'
         Bumps changelog version to %s
 
         Updates the %s file to add a changelog entry for a new %s version.
         COMMIT;
 
-    private ChangelogExists $changelogExists;
-    private CheckoutBranch $checkoutBranch;
-    private CommitFile $commitFile;
-    private Push $push;
+    private ChangelogExistsInterface $changelogExists;
+    private CheckoutBranchInterface $checkoutBranch;
+    private CommitFileInterface $commitFile;
+    private PushInterface $push;
     private LoggerInterface $logger;
 
     public function __construct(
-        ChangelogExists $changelogExists,
-        CheckoutBranch $checkoutBranch,
-        CommitFile $commitFile,
-        Push $push,
+        ChangelogExistsInterface $changelogExists,
+        CheckoutBranchInterface $checkoutBranch,
+        CommitFileInterface $commitFile,
+        PushInterface $push,
         LoggerInterface $logger
     ) {
         $this->changelogExists = $changelogExists;

@@ -27,7 +27,6 @@ final class IssueOrPullRequest
     /**
      * @psalm-param non-empty-string $title
      * @psalm-param list<Label> $labels
-     *
      * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
@@ -48,9 +47,7 @@ final class IssueOrPullRequest
 
     /**
      * @param array<string, mixed> $payload
-     *
      * @psalm-pure
-     *
      * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
      * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
@@ -58,12 +55,12 @@ final class IssueOrPullRequest
     {
         $payload = Type\shape([
             'number' => Type\positive_int(),
-            'title' => Type\non_empty_string(),
+            'title'  => Type\non_empty_string(),
             'author' => Type\dict(Type\string(), Type\mixed()),
             'labels' => Type\shape([
                 'nodes' => Type\vec(Type\dict(Type\string(), Type\mixed())),
             ]),
-            'url' => Type\non_empty_string(),
+            'url'    => Type\non_empty_string(),
             'closed' => Type\bool(),
             'merged' => Type\optional(Type\bool()),
         ])->coerce($payload);

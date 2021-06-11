@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Git;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Psl\Shell;
 
-class CheckoutBranchViaConsole implements CheckoutBranch
+class CheckoutBranchViaConsole implements CheckoutBranchInterface
 {
     public function __invoke(
         string $repositoryDirectory,

@@ -29,14 +29,14 @@ final class MilestoneClosedEvent
     public static function fromEventJson(string $json): self
     {
         $event = Json\typed($json, Type\shape([
-            'milestone' => Type\shape([
-                'title' => Type\non_empty_string(),
+            'milestone'  => Type\shape([
+                'title'  => Type\non_empty_string(),
                 'number' => Type\positive_int(),
             ]),
             'repository' => Type\shape([
                 'full_name' => Type\non_empty_string(),
             ]),
-            'action' => Type\literal_scalar('closed'),
+            'action'     => Type\literal_scalar('closed'),
         ]));
 
         return new self(
