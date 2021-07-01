@@ -13,7 +13,7 @@
         "ocramius/package-versions": "^2.3.0",
         "phly/keep-a-changelog": "^2.11.0",
         "php-http/curl-client": "^2.2.0",
-        "php-http/discovery": "^1.13.0",
+        "php-http/discovery": "^1.14.0",
         "php-http/httplug": "^2.2.0",
         "psr/http-client": "^1.0.1",
         "psr/http-message": "^1.0.1",
