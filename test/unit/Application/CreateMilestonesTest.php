@@ -89,7 +89,7 @@ final class CreateMilestonesTest extends TestCase
                 ],
             );
 
-        self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
+        self::assertSame(0, $this->command->execute(new ArrayInput([]), new NullOutput()));
     }
 
     public function testWillFailed(): void
@@ -128,6 +128,6 @@ final class CreateMilestonesTest extends TestCase
                 ),
             );
 
-        self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
+        self::assertSame(0, $this->command->execute(new ArrayInput([]), new NullOutput()));
     }
 }
