@@ -16,6 +16,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+/**
+ * @covers \Laminas\AutomaticReleases\Application\Command\CreateMilestones
+ */
 final class CreateMilestonesTest extends TestCase
 {
     /** @var LoadCurrentGithubEvent&MockObject */
