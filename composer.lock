@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c34c89fcd85cf851d471f974e95f005",
+    "content-hash": "993bb5ff74174c3ffc81aa07f3faadcf",
     "packages": [
         {
             "name": "azjezz/psl",
-            "version": "1.7.1",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "edf5ba8c9bc5cdca5aff79f38e5effd23621b163"
+                "reference": "3860787c6c277feec6d3759b33eb78ebdf70f22d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/edf5ba8c9bc5cdca5aff79f38e5effd23621b163",
-                "reference": "edf5ba8c9bc5cdca5aff79f38e5effd23621b163",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/3860787c6c277feec6d3759b33eb78ebdf70f22d",
+                "reference": "3860787c6c277feec6d3759b33eb78ebdf70f22d",
                 "shasum": ""
             },
             "require": {
@@ -27,6 +27,9 @@
                 "ext-mbstring": "*",
                 "ext-sodium": "*",
                 "php": "^8.0"
+            },
+            "suggest": {
+                "php-standard-library/psalm-plugin": "Psalm integration"
             },
             "type": "library",
             "extra": {
@@ -59,9 +62,15 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/1.7.1"
+                "source": "https://github.com/azjezz/psl/tree/1.8.1"
             },
-            "time": "2021-05-19T11:55:09+00:00"
+            "funding": [
+                {
+                    "url": "https://opencollective.com/php-standard-library",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2021-10-03T15:35:04+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -6937,5 +6946,5 @@
         "php": "^8.0.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
