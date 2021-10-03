@@ -3,27 +3,37 @@
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
 
-## 1.13.0 - TBD
+## 1.13.0 - 2021-10-03
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.13.0](https://github.com/laminas/automatic-releases/milestone/33)
 
-- Nothing.
+Feature release (minor)
 
-### Deprecated
+### 1.13.0
 
-- Nothing.
+- Total issues resolved: **2**
+- Total pull requests resolved: **4**
+- Total contributors: **5**
 
-### Removed
+#### Enhancement,dependencies
 
-- Nothing.
+ - [169: chore(dependencies): upgrade PSL to 1.8.1](https://github.com/laminas/automatic-releases/pull/169) thanks to @azjezz and @greg0ire
 
-### Fixed
+#### Enhancement
 
-- Nothing.
+ - [165: Closes #147: Add test for `CreateMilestones` command](https://github.com/laminas/automatic-releases/pull/165) thanks to @alexraputa
+
+#### Bug
+
+ - [149: Merge release 1.12.2 into 1.13.x](https://github.com/laminas/automatic-releases/pull/149) thanks to @github-actions[bot]
+ - [141: Merge release 1.12.1 into 1.13.x](https://github.com/laminas/automatic-releases/pull/141) thanks to @github-actions[bot]
+
+#### Enhancement,Good First Issue,Help Wanted
+
+ - [147: `CreateMilestones` command is not covered by any tests](https://github.com/laminas/automatic-releases/issues/147) thanks to @Ocramius
 
 ## 1.12.2 - 2021-06-04
 
