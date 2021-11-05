@@ -6,9 +6,9 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\CreateMilestones;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestone;
-use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailed;
-use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneFailedException;
+use Laminas\AutomaticReleases\Github\Api\V3\CreateMilestoneInterface;
+use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventInterface;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,11 +21,9 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 final class CreateMilestonesTest extends TestCase
 {
-    /** @var LoadCurrentGithubEvent&MockObject */
-    private LoadCurrentGithubEvent $loadEvent;
+    private LoadCurrentGithubEventInterface|MockObject $loadEvent;
 
-    /** @var CreateMilestone&MockObject */
-    private CreateMilestone $createMilestone;
+    private CreateMilestoneInterface|MockObject $createMilestone;
 
     private CreateMilestones $command;
 
@@ -37,15 +35,16 @@ final class CreateMilestonesTest extends TestCase
     {
         parent::setUp();
 
-        $this->loadEvent       = $this->createMock(LoadCurrentGithubEvent::class);
-        $this->createMilestone = $this->createMock(CreateMilestone::class);
+        $this->loadEvent       = $this->createMock(LoadCurrentGithubEventInterface::class);
+        $this->createMilestone = $this->createMock(CreateMilestoneInterface::class);
 
         $this->command = new CreateMilestones(
             $this->loadEvent,
             $this->createMilestone
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
             {
                 "milestone": {
                     "title": "1.2.3",
@@ -121,13 +120,13 @@ final class CreateMilestonesTest extends TestCase
             )
             ->willReturnOnConsecutiveCalls(
                 self::throwException(
-                    CreateMilestoneFailed::forVersion($this->releaseVersion->nextPatch()->fullReleaseName()),
+                    CreateMilestoneFailedException::forVersion($this->releaseVersion->nextPatch()->fullReleaseName()),
                 ),
                 self::throwException(
-                    CreateMilestoneFailed::forVersion($this->releaseVersion->nextMinor()->fullReleaseName()),
+                    CreateMilestoneFailedException::forVersion($this->releaseVersion->nextMinor()->fullReleaseName()),
                 ),
                 self::throwException(
-                    CreateMilestoneFailed::forVersion($this->releaseVersion->nextMajor()->fullReleaseName()),
+                    CreateMilestoneFailedException::forVersion($this->releaseVersion->nextMajor()->fullReleaseName()),
                 ),
             );
 
