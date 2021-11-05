@@ -45,6 +45,7 @@
     "scripts": {
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always",
+        "static-analysis": "psalm --shepherd --stats"
     }
 }
