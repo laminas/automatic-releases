@@ -21,8 +21,10 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 final class CreateMilestonesTest extends TestCase
 {
+    /** @var LoadCurrentGithubEventInterface&MockObject */
     private LoadCurrentGithubEventInterface|MockObject $loadEvent;
 
+    /** @var CreateMilestoneInterface&MockObject */
     private CreateMilestoneInterface|MockObject $createMilestone;
 
     private CreateMilestones $command;
