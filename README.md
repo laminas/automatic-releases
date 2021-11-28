@@ -1,5 +1,7 @@
 # Release Automation
 
+[![Build Status](https://github.com/laminas/automatic-releases/workflows/Continuous%20Integration/badge.svg)](https://github.com/laminas/automatic-releases/actions?query=workflow%3A"Continuous+Integration") [![Psalm coverage](https://shepherd.dev/github/laminas/automatic-releases/coverage.svg?)](https://shepherd.dev/github/laminas/automatic-releases)
+
 This project is a [Github Action](https://github.com/features/actions) that allows
 maintainers of open-source projects that follow [SemVer](https://semver.org/spec/v2.0.0.html)
 to automate the automation of releases.
