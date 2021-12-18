@@ -19,7 +19,6 @@ use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Env;
 use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -89,7 +88,7 @@ JSON
 
     public function testWillSwitchToExistingNewestDefaultBranch(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         Filesystem\delete_file($workspace);
         Filesystem\create_directory($workspace);
@@ -132,7 +131,7 @@ JSON
 
     public function testWillSwitchToNewlyCreatedDefaultBranchWhenNoNewerReleaseBranchExists(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         Filesystem\delete_file($workspace);
         Filesystem\create_directory($workspace);
@@ -181,7 +180,7 @@ JSON
 
     public function testWillNotSwitchDefaultBranchIfNoBranchesExist(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         Filesystem\delete_file($workspace);
         Filesystem\create_directory($workspace);

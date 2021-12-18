@@ -9,8 +9,6 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 
-use function Psl\Env\temp_dir;
-use function Psl\Filesystem\create_temporary_file;
 use function Psl\Filesystem\write_file;
 
 /** @covers \Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
@@ -32,7 +30,7 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
     "action": "closed"
 }
 JSON;
-        $event     = create_temporary_file(temp_dir(), 'github_event');
+        $event     = $this->createTemporaryFile('github_event');
 
         write_file($event, $eventData);
 

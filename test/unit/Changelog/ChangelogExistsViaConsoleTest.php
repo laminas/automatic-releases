@@ -7,7 +7,6 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
@@ -44,7 +43,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
      */
     private function createMockRepositoryWithChangelog(): string
     {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExists');
+        $repo = $this->createTemporaryFile('ChangelogExists');
         Filesystem\delete_file($repo);
 
         Filesystem\create_directory($repo);
@@ -98,7 +97,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        $repo = $this->createTemporaryFile('CreateReleaseTextViaKeepAChangelog');
         Filesystem\delete_file($repo);
 
         Shell\execute('git', ['clone', $origin, $repo]);

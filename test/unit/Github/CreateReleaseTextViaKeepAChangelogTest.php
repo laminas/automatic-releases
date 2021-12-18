@@ -14,7 +14,6 @@ use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Lcobucci\Clock\FrozenClock;
 use Lcobucci\Clock\SystemClock;
-use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
@@ -209,7 +208,7 @@ final class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         string $filename = 'CHANGELOG.md',
         string $initialBranch = '1.0.x'
     ): string {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        $repo = $this->createTemporaryFile('CreateReleaseTextViaKeepAChangelog');
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
 
@@ -232,7 +231,7 @@ final class CreateReleaseTextViaKeepAChangelogTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
+        $repo = $this->createTemporaryFile('CreateReleaseTextViaKeepAChangelog');
         Filesystem\delete_file($repo);
 
         Shell\execute('git', ['clone', $origin, $repo]);

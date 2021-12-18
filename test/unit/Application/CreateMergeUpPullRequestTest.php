@@ -27,9 +27,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
-use function Psl\Env\temp_dir;
 use function Psl\Filesystem\create_directory;
-use function Psl\Filesystem\create_temporary_file;
 use function Psl\Filesystem\delete_file;
 
 final class CreateMergeUpPullRequestTest extends TestCase
@@ -124,7 +122,7 @@ JSON
 
     public function testWillCreateMergeUpPullRequest(): void
     {
-        $workspace = create_temporary_file(temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         delete_file($workspace);
         create_directory($workspace);
@@ -190,7 +188,7 @@ JSON
 
     public function testWillSkipMergeUpPullRequestOnNoMergeUpCandidate(): void
     {
-        $workspace = create_temporary_file(temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         delete_file($workspace);
         create_directory($workspace);

@@ -31,9 +31,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
-use function Psl\Env\temp_dir;
 use function Psl\Filesystem\create_directory;
-use function Psl\Filesystem\create_temporary_file;
 use function Psl\Filesystem\delete_file;
 
 /** @psalm-suppress MissingConstructor */
@@ -141,7 +139,7 @@ JSON
      */
     public function testWillRelease(): void
     {
-        $workspace = create_temporary_file(temp_dir(), 'workspace');
+        $workspace = $this->createTemporaryFile('workspace');
 
         delete_file($workspace);
         create_directory($workspace);

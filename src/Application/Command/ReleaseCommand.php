@@ -115,10 +115,7 @@ final class ReleaseCommand extends Command
         ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());
         ($this->createRelease)($repositoryName, $releaseVersion, $changelogReleaseNotes->contents());
-
-//        if ($this->environment->twitterEnabled()) {
-            ($this->publishTweet)(Tweet::fromMilestone($milestone));
-//        }
+        ($this->publishTweet)(Tweet::fromMilestone($milestone));
 
         return 0;
     }

@@ -7,11 +7,9 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Env;
 use Psr\Http\Message\UriInterface;
 
 use function Psl\Filesystem\create_directory;
-use function Psl\Filesystem\create_temporary_file;
 use function Psl\Filesystem\delete_file;
 use function Psl\Shell\execute;
 use function Psl\Str\trim;
@@ -35,8 +33,8 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         $this->environment = $this->createMock(Variables::class);
 
-        $source      = create_temporary_file(Env\temp_dir(), 'FetchSource');
-        $destination = create_temporary_file(Env\temp_dir(), 'FetchDestination');
+        $source      = $this->createTemporaryFile('FetchSource');
+        $destination = $this->createTemporaryFile('FetchDestination');
 
         non_empty_string()->assert($source);
         non_empty_string()->assert($destination);

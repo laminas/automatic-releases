@@ -11,9 +11,7 @@ use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psr\Http\Message\UriInterface;
 
-use function Psl\Env\temp_dir;
 use function Psl\Filesystem\create_directory;
-use function Psl\Filesystem\create_temporary_file;
 use function Psl\Filesystem\delete_file;
 use function Psl\Filesystem\read_file;
 use function Psl\Shell\execute;
@@ -35,7 +33,7 @@ final class CreateTagViaConsoleTest extends TestCase
             read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc')
         );
 
-        $this->repository = create_temporary_file(temp_dir(), 'CreateTagViaConsoleRepository');
+        $this->repository = $this->createTemporaryFile('CreateTagViaConsoleRepository');
 
         delete_file($this->repository);
         create_directory($this->repository);

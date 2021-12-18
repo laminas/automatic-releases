@@ -6,7 +6,6 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\PushViaConsole;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Type;
@@ -23,8 +22,8 @@ final class PushViaConsoleTest extends TestCase
     {
         parent::setUp();
 
-        $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestSource');
-        $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestDestination');
+        $source      = $this->createTemporaryFile('PushViaConsoleTestSource');
+        $destination = $this->createTemporaryFile('PushViaConsoleTestDestination');
 
         $this->source      = Type\non_empty_string()->assert($source);
         $this->destination = Type\non_empty_string()->assert($destination);

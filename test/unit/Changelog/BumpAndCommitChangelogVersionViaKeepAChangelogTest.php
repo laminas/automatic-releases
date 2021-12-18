@@ -16,7 +16,6 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Type;
@@ -188,7 +187,7 @@ final class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
      */
     private function createMockChangelog(): string
     {
-        $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'BumpAndCommitChangelogVersion');
+        $repo = $this->createTemporaryFile('BumpAndCommitChangelogVersion');
 
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
