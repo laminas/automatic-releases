@@ -62,7 +62,6 @@
         }
     },
     "bin": [
-        "bin/console.php",
-        "bin/tweet-on-release.php"
+        "bin/console.php"
     ]
 }
