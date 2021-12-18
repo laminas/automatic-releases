@@ -15,6 +15,11 @@
     </projectFiles>
 
     <issueHandlers>
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <directory name="test"/>
+            </errorLevel>
+        </MissingConstructor>
         <InternalMethod>
             <errorLevel type="suppress">
                 <referencedMethod name="PHPUnit\Framework\MockObject\Builder\InvocationMocker::method"/>
