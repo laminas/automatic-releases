@@ -23,6 +23,14 @@ RUN apk add --no-cache git gnupg libzip icu-dev \
     && docker-php-ext-install intl \
     && apk del .build-deps
 
+ENV GH_VERSION=2.0.0
+## GITHUB CLI 
+RUN wget --no-check-certificate https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz \
+	&& tar -zxvf gh_${GH_VERSION}_linux_amd64.tar.gz \
+	&& mv gh_${GH_VERSION}_linux_amd64/bin/gh /usr/local/bin/gh \
+	&& chmod +x /usr/local/bin/gh \
+	&& gh --version
+
 COPY composer.* /app/
 
 RUN COMPOSER_CACHE_DIR=/dev/null composer install --no-dev --no-autoloader
