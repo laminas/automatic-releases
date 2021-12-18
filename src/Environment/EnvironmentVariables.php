@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Environment;
 
-use Laminas\AutomaticReleases\Environment\Contracts\GithubVariablesInterface;
-use Laminas\AutomaticReleases\Environment\Traits\EnvTrait;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
+use function Psl\Env\get_var;
+use function Psl\Env\set_var;
 use function Psl\invariant;
 use function Psl\Iter\contains;
+use function Psl\Str\format;
+use function Psl\Type\non_empty_string;
 
 /** @psalm-immutable */
-class EnvironmentVariables extends GithubEnvironmentVariables implements Variables, GithubVariablesInterface
+final class EnvironmentVariables implements Variables
 {
-    use EnvTrait;
-
     private const LOG_LEVELS = [
         '100',
         '200',
@@ -36,70 +37,126 @@ class EnvironmentVariables extends GithubEnvironmentVariables implements Variabl
         'EMERGENCY',
     ];
 
-    /** @psalm-var non-empty-string */
+    /** @var non-empty-string */
     private string $githubToken;
-    private SecretKeyId $signingSecretKey;
-    /** @psalm-var non-empty-string */
-    private string $gitAuthorName;
-    /** @psalm-var non-empty-string */
-    private string $gitAuthorEmail;
-    /** @psalm-var non-empty-string */
+    /** @var non-empty-string */
     private string $githubEventPath;
-    /** @psalm-var non-empty-string */
-    private string $workspacePath;
-    /** @psalm-var non-empty-string */
+    /** @var non-empty-string */
+    private string $githubWorkspacePath;
+    /** @var non-empty-string */
+    private string $gitAuthorName;
+    /** @var non-empty-string */
+    private string $gitAuthorEmail;
+    private SecretKeyId $secretKeyId;
+    /** @var non-empty-string */
     private string $logLevel;
+    /** @var non-empty-string */
+    private string $twitterAccessToken;
+    /** @var non-empty-string */
+    private string $twitterAccessTokenSecret;
+    /** @var non-empty-string */
+    private string $twitterConsumerApiKey;
+    /** @var non-empty-string */
+    private string $twitterConsumerApiSecret;
 
     /**
-     * @psalm-param non-empty-string $githubToken
-     * @psalm-param non-empty-string $gitAuthorName
-     * @psalm-param non-empty-string $gitAuthorEmail
-     * @psalm-param non-empty-string $githubEventPath
-     * @psalm-param non-empty-string $workspacePath
-     * @psalm-param non-empty-string $logLevel
+     * @param non-empty-string $githubToken
+     * @param non-empty-string $githubEventPath
+     * @param non-empty-string $githubWorkspacePath
+     * @param non-empty-string $gitAuthorName
+     * @param non-empty-string $gitAuthorEmail
+     * @param non-empty-string $logLevel
+     * @param non-empty-string $twitterAccessToken
+     * @param non-empty-string $twitterAccessTokenSecret
+     * @param non-empty-string $twitterConsumerApiKey
+     * @param non-empty-string $twitterConsumerApiSecret
      */
     private function __construct(
+        SecretKeyId $secretKeyId,
         string $githubToken,
-        SecretKeyId $signingSecretKey,
+        string $githubEventPath,
+        string $githubWorkspacePath,
         string $gitAuthorName,
         string $gitAuthorEmail,
-        string $githubEventPath,
-        string $workspacePath,
-        string $logLevel
+        string $logLevel,
+        string $twitterAccessToken,
+        string $twitterAccessTokenSecret,
+        string $twitterConsumerApiKey,
+        string $twitterConsumerApiSecret
     ) {
-        $this->githubToken      = $githubToken;
-        $this->signingSecretKey = $signingSecretKey;
-        $this->gitAuthorName    = $gitAuthorName;
-        $this->gitAuthorEmail   = $gitAuthorEmail;
-        $this->githubEventPath  = $githubEventPath;
-        $this->workspacePath    = $workspacePath;
-
-        /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
+        /** @psalm-suppress ImpureFunctionCall */
         invariant(
             contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
             . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
         );
 
-        $this->logLevel = $logLevel;
+        $this->secretKeyId              = $secretKeyId;
+        $this->githubToken              = $githubToken;
+        $this->githubWorkspacePath      = $githubWorkspacePath;
+        $this->githubEventPath          = $githubEventPath;
+        $this->gitAuthorName            = $gitAuthorName;
+        $this->gitAuthorEmail           = $gitAuthorEmail;
+        $this->logLevel                 = $logLevel;
+        $this->twitterAccessToken       = $twitterAccessToken;
+        $this->twitterAccessTokenSecret = $twitterAccessTokenSecret;
+        $this->twitterConsumerApiKey    = $twitterConsumerApiKey;
+        $this->twitterConsumerApiSecret = $twitterConsumerApiSecret;
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    private static function getEnvironmentVariable(string $key): string
+    {
+        invariant(
+            self::hasEnvironmentVariable($key),
+            format('Could not find a value for environment variable "%s"', $key)
+        );
+
+        return non_empty_string()->assert(get_var($key));
+    }
+
+    private static function hasEnvironmentVariable(string $key): bool
+    {
+        return non_empty_string()->matches(
+            get_var(non_empty_string()->assert($key))
+        );
+    }
+
+    private static function setEnvironmentVariable(string $key, string $value): void
+    {
+        set_var(non_empty_string()->assert($key), non_empty_string()->assert($value));
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    private static function getEnvironmentVariableWithFallback(string $key, string $default): string
+    {
+        return self::hasEnvironmentVariable($key) ? self::getEnvironmentVariable($key) : non_empty_string()->assert($default);
     }
 
     public static function fromEnvironment(): self
     {
         return new self(
-            self::getEnv('GITHUB_TOKEN'),
-            SecretKeyId::fromBase16String(self::getEnv('GPG_KEY_ID')),
-            self::getEnv('GIT_AUTHOR_NAME'),
-            self::getEnv('GIT_AUTHOR_EMAIL'),
-            self::getEnv('GITHUB_EVENT_PATH'),
-            self::getEnv('GITHUB_WORKSPACE'),
-            self::getenvWithFallback('LOG_LEVEL', 'INFO')
+            SecretKeyId::fromBase16String(self::getEnvironmentVariable('GPG_KEY_ID')),
+            self::getEnvironmentVariable('GITHUB_TOKEN'),
+            self::getEnvironmentVariable('GITHUB_EVENT_PATH'),
+            self::getEnvironmentVariable('GITHUB_WORKSPACE'),
+            self::getEnvironmentVariable('GIT_AUTHOR_NAME'),
+            self::getEnvironmentVariable('GIT_AUTHOR_EMAIL'),
+            self::getEnvironmentVariableWithFallback('LOG_LEVEL', 'INFO'),
+            self::getEnvironmentVariableWithFallback('TWITTER_ACCESS_TOKEN', self::DISABLED),
+            self::getEnvironmentVariableWithFallback('TWITTER_ACCESS_TOKEN_SECRET', self::DISABLED),
+            self::getEnvironmentVariableWithFallback('TWITTER_CONSUMER_API_KEY', self::DISABLED),
+            self::getEnvironmentVariableWithFallback('TWITTER_CONSUMER_API_SECRET', self::DISABLED)
         );
     }
 
     public static function fromEnvironmentWithGpgKey(ImportGpgKeyFromString $importKey): self
     {
-        self::setEnv('GPG_KEY_ID', ($importKey)(self::getEnv('SIGNING_SECRET_KEY'))->id());
+        self::setEnvironmentVariable('GPG_KEY_ID', (string) ($importKey)(self::getEnvironmentVariable('SIGNING_SECRET_KEY')));
 
         return self::fromEnvironment();
     }
@@ -109,9 +166,14 @@ class EnvironmentVariables extends GithubEnvironmentVariables implements Variabl
         return $this->githubToken;
     }
 
-    public function signingSecretKey(): SecretKeyId
+    public function githubEventPath(): string
     {
-        return $this->signingSecretKey;
+        return $this->githubEventPath;
+    }
+
+    public function githubWorkspacePath(): string
+    {
+        return $this->githubWorkspacePath;
     }
 
     public function gitAuthorName(): string
@@ -124,19 +186,41 @@ class EnvironmentVariables extends GithubEnvironmentVariables implements Variabl
         return $this->gitAuthorEmail;
     }
 
-    public function githubEventPath(): string
+    public function secretKeyId(): SecretKeyId
     {
-        // @TODO test me
-        return $this->githubEventPath;
-    }
-
-    public function githubWorkspacePath(): string
-    {
-        return $this->workspacePath;
+        return $this->secretKeyId;
     }
 
     public function logLevel(): string
     {
         return $this->logLevel;
+    }
+
+    public function twitterAccessToken(): string
+    {
+        return $this->twitterAccessToken;
+    }
+
+    public function twitterAccessTokenSecret(): string
+    {
+        return $this->twitterAccessTokenSecret;
+    }
+
+    public function twitterConsumerApiKey(): string
+    {
+        return $this->twitterConsumerApiKey;
+    }
+
+    public function twitterConsumerApiSecret(): string
+    {
+        return $this->twitterConsumerApiSecret;
+    }
+
+    public function twitterEnabled(): bool
+    {
+        return $this->twitterAccessToken !== self::DISABLED
+            && $this->twitterAccessTokenSecret !== self::DISABLED
+            && $this->twitterConsumerApiKey !== self::DISABLED
+            && $this->twitterConsumerApiSecret !== self::DISABLED;
     }
 }
