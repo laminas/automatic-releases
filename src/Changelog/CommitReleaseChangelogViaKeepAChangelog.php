@@ -52,7 +52,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $secretKeyId
     ): void {
         if (! $releaseNotes->requiresUpdatingChangelogFile()) {
             // Nothing to commit
@@ -83,7 +83,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $secretKeyId
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());

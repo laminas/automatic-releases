@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git;
 
-use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
-use Psl\Shell;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
+use Psl\Shell\Exception\FailedExecutionException;
 use Psr\Http\Message\UriInterface;
+
+use function Psl\Shell\execute;
 
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
-    private EnvironmentVariables $variables;
+    private Variables $environment;
 
-    public function __construct(EnvironmentVariables $variables)
+    public function __construct(Variables $environment)
     {
-        $this->variables = $variables;
+        $this->environment = $environment;
     }
 
     public function __invoke(
@@ -22,13 +24,13 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetc
         string $repositoryRootDirectory
     ): void {
         try {
-            Shell\execute('git', ['remote', 'rm', 'origin'], $repositoryRootDirectory);
-        } catch (Shell\Exception\FailedExecutionException) {
+            execute('git', ['remote', 'rm', 'origin'], $repositoryRootDirectory);
+        } catch (FailedExecutionException) {
         }
 
-        Shell\execute('git', ['remote', 'add', 'origin', $repositoryUri->__toString()], $repositoryRootDirectory);
-        Shell\execute('git', ['fetch', 'origin'], $repositoryRootDirectory);
-        Shell\execute('git', ['config', 'user.email', $this->variables->gitAuthorEmail()], $repositoryRootDirectory);
-        Shell\execute('git', ['config', 'user.name', $this->variables->gitAuthorName()], $repositoryRootDirectory);
+        execute('git', ['remote', 'add', 'origin', $repositoryUri->__toString()], $repositoryRootDirectory);
+        execute('git', ['fetch', 'origin'], $repositoryRootDirectory);
+        execute('git', ['config', 'user.email', $this->environment->gitAuthorEmail()], $repositoryRootDirectory);
+        execute('git', ['config', 'user.name', $this->environment->gitAuthorName()], $repositoryRootDirectory);
     }
 }

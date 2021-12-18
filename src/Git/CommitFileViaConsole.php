@@ -10,6 +10,8 @@ use Psl;
 use Psl\Shell;
 use Psl\Str;
 
+use function Psl\Shell\execute;
+
 final class CommitFileViaConsole implements CommitFile
 {
     public function __invoke(
@@ -17,12 +19,21 @@ final class CommitFileViaConsole implements CommitFile
         BranchName $sourceBranch,
         string $filename,
         string $commitMessage,
-        SecretKeyId $keyId
+        SecretKeyId $secretKeyId
     ): void {
         $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
-        Shell\execute('git', ['add', $filename], $repositoryDirectory);
-        Shell\execute('git', ['commit', '-m', $commitMessage, '--gpg-sign=' . $keyId->id()], $repositoryDirectory);
+        execute(
+            'git',
+            ['add', $filename],
+            $repositoryDirectory
+        );
+
+        execute(
+            'git',
+            ['commit', '-m', $commitMessage, '--gpg-sign=' . $secretKeyId],
+            $repositoryDirectory
+        );
     }
 
     /**

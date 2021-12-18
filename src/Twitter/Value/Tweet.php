@@ -4,43 +4,62 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Twitter\Value;
 
-use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
+use Laminas\AutomaticReleases\Announcement\Contracts\Announcement;
+use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 
-use function str_replace;
+use function Psl\Dict\filter;
+use function Psl\Dict\take;
+use function Psl\Iter\first;
+use function Psl\Regex\capture_groups;
+use function Psl\Regex\first_match;
+use function Psl\Str\Byte\split;
+use function Psl\Str\Byte\trim as strTrim;
+use function Psl\Str\format;
+use function Psl\Type\non_empty_string;
+use function Psl\Vec\filter_keys;
 
-/** @psalm-immutable */
-final class Tweet
+/** @immutable */
+final class Tweet implements Announcement
 {
-    /** @psalm-var non-empty-string */
-    private const TEMPLATE = 'Released: {repository} {version} https://github.com/{repository}/releases/tag/{version}';
-    /** @psalm-var non-empty-string */
-    private string $content;
+    private string $message;
 
-    /**
-     * @psalm-param non-empty-string $content
-     */
-    private function __construct(string $content)
+    public function __construct(string $message)
     {
-        $this->content = $content;
+        $this->message = non_empty_string()->assert($message);
     }
 
-    public function content(): string
+    public static function fromMilestone(Milestone $milestone): Announcement
     {
-        return $this->content;
+        return new self(strTrim(first(filter_keys(
+            first_match(
+                non_empty_string()->assert($milestone->description()),
+                '#^[`]{3}\s?tweet(?<announcement>.*?)[`]{3}$#ims',
+                capture_groups(['announcement'])
+            ) ?? ['announcement' => self::defaultTweet($milestone)],
+            static fn (int|string $key) => $key === 'announcement'
+        ))));
     }
 
-    /** @psalm-pure */
-    public static function fromMilestoneClosedEvent(MilestoneClosedEvent $event): self
+    public function __toString(): string
     {
-        /** @psalm-var non-empty-string $content*/
-        $content = str_replace([
-            '{repository}',
-            '{version}',
-        ], [
-            $event->repository()->owner() . '/' . $event->repository()->name(),
-            $event->version()->fullReleaseName(),
-        ], self::TEMPLATE);
+        return $this->message;
+    }
 
-        return new self($content);
+    private static function defaultTweet(Milestone $milestone): string
+    {
+        $repository = format('%s/%s', ...take(filter(
+            split($milestone->url()->getPath(), '/'),
+            static fn (string $string): bool => non_empty_string()->matches($string)
+        ), 2));
+
+        $version = $milestone->title();
+
+        return format(
+            'Released: %s %s https://github.com/%s/releases/tag/%s',
+            $repository,
+            $version,
+            $repository,
+            $version
+        );
     }
 }

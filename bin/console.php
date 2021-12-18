@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\WebApplication;
 
+use Abraham\TwitterOAuth\TwitterOAuth;
 use ChangelogGenerator\GitHubOAuthToken;
 use DateTimeZone;
 use ErrorException;
@@ -37,6 +38,7 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Twitter\PublishTweet;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -51,6 +53,7 @@ use const E_WARNING;
 use const STDERR;
 
 (static function (): void {
+    /** @psalm-suppress MissingFile */
     require_once __DIR__ . '/../vendor/autoload.php';
 
     set_error_handler(
@@ -60,16 +63,18 @@ use const STDERR;
         E_STRICT | E_NOTICE | E_WARNING
     );
 
-    $variables = EnvironmentVariables::fromEnvironmentWithGpgKey(new ImportGpgKeyFromStringViaTemporaryFile());
-    $loadEvent = new LoadCurrentGithubEventFromGithubActionPath($variables);
-    $logger    = new Logger('automatic-releases');
-    $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
-    $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
-    $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
+    $environment          = EnvironmentVariables::fromEnvironmentWithGpgKey(
+        new ImportGpgKeyFromStringViaTemporaryFile()
+    );
+    $logger               = (new Logger('automatic-releases'))->pushHandler(
+        new StreamHandler(STDERR, $environment->logLevel())
+    );
+    $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($environment);
+    $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($environment);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
     $makeRequests         = Psr17FactoryDiscovery::findRequestFactory();
     $httpClient           = HttpClientDiscovery::find();
-    $githubToken          = $variables->githubToken();
+    $githubToken          = $environment->githubToken();
     $getMilestone         = new GetMilestoneFirst100IssuesAndPullRequests(new RunGraphQLQuery(
         $makeRequests,
         $httpClient,
@@ -92,7 +97,10 @@ use const STDERR;
         new GitHubOAuthToken($githubToken)
     ));
     $createReleaseText    = new MergeMultipleReleaseNotes([
-        new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock(new DateTimeZone('UTC'))),
+        new CreateReleaseTextViaKeepAChangelog(
+            $changelogExists,
+            new SystemClock(new DateTimeZone('UTC'))
+        ),
         $createCommitText,
     ]);
     $createRelease        = new CreateReleaseThroughApiCall(
@@ -100,6 +108,7 @@ use const STDERR;
         $httpClient,
         $githubToken
     );
+
     $bumpChangelogVersion = new BumpAndCommitChangelogVersionViaKeepAChangelog(
         $changelogExists,
         $checkoutBranch,
@@ -108,12 +117,10 @@ use const STDERR;
         $logger
     );
 
-    /** @psalm-suppress DeprecatedClass */
     $application = new Application(Versions::rootPackageName(), Versions::getVersion('laminas/automatic-releases'));
-
     $application->addCommands([
         new ReleaseCommand(
-            $variables,
+            $environment,
             $loadEvent,
             $fetch,
             $getCandidateBranches,
@@ -122,10 +129,19 @@ use const STDERR;
             $createReleaseText,
             new CreateTagViaConsole(),
             $push,
-            $createRelease
+            $createRelease,
+            new PublishTweet(
+                new TwitterOAuth(
+                    $environment->twitterConsumerApiKey(),
+                    $environment->twitterConsumerApiSecret(),
+                    $environment->twitterAccessToken(),
+                    $environment->twitterAccessTokenSecret()
+                ),
+                $environment
+            )
         ),
         new CreateMergeUpPullRequest(
-            $variables,
+            $environment,
             $loadEvent,
             $fetch,
             $getCandidateBranches,
@@ -139,7 +155,7 @@ use const STDERR;
             )
         ),
         new SwitchDefaultBranchToNextMinor(
-            $variables,
+            $environment,
             $loadEvent,
             $fetch,
             $getCandidateBranches,
@@ -152,7 +168,7 @@ use const STDERR;
             $bumpChangelogVersion
         ),
         new BumpChangelogForReleaseBranch(
-            $variables,
+            $environment,
             $loadEvent,
             $fetch,
             $getCandidateBranches,

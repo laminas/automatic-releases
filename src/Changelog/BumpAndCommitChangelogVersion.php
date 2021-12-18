@@ -22,6 +22,6 @@ interface BumpAndCommitChangelogVersion
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $secretKeyId
     ): void;
 }

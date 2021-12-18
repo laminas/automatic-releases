@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Application\Command;
 
+use Laminas\AutomaticReleases\Announcement\Contracts\Publish;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
@@ -14,6 +15,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetGithubMilestone;
 use Laminas\AutomaticReleases\Github\Api\V3\CreateRelease;
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
+use Laminas\AutomaticReleases\Twitter\Value\Tweet;
 use Psl;
 use Psl\Filesystem;
 use Psl\Str;
@@ -33,6 +35,7 @@ final class ReleaseCommand extends Command
     private CreateTag $createTag;
     private Push $push;
     private CreateRelease $createRelease;
+    private Publish $publishTweet;
 
     public function __construct(
         Variables $environment,
@@ -44,7 +47,8 @@ final class ReleaseCommand extends Command
         CreateReleaseText $createChangelogText,
         CreateTag $createTag,
         Push $push,
-        CreateRelease $createRelease
+        CreateRelease $createRelease,
+        Publish $publishTweet,
     ) {
         parent::__construct('laminas:automatic-releases:release');
 
@@ -58,6 +62,7 @@ final class ReleaseCommand extends Command
         $this->createTag           = $createTag;
         $this->push                = $push;
         $this->createRelease       = $createRelease;
+        $this->publishTweet        = $publishTweet;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -95,7 +100,7 @@ final class ReleaseCommand extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->secretKeyId()
         );
 
         $tagName = $releaseVersion->fullReleaseName();
@@ -105,11 +110,15 @@ final class ReleaseCommand extends Command
             $releaseBranch,
             $tagName,
             $changelogReleaseNotes->contents(),
-            $this->environment->signingSecretKey()
+            $this->environment->secretKeyId()
         );
         ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());
         ($this->createRelease)($repositoryName, $releaseVersion, $changelogReleaseNotes->contents());
+
+//        if ($this->environment->twitterEnabled()) {
+            ($this->publishTweet)(Tweet::fromMilestone($milestone));
+//        }
 
         return 0;
     }

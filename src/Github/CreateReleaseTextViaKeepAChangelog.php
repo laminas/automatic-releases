@@ -101,7 +101,11 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         BranchName $sourceBranch,
         string $repositoryDirectory
     ): string {
-        $contents = Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
+        $contents = Shell\execute(
+            'git',
+            ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'],
+            $repositoryDirectory
+        );
 
         return Type\non_empty_string()->assert($contents);
     }
@@ -119,9 +123,15 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         Psl\invariant(Iter\count($lines) >= 0, 'Empty changelog detected.');
 
         $releaseLine = $lines[0];
-        $regex       = Type\non_empty_string()
+
+        $regex = Type\non_empty_string()
             ->assert(Str\format('/^(## (?:%1$s|\[%1$s\])).*$/i', preg_quote($version)));
-        $lines[0]    = Regex\replace($releaseLine, $regex, '$1 - ' . $this->clock->now()->format('Y-m-d'));
+
+        $lines[0] = Regex\replace(
+            $releaseLine,
+            $regex,
+            '$1 - ' . $this->clock->now()->format('Y-m-d')
+        );
 
         return Type\non_empty_string()->assert(Str\join($lines, "\n"));
     }

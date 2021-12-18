@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Application\Command;
 
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
@@ -62,7 +62,7 @@ final class BumpChangelogForReleaseBranch extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->secretKeyId()
         );
 
         return 0;

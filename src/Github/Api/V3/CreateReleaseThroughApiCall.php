@@ -10,6 +10,7 @@ use Laminas\Diactoros\Uri;
 use Psl;
 use Psl\Json;
 use Psl\Type;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
@@ -36,6 +37,9 @@ final class CreateReleaseThroughApiCall implements CreateRelease
         $this->apiToken       = $apiToken;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version,

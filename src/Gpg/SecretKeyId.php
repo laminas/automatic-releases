@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Gpg;
 
-use Psl;
-use Psl\Regex;
-use Psl\Str;
+use function Psl\invariant;
+use function Psl\Regex\matches;
+use function Psl\Str\is_empty;
 
 /** @psalm-immutable */
 final class SecretKeyId
@@ -21,16 +21,16 @@ final class SecretKeyId
     }
 
     /** @psalm-pure */
-    public static function fromBase16String(string $keyId): self
+    public static function fromBase16String(string $secretKeyId): self
     {
-        Psl\invariant(! Str\is_empty($keyId), 'Expected a non-empty key id.');
-        Psl\invariant(Regex\matches($keyId, '/^[A-F0-9]+$/i'), 'Key id is malformed.');
+        invariant(! is_empty($secretKeyId), 'Expected a non-empty key id.');
+        invariant(matches($secretKeyId, '/^[A-F0-9]+$/i'), 'Key id is malformed.');
 
-        return new self($keyId);
+        return new self($secretKeyId);
     }
 
     /** @psalm-return non-empty-string */
-    public function id(): string
+    public function __toString(): string
     {
         return $this->id;
     }

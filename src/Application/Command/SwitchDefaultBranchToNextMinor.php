@@ -5,21 +5,22 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Application\Command;
 
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Github\Api\V3\SetDefaultBranch;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
-use Psl;
-use Psl\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function Psl\Filesystem\is_directory;
+use function Psl\invariant;
+
 final class SwitchDefaultBranchToNextMinor extends Command
 {
-    private Variables $variables;
+    private Variables $environment;
     private LoadCurrentGithubEvent $loadGithubEvent;
     private Fetch $fetch;
     private GetMergeTargetCandidateBranches $getMergeCandidates;
@@ -28,7 +29,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
     private BumpAndCommitChangelogVersion $bumpChangelogVersion;
 
     public function __construct(
-        Variables $variables,
+        Variables $environment,
         LoadCurrentGithubEvent $loadGithubEvent,
         Fetch $fetch,
         GetMergeTargetCandidateBranches $getMergeCandidates,
@@ -38,7 +39,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
     ) {
         parent::__construct('laminas:automatic-releases:switch-default-branch-to-next-minor');
 
-        $this->variables            = $variables;
+        $this->environment          = $environment;
         $this->loadGithubEvent      = $loadGithubEvent;
         $this->fetch                = $fetch;
         $this->getMergeCandidates   = $getMergeCandidates;
@@ -49,18 +50,21 @@ final class SwitchDefaultBranchToNextMinor extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $event          = $this->loadGithubEvent->__invoke();
-        $repositoryPath = $this->variables->githubWorkspacePath();
+        $event          = ($this->loadGithubEvent)();
+        $repositoryPath = $this->environment->githubWorkspacePath();
 
-        Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
+        invariant(
+            is_directory($repositoryPath . '/.git'),
+            'Workspace is not a GIT repository.'
+        );
 
-        $this->fetch->__invoke(
+        ($this->fetch)(
             $event->repository()
-                ->uriWithTokenAuthentication($this->variables->githubToken()),
+                ->uriWithTokenAuthentication($this->environment->githubToken()),
             $repositoryPath
         );
 
-        $mergeCandidates = $this->getMergeCandidates->__invoke($repositoryPath);
+        $mergeCandidates = ($this->getMergeCandidates)($repositoryPath);
         $releaseVersion  = $event->version();
         $newestBranch    = $mergeCandidates->newestReleaseBranch();
 
@@ -73,7 +77,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
         $nextDefaultBranch = $mergeCandidates->newestFutureReleaseBranchAfter($releaseVersion);
 
         if (! $mergeCandidates->contains($nextDefaultBranch)) {
-            $this->push->__invoke(
+            ($this->push)(
                 $repositoryPath,
                 $newestBranch->name(),
                 $nextDefaultBranch->name()
@@ -83,11 +87,11 @@ final class SwitchDefaultBranchToNextMinor extends Command
                 $repositoryPath,
                 $releaseVersion,
                 $nextDefaultBranch,
-                $this->variables->signingSecretKey()
+                $this->environment->secretKeyId()
             );
         }
 
-        $this->switchDefaultBranch->__invoke($event->repository(), $nextDefaultBranch);
+        ($this->switchDefaultBranch)($event->repository(), $nextDefaultBranch);
 
         return 0;
     }

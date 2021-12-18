@@ -50,7 +50,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $secretKeyId
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
@@ -76,7 +76,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $secretKeyId
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
