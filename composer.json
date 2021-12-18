@@ -37,6 +37,20 @@
     "config": {
         "sort-packages": true
     },
+
+  "scripts": {
+    "check": [
+      "@cs-check",
+      "@test",
+      "@psalm",
+      "@infection"
+    ],
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "infection": "vendor/bin/roave-infection-static-analysis-plugin",
+    "static-analysis": "psalm --shepherd --stats",
+    "test": "vendor/bin/phpunit --stop-on-failure --colors=always"
+  },
     "autoload": {
         "psr-4": {
             "Laminas\\AutomaticReleases\\": "src"
