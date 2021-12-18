@@ -7,11 +7,13 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
-use PHPUnit\Framework\TestCase;
-use Psl\Env;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Type;
+
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Type\non_empty_string;
 
 /** @covers \Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
@@ -24,15 +26,7 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
     protected function setUp(): void
     {
         parent::setUp();
-
-        $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetSource');
-        $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetDestination');
-
-        Type\non_empty_string()->assert($source);
-        Type\non_empty_string()->assert($destination);
-
-        $this->source      = $source;
-        $this->destination = $destination;
+        $this->createTemporaryFiles();
 
         Filesystem\delete_file($this->source);
         Filesystem\delete_file($this->destination);
@@ -52,6 +46,19 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
         Shell\execute('git', ['checkout', '-b', '3.0.x'], $this->source);
         // Ignored - not on remote
         Shell\execute('git', ['checkout', '-b', '4.0.x'], $this->destination);
+    }
+
+    private function createTemporaryFiles(): void
+    {
+        $this->source      = $this->createTemporaryFile('GetMergeTargetSource');
+        $this->destination = $this->createTemporaryFile('GetMergeTargetDestination');
+    }
+
+    private function createTemporaryFile(?string $prefix = null): string
+    {
+        return non_empty_string()->assert(
+            create_temporary_file(temp_dir(), $prefix)
+        );
     }
 
     public function testFetchesMergeTargetCandidates(): void

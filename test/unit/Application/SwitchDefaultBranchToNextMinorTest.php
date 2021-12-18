@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\SwitchDefaultBranchToNextMinor;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
@@ -18,8 +18,7 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -28,19 +27,12 @@ use Symfony\Component\Console\Output\NullOutput;
 
 final class SwitchDefaultBranchToNextMinorTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
+    private Variables $environment;
     private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
     private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var MockObject&Push */
     private Push $push;
-    /** @var MockObject&SetDefaultBranch */
     private SetDefaultBranch $setDefaultBranch;
-    /** @var BumpAndCommitChangelogVersion&MockObject */
     private BumpAndCommitChangelogVersion $bumpChangelogVersion;
     private SwitchDefaultBranchToNextMinor $command;
     private MilestoneClosedEvent $event;
@@ -49,7 +41,7 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables            = $this->createMock(Variables::class);
+        $this->environment          = $this->createMock(Variables::class);
         $this->loadEvent            = $this->createMock(LoadCurrentGithubEvent::class);
         $this->fetch                = $this->createMock(Fetch::class);
         $this->getMergeTargets      = $this->createMock(GetMergeTargetCandidateBranches::class);
@@ -58,7 +50,7 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
         $this->bumpChangelogVersion = $this->createMock(BumpAndCommitChangelogVersion::class);
 
         $this->command = new SwitchDefaultBranchToNextMinor(
-            $this->variables,
+            $this->environment,
             $this->loadEvent,
             $this->fetch,
             $this->getMergeTargets,
@@ -84,9 +76,9 @@ JSON
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
             ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
-        $this->variables->method('signingSecretKey')->willReturn($key);
+        $this->environment->method('secretKeyId')->willReturn($key);
 
-        $this->variables->method('githubToken')
+        $this->environment->method('githubToken')
             ->willReturn('github-auth-token');
     }
 
@@ -103,7 +95,7 @@ JSON
         Filesystem\create_directory($workspace);
         Filesystem\create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')
@@ -146,7 +138,7 @@ JSON
         Filesystem\create_directory($workspace);
         Filesystem\create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')
@@ -195,7 +187,7 @@ JSON
         Filesystem\create_directory($workspace);
         Filesystem\create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Gpg;
 
+use Generator;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Exception\InvariantViolationException;
 
 final class SecretKeyIdTest extends TestCase
@@ -20,16 +21,14 @@ final class SecretKeyIdTest extends TestCase
         SecretKeyId::fromBase16String($invalid);
     }
 
-    /** @return array<int, array<int, string>> */
-    public function invalidKeys(): array
+    /** @return iterable <array-keys, array<int, string>> */
+    public function invalidKeys(): Generator
     {
-        return [
-            [''],
-            ['foo'],
-            ['abz'],
-            ['FOO'],
-            ['123z'],
-        ];
+        yield 'empty-string' => [''];
+        yield 'foo' => ['foo'];
+        yield 'abz' => ['abz'];
+        yield 'FOO' => ['FOO'];
+        yield '123z' => ['123z'];
     }
 
     /**
@@ -39,8 +38,7 @@ final class SecretKeyIdTest extends TestCase
     {
         self::assertSame(
             $valid,
-            SecretKeyId::fromBase16String($valid)
-                       ->id()
+            (string) SecretKeyId::fromBase16String($valid)
         );
     }
 

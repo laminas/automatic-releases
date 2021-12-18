@@ -7,8 +7,8 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 /** @covers \Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests */
 final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
@@ -44,7 +44,7 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
                     'milestone' => [
                         'number'       => 123,
                         'closed'       => true,
-                        'title'        => 'The title',
+                        'title'        => '1.2.3',
                         'description'  => 'The description',
                         'issues'       => [
                             'nodes' => [

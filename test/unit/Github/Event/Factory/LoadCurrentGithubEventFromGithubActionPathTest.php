@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Event\Factory;
 
-use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
-use PHPUnit\Framework\TestCase;
-use Psl\Env;
-use Psl\Filesystem;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
+
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Filesystem\write_file;
 
 /** @covers \Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
 final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 {
     public function testWillLoadEventFile(): void
     {
-        $variables = $this->createMock(EnvironmentVariables::class);
+        $environment = $this->createMock(Variables::class);
 
         $eventData = <<<'JSON'
 {
@@ -30,16 +32,16 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
     "action": "closed"
 }
 JSON;
-        $event     = Filesystem\create_temporary_file(Env\temp_dir(), 'github_event');
+        $event     = create_temporary_file(temp_dir(), 'github_event');
 
-        Filesystem\write_file($event, $eventData);
+        write_file($event, $eventData);
 
-        $variables->method('eventPath')
+        $environment->method('githubEventPath')
             ->willReturn($event);
 
         self::assertEquals(
             MilestoneClosedEvent::fromEventJson($eventData),
-            (new LoadCurrentGithubEventFromGithubActionPath($variables))()
+            (new LoadCurrentGithubEventFromGithubActionPath($environment))()
         );
     }
 }

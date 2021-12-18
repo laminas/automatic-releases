@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git\Value;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 
 final class MergeTargetCandidateBranchesTest extends TestCase
 {

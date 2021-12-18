@@ -11,8 +11,8 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseText;
 use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psl\Type;
 use Psl\Vec;
 
@@ -34,7 +34,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         $this->milestone = Milestone::fromPayload([
             'number'       => 123,
             'closed'       => true,
-            'title'        => 'The title',
+            'title'        => '1.2.3',
             'description'  => 'The description',
             'issues'       => [
                 'nodes' => [],

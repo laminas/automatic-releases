@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github\Api\GraphQL\Query\GetMilest
 
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\IssueOrPullRequest;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 
 final class MilestoneTest extends TestCase
 {
@@ -15,7 +15,7 @@ final class MilestoneTest extends TestCase
         $milestone = Milestone::fromPayload([
             'number'       => 123,
             'closed'       => true,
-            'title'        => 'The title',
+            'title'        => '1.2.3',
             'description'  => 'The description',
             'issues'       => [
                 'nodes' => [
@@ -52,7 +52,7 @@ final class MilestoneTest extends TestCase
                     ],
                 ],
             ],
-            'url'          => 'https://example.com/milestone',
+            'url'          => 'https://github.com/vendor/project/releases/milestone/123',
         ]);
 
         self::assertEquals(
@@ -90,8 +90,8 @@ final class MilestoneTest extends TestCase
 
         self::assertSame(123, $milestone->number());
         self::assertTrue($milestone->closed());
-        self::assertSame('https://example.com/milestone', $milestone->url()->__toString());
-        self::assertSame('The title', $milestone->title());
+        self::assertSame('https://github.com/vendor/project/releases/milestone/123', $milestone->url()->__toString());
+        self::assertSame('1.2.3', $milestone->title());
         self::assertSame('The description', $milestone->description());
 
         /** @psalm-suppress UnusedMethodCall */

@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
 use Laminas\AutomaticReleases\Changelog\BumpAndCommitChangelogVersion;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
@@ -15,24 +15,22 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psl\Env;
-use Psl\Filesystem;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_directory;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Filesystem\delete_file;
+use function Psl\Filesystem\read_file;
+
 class BumpChangelogForReleaseBranchTest extends TestCase
 {
-    /** @var Variables&MockObject */
     private Variables $environment;
-    /** @var LoadCurrentGithubEvent&MockObject */
     private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
     private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var BumpAndCommitChangelogVersion&MockObject */
     private BumpAndCommitChangelogVersion $bumpChangelogVersion;
     private MilestoneClosedEvent $event;
     private BumpChangelogForReleaseBranch $command;
@@ -66,19 +64,18 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             }
             JSON);
 
-        $key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+        $key = (new ImportGpgKeyFromStringViaTemporaryFile())(read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
-        $this->environment->method('signingSecretKey')->willReturn($key);
+        $this->environment->method('secretKeyId')->willReturn($key);
     }
 
     public function testWillBumpChangelogVersion(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = create_temporary_file(temp_dir(), 'workspace');
 
-        Filesystem\delete_file($workspace);
-        Filesystem\create_directory($workspace);
-        Filesystem\create_directory($workspace . '/.git');
+        delete_file($workspace);
+        create_directory($workspace);
+        create_directory($workspace . '/.git');
 
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1.x'),

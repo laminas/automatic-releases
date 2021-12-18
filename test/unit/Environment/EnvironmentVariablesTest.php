@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Environment;
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromString;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Exception\InvariantViolationException;
 
 use function Psl\Dict\associate;
@@ -29,6 +29,10 @@ final class EnvironmentVariablesTest extends TestCase
         'GITHUB_TOKEN',
         'GITHUB_WORKSPACE',
         'SIGNING_SECRET_KEY',
+        'TWITTER_ACCESS_TOKEN',
+        'TWITTER_ACCESS_TOKEN_SECRET',
+        'TWITTER_CONSUMER_API_KEY',
+        'TWITTER_CONSUMER_API_SECRET',
     ];
 
     /** @var array<string, ?string> */
@@ -63,14 +67,18 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testReadsEnvironmentVariables(): void
     {
-        $signingSecretKey   = 'signingSecretKey' . string(8);
-        $signingSecretKeyId = SecretKeyId::fromBase16String('aabbccdd');
-        $githubToken        = 'githubToken' . string(8);
-        $githubOrganisation = 'githubOrganisation' . string(8);
-        $gitAuthorName      = 'gitAuthorName' . string(8);
-        $gitAuthorEmail     = 'gitAuthorEmail' . string(8);
-        $githubEventPath    = 'githubEventPath' . string(8);
-        $githubWorkspace    = 'githubWorkspace' . string(8);
+        $signingSecretKey         = 'signingSecretKey' . string(8);
+        $secretKeyId              = SecretKeyId::fromBase16String('aabbccdd');
+        $githubToken              = 'githubToken' . string(8);
+        $githubOrganisation       = 'githubOrganisation' . string(8);
+        $gitAuthorName            = 'gitAuthorName' . string(8);
+        $gitAuthorEmail           = 'gitAuthorEmail' . string(8);
+        $githubEventPath          = 'githubEventPath' . string(8);
+        $githubWorkspace          = 'githubWorkspace' . string(8);
+        $twitterAccessToken       = 'twitterAccessToken' . string(8);
+        $twitterAccessTokenSecret = 'twitterAccessTokenSecret' . string(8);
+        $twitterConsumerApiKey    = 'twitterConsumerApiKey' . string(8);
+        $twitterConsumerApiSecret = 'twitterConsumerApiSecret' . string(8);
 
         set_var('GITHUB_TOKEN', $githubToken);
         set_var('SIGNING_SECRET_KEY', $signingSecretKey);
@@ -79,21 +87,29 @@ final class EnvironmentVariablesTest extends TestCase
         set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
         set_var('GITHUB_EVENT_PATH', $githubEventPath);
         set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        set_var('TWITTER_ACCESS_TOKEN', $twitterAccessToken);
+        set_var('TWITTER_ACCESS_TOKEN_SECRET', $twitterAccessTokenSecret);
+        set_var('TWITTER_CONSUMER_API_KEY', $twitterConsumerApiKey);
+        set_var('TWITTER_CONSUMER_API_SECRET', $twitterConsumerApiSecret);
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
         $importKey->method('__invoke')
             ->with($signingSecretKey)
-            ->willReturn($signingSecretKeyId);
+            ->willReturn($secretKeyId);
 
-        $variables = EnvironmentVariables::fromEnvironmentWithGpgKey($importKey);
+        $environment = EnvironmentVariables::fromEnvironmentWithGpgKey($importKey);
 
-        self::assertEquals($signingSecretKeyId, $variables->signingSecretKey());
-        self::assertSame($githubToken, $variables->githubToken());
-        self::assertSame($gitAuthorName, $variables->gitAuthorName());
-        self::assertSame($gitAuthorEmail, $variables->gitAuthorEmail());
-        self::assertSame($githubEventPath, $variables->githubEventPath());
-        self::assertSame($githubWorkspace, $variables->githubWorkspacePath());
+        self::assertEquals($secretKeyId, $environment->secretKeyId());
+        self::assertSame($githubToken, $environment->githubToken());
+        self::assertSame($gitAuthorName, $environment->gitAuthorName());
+        self::assertSame($gitAuthorEmail, $environment->gitAuthorEmail());
+        self::assertSame($githubEventPath, $environment->githubEventPath());
+        self::assertSame($githubWorkspace, $environment->githubWorkspacePath());
+        self::assertSame($twitterAccessToken, $environment->twitterAccessToken());
+        self::assertSame($twitterAccessTokenSecret, $environment->twitterAccessTokenSecret());
+        self::assertSame($twitterConsumerApiKey, $environment->twitterConsumerApiKey());
+        self::assertSame($twitterConsumerApiSecret, $environment->twitterConsumerApiSecret());
     }
 
     public function testFailsOnMissingEnvironmentVariables(): void

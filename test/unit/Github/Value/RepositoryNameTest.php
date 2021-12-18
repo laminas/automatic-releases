@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Github\Value;
 
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Exception\InvariantViolationException;
 
 final class RepositoryNameTest extends TestCase

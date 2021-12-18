@@ -15,27 +15,24 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Str;
 use Psl\Type;
 use Psr\Log\LoggerInterface;
 
-class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
+use function Psl\Filesystem\read_file;
+use function Psl\Str\format;
+
+final class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 {
-    /** @var CheckoutBranch&MockObject */
     private CheckoutBranch $checkoutBranch;
-    /** @var CommitFile&MockObject */
     private CommitFile $commitFile;
-    /** @var Push&MockObject */
     private Push $push;
-    /** @var LoggerInterface&MockObject */
     private LoggerInterface $logger;
     private BumpAndCommitChangelogVersionViaKeepAChangelog $bumpAndCommitChangelog;
-    private SecretKeyId $key;
+    private SecretKeyId $secretKeyId;
 
     protected function setUp(): void
     {
@@ -51,8 +48,9 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->logger
         );
 
-        $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+        $this->secretKeyId = (new ImportGpgKeyFromStringViaTemporaryFile())(
+            read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc')
+        );
     }
 
     public function testReturnsEarlyWhenNoChangelogFilePresent(): void
@@ -75,7 +73,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $repoDir,
             $version,
             $sourceBranch,
-            $this->key
+            $this->secretKeyId
         );
     }
 
@@ -125,7 +123,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         $this->logger
             ->expects(self::once())
             ->method('info')
-            ->with(self::stringContains(Str\format(
+            ->with(self::stringContains(format(
                 'Bumped CHANGELOG.md to version %s in branch %s',
                 $expectedVersion,
                 $branchName
@@ -146,7 +144,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
                 self::equalTo($repoDir),
                 $sourceBranch,
                 'CHANGELOG.md',
-                self::stringContains(Str\format(
+                self::stringContains(format(
                     'Bumps changelog version to %s',
                     $expectedVersion
                 ))
@@ -170,14 +168,14 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $repoDir,
             $version,
             $sourceBranch,
-            $this->key
+            $this->secretKeyId
         );
 
-        $changelogContents = Filesystem\read_file($changelogFile);
+        $changelogContents = read_file($changelogFile);
         self::assertMatchesRegularExpression(
             '/^## ' . $expectedVersion . ' - TBD$/m',
             $changelogContents,
-            Str\format(
+            format(
                 'Could not locate entry for new version %s in file %s',
                 $expectedVersion,
                 $changelogFile
@@ -195,7 +193,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
 
-        $changelogFile = Str\format('%s/CHANGELOG.md', $repo);
+        $changelogFile = format('%s/CHANGELOG.md', $repo);
 
         Filesystem\write_file($changelogFile, self::CHANGELOG_STUB);
 

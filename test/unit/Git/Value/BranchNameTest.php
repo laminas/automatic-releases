@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git\Value;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Type\Exception\AssertException;
 
 final class BranchNameTest extends TestCase

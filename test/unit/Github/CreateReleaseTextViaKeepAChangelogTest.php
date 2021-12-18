@@ -11,16 +11,29 @@ use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Response\Milestone;
 use Laminas\AutomaticReleases\Github\CreateReleaseTextViaKeepAChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Lcobucci\Clock\FrozenClock;
 use Lcobucci\Clock\SystemClock;
-use PHPUnit\Framework\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
-use Psl\Type;
 
-class CreateReleaseTextViaKeepAChangelogTest extends TestCase
+use function array_merge;
+use function Psl\Str\format;
+use function Psl\Type\bool;
+use function Psl\Type\dict;
+use function Psl\Type\mixed;
+use function Psl\Type\non_empty_string;
+use function Psl\Type\null as nullAlias;
+use function Psl\Type\positive_int;
+use function Psl\Type\shape;
+use function Psl\Type\string;
+use function Psl\Type\union;
+use function Psl\Type\vec;
+
+/** @psalm-suppress MissingConstructor */
+final class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 {
     private FrozenClock $frozenClock;
     private SystemClock $systemClock;
@@ -91,11 +104,11 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
     public function testExtractsReleaseTextViaChangelogFile(): void
     {
         $date              = $this->frozenClock->now()->format('Y-m-d');
-        $changelogContents = Str\format(self::READY_CHANGELOG, $date);
+        $changelogContents = format(self::READY_CHANGELOG, $date);
         $repositoryPath    = $this->createMockRepositoryWithChangelog($changelogContents);
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = Str\format(<<< 'END'
+        $expected = format(<<< 'END'
             ## 1.0.0 - %s
             
             ### Added
@@ -105,14 +118,13 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
-                ->__invoke(
-                    $this->createMockMilestone(),
-                    RepositoryName::fromFullName('example/repo'),
-                    SemVerVersion::fromMilestoneName('1.0.0'),
-                    BranchName::fromName('1.0.x'),
-                    $workingPath
-                )
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))(
+                $this->createMockMilestone(),
+                RepositoryName::fromFullName('example/repo'),
+                SemVerVersion::fromMilestoneName('1.0.0'),
+                BranchName::fromName('1.0.x'),
+                $workingPath
+            )
                 ->contents()
         );
     }
@@ -120,7 +132,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
     public function testExtractsNonEmptySectionsForVersionViaChangelogFile(): void
     {
         $date              = $this->frozenClock->now()->format('Y-m-d');
-        $changelogContents = Str\format(self::CHANGELOG_MULTI_SECTION, $date);
+        $changelogContents = format(self::CHANGELOG_MULTI_SECTION, $date);
         $repositoryPath    = $this->createMockRepositoryWithChangelog(
             $changelogContents,
             'CHANGELOG.md',
@@ -128,7 +140,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         );
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
-        $expected = Str\format(<<< 'END'
+        $expected = format(<<< 'END'
             ## 2.3.12 - %s
             
             ### Added
@@ -142,33 +154,51 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         self::assertStringContainsString(
             $expected,
-            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))
-                ->__invoke(
-                    $this->createMockMilestone(),
-                    RepositoryName::fromFullName('example/repo'),
-                    SemVerVersion::fromMilestoneName('2.3.12'),
-                    BranchName::fromName('2.3.x'),
-                    $workingPath
-                )
+            (new CreateReleaseTextViaKeepAChangelog(new ChangelogExistsViaConsole(), $this->frozenClock))(
+                $this->createMockMilestone(['title' => 'example']),
+                RepositoryName::fromFullName('example/repo'),
+                SemVerVersion::fromMilestoneName('2.3.12'),
+                BranchName::fromName('2.3.x'),
+                $workingPath
+            )
                 ->contents()
         );
     }
 
-    private function createMockMilestone(): Milestone
+    /**
+     * @param array<array-key, mixed> $fields
+     */
+    private function createMockMilestone(array $fields = []): Milestone
     {
-        return Milestone::fromPayload([
-            'number'       => 123,
-            'closed'       => true,
-            'title'        => 'The title',
-            'description'  => 'The description',
-            'issues'       => [
-                'nodes' => [],
-            ],
-            'pullRequests' => [
-                'nodes' => [],
-            ],
-            'url'          => 'https://example.com/milestone',
-        ]);
+        return Milestone::fromPayload(
+            shape([
+                'number' => positive_int(),
+                'closed' => bool(),
+                'title' => non_empty_string(),
+                'description' => union(nullAlias(), string()),
+                'url' => non_empty_string(),
+                'issues' => shape([
+                    'nodes' => vec(dict(string(), mixed())),
+                ]),
+                'pullRequests' => shape([
+                    'nodes' => vec(dict(string(), mixed())),
+                ]),
+            ])->assert(
+                array_merge([
+                    'number'       => 123,
+                    'closed'       => true,
+                    'title'        => '1.2.3',
+                    'description'  => 'The description',
+                    'issues'       => [
+                        'nodes' => [],
+                    ],
+                    'pullRequests' => [
+                        'nodes' => [],
+                    ],
+                    'url'          => 'https://github.com/vendor/project/releases/milestone/123',
+                ], $fields)
+            )
+        );
     }
 
     /**
@@ -192,7 +222,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
         Shell\execute('git', ['switch', '-c', $initialBranch], $repo);
 
-        return Type\non_empty_string()->assert($repo);
+        return non_empty_string()->assert($repo);
     }
 
     /**
@@ -207,7 +237,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         Shell\execute('git', ['clone', $origin, $repo]);
 
-        return Type\non_empty_string()->assert($repo);
+        return non_empty_string()->assert($repo);
     }
 
     private const INVALID_CHANGELOG = <<< 'END'

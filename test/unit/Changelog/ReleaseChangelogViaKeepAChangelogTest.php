@@ -14,19 +14,26 @@ use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
-use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Lcobucci\Clock\FrozenClock;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psl\Dict;
 use Psl\Env;
-use Psl\Filesystem;
-use Psl\Shell;
 use Psl\Str;
 use Psl\Type;
-use Psl\Vec;
 use Psr\Log\LoggerInterface;
+
+use function Psl\Dict\take;
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_directory;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Filesystem\delete_file;
+use function Psl\Filesystem\read_file;
+use function Psl\Filesystem\write_file;
+use function Psl\Shell\execute;
+use function Psl\Str\split;
+use function Psl\Type\non_empty_string;
+use function Psl\Vec\values;
 
 class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
@@ -45,7 +52,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     private LoggerInterface $logger;
 
     private CommitReleaseChangelogViaKeepAChangelog $releaseChangelog;
-    private SecretKeyId $key;
+    private string $gpgKey;
 
     protected function setUp(): void
     {
@@ -63,8 +70,9 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             $this->logger
         );
 
-        $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+        $this->secretKeyId = (new ImportGpgKeyFromStringViaTemporaryFile())(
+            read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc')
+        );
     }
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
@@ -96,7 +104,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 __DIR__,
                 SemVerVersion::fromMilestoneName('0.99.99'),
                 BranchName::fromName('0.99.x'),
-                $this->key
+                $this->secretKeyId
             )
         );
     }
@@ -135,7 +143,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 $branch,
-                $this->key
+                $this->secretKeyId
             )
         );
     }
@@ -204,20 +212,25 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             );
 
         self::assertNull(
-            $this->releaseChangelog->__invoke(
+            ($this->releaseChangelog)(
                 $releaseNotes,
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 BranchName::fromName('1.0.x'),
-                $this->key
+                $this->secretKeyId
             )
         );
 
         $changelogFile = $checkout . '/CHANGELOG.md';
-        $contents      = Filesystem\read_file($changelogFile);
+        $contents      = read_file($changelogFile);
         $this->assertStringContainsString(
             Str\join(
-                Vec\values(Dict\take(Str\split(self::READY_CHANGELOG, "\n"), 4)),
+                values(
+                    take(
+                        split(self::READY_CHANGELOG, "\n"),
+                        4
+                    )
+                ),
                 "\n",
             ),
             $contents
@@ -233,22 +246,22 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         string $template,
         string $filename = 'CHANGELOG.md'
     ): string {
-        $repo = Type\non_empty_string()
-            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'ReleaseChangelogViaKeepAChangelog'));
+        $repo = non_empty_string()
+            ->assert(create_temporary_file(Env\temp_dir(), 'ReleaseChangelogViaKeepAChangelog'));
 
-        Filesystem\delete_file($repo);
-        Filesystem\create_directory($repo);
-        Filesystem\write_file(
+        delete_file($repo);
+        create_directory($repo);
+        write_file(
             Str\format('%s/%s', $repo, $filename),
             $template
         );
 
-        Shell\execute('git', ['init', '.'], $repo);
-        Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
-        Shell\execute('git', ['config', 'user.name', 'Just Me'], $repo);
-        Shell\execute('git', ['add', '.'], $repo);
-        Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
-        Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
+        execute('git', ['init', '.'], $repo);
+        execute('git', ['config', 'user.email', 'me@example.com'], $repo);
+        execute('git', ['config', 'user.name', 'Just Me'], $repo);
+        execute('git', ['add', '.'], $repo);
+        execute('git', ['commit', '-m', 'Initial import'], $repo);
+        execute('git', ['switch', '-c', '1.0.x'], $repo);
 
         return $repo;
     }
@@ -260,12 +273,15 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
      */
     private function checkoutMockRepositoryWithChangelog(string $origin): string
     {
-        $repo = Type\non_empty_string()
-            ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog'));
+        $repo = non_empty_string()
+            ->assert(create_temporary_file(
+                temp_dir(),
+                'CreateReleaseTextViaKeepAChangelog'
+            ));
 
-        Filesystem\delete_file($repo);
+        delete_file($repo);
 
-        Shell\execute('git', ['clone', $origin, $repo]);
+        execute('git', ['clone', $origin, $repo]);
 
         return $repo;
     }

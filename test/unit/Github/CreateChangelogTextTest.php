@@ -10,7 +10,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Github\CreateReleaseTextThroughChangelog;
 use Laminas\AutomaticReleases\Github\GenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 
 final class CreateChangelogTextTest extends TestCase
 {
@@ -51,7 +51,7 @@ final class CreateChangelogTextTest extends TestCase
 
         self::assertSame(
             <<< 'RELEASE'
-                ### Release Notes for [The title](http://example.com/milestone)
+                ### Release Notes for [1.2.3](https://github.com/vendor/project/releases/milestone/123)
                 
                 The description
                 
@@ -68,61 +68,60 @@ final class CreateChangelogTextTest extends TestCase
                 - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
                 
                 RELEASE,
-            (new CreateReleaseTextThroughChangelog($generateChangelog))
-                ->__invoke(
-                    Milestone::fromPayload([
-                        'number'       => 123,
-                        'closed'       => true,
-                        'title'        => 'The title',
-                        'description'  => 'The description',
-                        'issues'       => [
-                            'nodes' => [
-                                [
-                                    'number' => 456,
-                                    'title'  => 'Issue',
-                                    'author' => [
-                                        'login' => 'Magoo',
-                                        'url'   => 'http://example.com/author',
-                                    ],
-                                    'url'    => 'http://example.com/issue',
-                                    'closed' => true,
-                                    'labels' => [
-                                        'nodes' => [],
-                                    ],
+            (new CreateReleaseTextThroughChangelog($generateChangelog))(
+                Milestone::fromPayload([
+                    'number'       => 123,
+                    'closed'       => true,
+                    'title'        => '1.2.3',
+                    'description'  => 'The description',
+                    'issues'       => [
+                        'nodes' => [
+                            [
+                                'number' => 456,
+                                'title'  => 'Issue',
+                                'author' => [
+                                    'login' => 'Magoo',
+                                    'url'   => 'https://example.com/author',
+                                ],
+                                'url'    => 'https://example.com/issue',
+                                'closed' => true,
+                                'labels' => [
+                                    'nodes' => [],
                                 ],
                             ],
                         ],
-                        'pullRequests' => [
-                            'nodes' => [
-                                [
-                                    'number' => 789,
-                                    'title'  => 'PR',
-                                    'author' => [
-                                        'login' => 'Magoo',
-                                        'url'   => 'http://example.com/author',
-                                    ],
-                                    'url'    => 'http://example.com/issue',
-                                    'merged' => true,
-                                    'closed' => false,
-                                    'labels' => [
-                                        'nodes' => [
-                                            [
-                                                'color' => 'aabbcc',
-                                                'name'  => 'A label',
-                                                'url'   => 'http://example.com/a-label',
-                                            ],
+                    ],
+                    'pullRequests' => [
+                        'nodes' => [
+                            [
+                                'number' => 789,
+                                'title'  => 'PR',
+                                'author' => [
+                                    'login' => 'Magoo',
+                                    'url'   => 'https://example.com/author',
+                                ],
+                                'url'    => 'https://example.com/issue',
+                                'merged' => true,
+                                'closed' => false,
+                                'labels' => [
+                                    'nodes' => [
+                                        [
+                                            'color' => 'aabbcc',
+                                            'name'  => 'A label',
+                                            'url'   => 'https://example.com/a-label',
                                         ],
                                     ],
                                 ],
                             ],
                         ],
-                        'url'          => 'http://example.com/milestone',
-                    ]),
-                    $repositoryName,
-                    $semVerVersion,
-                    BranchName::fromName('2.12.x'),
-                    __DIR__
-                )
+                    ],
+                    'url'          => 'https://github.com/vendor/project/releases/milestone/123',
+                ]),
+                $repositoryName,
+                $semVerVersion,
+                BranchName::fromName('2.12.x'),
+                __DIR__
+            )
                 ->contents()
         );
     }
@@ -140,7 +139,7 @@ final class CreateChangelogTextTest extends TestCase
                     Milestone::fromPayload([
                         'number'       => 123,
                         'closed'       => true,
-                        'title'        => 'The title',
+                        'title'        => '1.2.3',
                         'description'  => 'The description',
                         'issues'       => [
                             'nodes' => [
@@ -149,9 +148,9 @@ final class CreateChangelogTextTest extends TestCase
                                     'title'  => 'Issue',
                                     'author' => [
                                         'login' => 'Magoo',
-                                        'url'   => 'http://example.com/author',
+                                        'url'   => 'https://example.com/author',
                                     ],
-                                    'url'    => 'http://example.com/issue',
+                                    'url'    => 'https://example.com/issue',
                                     'closed' => true,
                                     'labels' => [
                                         'nodes' => [],
@@ -166,9 +165,9 @@ final class CreateChangelogTextTest extends TestCase
                                     'title'  => 'PR',
                                     'author' => [
                                         'login' => 'Magoo',
-                                        'url'   => 'http://example.com/author',
+                                        'url'   => 'https://example.com/author',
                                     ],
-                                    'url'    => 'http://example.com/issue',
+                                    'url'    => 'https://example.com/issue',
                                     'merged' => true,
                                     'closed' => false,
                                     'labels' => [
@@ -176,14 +175,14 @@ final class CreateChangelogTextTest extends TestCase
                                             [
                                                 'color' => 'aabbcc',
                                                 'name'  => 'A label',
-                                                'url'   => 'http://example.com/a-label',
+                                                'url'   => 'https://example.com/a-label',
                                             ],
                                         ],
                                     ],
                                 ],
                             ],
                         ],
-                        'url'          => 'http://example.com/milestone',
+                        'url'          => 'https://github.com/vendor/project/releases/milestone/123',
                     ]),
                     $repositoryName,
                     $semVerVersion,

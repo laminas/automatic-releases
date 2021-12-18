@@ -7,7 +7,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Github\Event;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 
 final class MilestoneClosedEventTest extends TestCase
 {

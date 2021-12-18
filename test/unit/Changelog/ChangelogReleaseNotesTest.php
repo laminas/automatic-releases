@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
-use PHPUnit\Framework\TestCase;
 use Psl\Dict;
 use Psl\Env;
 use Psl\Filesystem;

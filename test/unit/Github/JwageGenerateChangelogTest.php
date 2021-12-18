@@ -12,7 +12,7 @@ use Http\Client\HttpClient;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psr\Http\Message\RequestFactoryInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 

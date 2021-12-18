@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Git;
 
 use Laminas\AutomaticReleases\Git\CheckoutBranchViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;

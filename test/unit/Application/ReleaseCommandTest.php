@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
+use Exception;
+use Laminas\AutomaticReleases\Announcement\Contracts\Publish;
 use Laminas\AutomaticReleases\Application\Command\ReleaseCommand;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
 use Laminas\AutomaticReleases\Changelog\CommitReleaseChangelog;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\CreateTag;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
@@ -23,47 +25,43 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
+use Laminas\AutomaticReleases\Twitter\Value\Tweet;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psl\Env;
-use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_directory;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Filesystem\delete_file;
+
+/** @psalm-suppress MissingConstructor */
 final class ReleaseCommandTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
+    private Variables $environment;
     private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
     private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var GetGithubMilestone&MockObject */
     private GetGithubMilestone $getMilestone;
-    /** @var CommitReleaseChangelog&MockObject */
     private CommitReleaseChangelog $commitChangelog;
-    /** @var CreateReleaseText&MockObject */
     private CreateReleaseText $createReleaseText;
-    /** @var CreateTag&MockObject */
     private CreateTag $createTag;
-    /** @var MockObject&Push */
     private Push $push;
-    /** @var CreateRelease&MockObject */
     private CreateRelease $createRelease;
+    private Publish $publishTweet;
     private ReleaseCommand $command;
     private MilestoneClosedEvent $event;
     private MergeTargetCandidateBranches $branches;
     private Milestone $milestone;
     private SemVerVersion $releaseVersion;
-    private SecretKeyId $signingKey;
+    private SecretKeyId $secretKeyId;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->variables         = $this->createMock(Variables::class);
+        $this->environment       = $this->createMock(Variables::class);
         $this->loadEvent         = $this->createMock(LoadCurrentGithubEvent::class);
         $this->fetch             = $this->createMock(Fetch::class);
         $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
@@ -73,9 +71,10 @@ final class ReleaseCommandTest extends TestCase
         $this->createTag         = $this->createMock(CreateTag::class);
         $this->push              = $this->createMock(Push::class);
         $this->createRelease     = $this->createMock(CreateRelease::class);
+        $this->publishTweet      = $this->createMock(Publish::class);
 
         $this->command = new ReleaseCommand(
-            $this->variables,
+            $this->environment,
             $this->loadEvent,
             $this->fetch,
             $this->getMergeTargets,
@@ -85,6 +84,7 @@ final class ReleaseCommandTest extends TestCase
             $this->createTag,
             $this->push,
             $this->createRelease,
+            $this->publishTweet
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
@@ -111,7 +111,7 @@ JSON
         $this->milestone = Milestone::fromPayload([
             'number'       => 123,
             'closed'       => true,
-            'title'        => 'The title',
+            'title'        => '1.2.3',
             'description'  => 'The description',
             'issues'       => [
                 'nodes' => [],
@@ -119,15 +119,15 @@ JSON
             'pullRequests' => [
                 'nodes' => [],
             ],
-            'url'          => 'https://example.com/milestone',
+            'url'          => 'https://github.com/vendor/project/releases/milestone/123',
         ]);
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');
-        $this->signingKey     = SecretKeyId::fromBase16String('aabbccddeeff');
+        $this->secretKeyId    = SecretKeyId::fromBase16String('aabbccddeeff');
 
-        $this->variables->method('signingSecretKey')
-            ->willReturn($this->signingKey);
-        $this->variables->method('githubToken')
+        $this->environment->method('secretKeyId')
+            ->willReturn($this->secretKeyId);
+        $this->environment->method('githubToken')
             ->willReturn('github-auth-token');
     }
 
@@ -136,15 +136,18 @@ JSON
         self::assertSame('laminas:automatic-releases:release', $this->command->getName());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testWillRelease(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = create_temporary_file(temp_dir(), 'workspace');
 
-        Filesystem\delete_file($workspace);
-        Filesystem\create_directory($workspace);
-        Filesystem\create_directory($workspace . '/.git');
+        delete_file($workspace);
+        create_directory($workspace);
+        create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')
@@ -198,7 +201,7 @@ JSON
                 self::equalTo(BranchName::fromName('1.2.x')),
                 '1.2.3',
                 'text of the changelog',
-                self::equalTo($this->signingKey)
+                self::equalTo($this->secretKeyId)
             );
 
         $this->push->expects(self::exactly(2))
@@ -212,6 +215,10 @@ JSON
                 self::equalTo($this->releaseVersion),
                 'text of the changelog'
             );
+
+        $this->publishTweet->expects(self::once())
+            ->method('__invoke')
+            ->with(Tweet::fromMilestone($this->milestone));
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
     }

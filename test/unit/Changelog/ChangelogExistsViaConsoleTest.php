@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Changelog;
 
 use Laminas\AutomaticReleases\Changelog\ChangelogExistsViaConsole;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
-use PHPUnit\Framework\TestCase;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;

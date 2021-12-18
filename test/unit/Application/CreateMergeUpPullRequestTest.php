@@ -6,7 +6,7 @@ namespace Laminas\AutomaticReleases\Test\Unit\Application;
 
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes;
-use Laminas\AutomaticReleases\Environment\Variables;
+use Laminas\AutomaticReleases\Environment\Contracts\Variables;
 use Laminas\AutomaticReleases\Git\Fetch;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Git\Push;
@@ -21,31 +21,27 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEvent;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Psl\Env;
-use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function Psl\Env\temp_dir;
+use function Psl\Filesystem\create_directory;
+use function Psl\Filesystem\create_temporary_file;
+use function Psl\Filesystem\delete_file;
+
 final class CreateMergeUpPullRequestTest extends TestCase
 {
-    /** @var MockObject&Variables */
-    private Variables $variables;
-    /** @var LoadCurrentGithubEvent&MockObject */
+    private Variables $environment;
     private LoadCurrentGithubEvent $loadEvent;
-    /** @var Fetch&MockObject */
     private Fetch $fetch;
-    /** @var GetMergeTargetCandidateBranches&MockObject */
     private GetMergeTargetCandidateBranches $getMergeTargets;
-    /** @var GetGithubMilestone&MockObject */
     private GetGithubMilestone $getMilestone;
-    /** @var CreateReleaseText&MockObject */
     private CreateReleaseText $createReleaseText;
-    /** @var MockObject&Push */
     private Push $push;
-    /** @var CreatePullRequest&MockObject */
+
     private CreatePullRequest $createPullRequest;
     private CreateMergeUpPullRequest $command;
     private MilestoneClosedEvent $event;
@@ -57,7 +53,7 @@ final class CreateMergeUpPullRequestTest extends TestCase
     {
         parent::setUp();
 
-        $this->variables         = $this->createMock(Variables::class);
+        $this->environment       = $this->createMock(Variables::class);
         $this->loadEvent         = $this->createMock(LoadCurrentGithubEvent::class);
         $this->fetch             = $this->createMock(Fetch::class);
         $this->getMergeTargets   = $this->createMock(GetMergeTargetCandidateBranches::class);
@@ -67,7 +63,7 @@ final class CreateMergeUpPullRequestTest extends TestCase
         $this->createPullRequest = $this->createMock(CreatePullRequest::class);
 
         $this->command = new CreateMergeUpPullRequest(
-            $this->variables,
+            $this->environment,
             $this->loadEvent,
             $this->fetch,
             $this->getMergeTargets,
@@ -101,7 +97,7 @@ JSON
         $this->milestone = Milestone::fromPayload([
             'number'       => 123,
             'closed'       => true,
-            'title'        => 'The title',
+            'title'        => '1.2.3',
             'description'  => 'The description',
             'issues'       => [
                 'nodes' => [],
@@ -109,15 +105,15 @@ JSON
             'pullRequests' => [
                 'nodes' => [],
             ],
-            'url'          => 'https://example.com/milestone',
+            'url'          => 'https://github.com/vendor/project/releases/milestone/123',
         ]);
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');
         $signingKey           = SecretKeyId::fromBase16String('aabbccddeeff');
 
-        $this->variables->method('signingSecretKey')
+        $this->environment->method('secretKeyId')
             ->willReturn($signingKey);
-        $this->variables->method('githubToken')
+        $this->environment->method('githubToken')
             ->willReturn('github-auth-token');
     }
 
@@ -128,13 +124,13 @@ JSON
 
     public function testWillCreateMergeUpPullRequest(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = create_temporary_file(temp_dir(), 'workspace');
 
-        Filesystem\delete_file($workspace);
-        Filesystem\create_directory($workspace);
-        Filesystem\create_directory($workspace . '/.git');
+        delete_file($workspace);
+        create_directory($workspace);
+        create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')
@@ -152,7 +148,7 @@ JSON
             ->with(self::equalTo(RepositoryName::fromFullName('foo/bar')), 123)
             ->willReturn($this->milestone);
 
-        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        /** @psalm-var ChangelogReleaseNotes $releaseNotes */
         $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
         $releaseNotes
             ->expects(self::once())
@@ -194,13 +190,13 @@ JSON
 
     public function testWillSkipMergeUpPullRequestOnNoMergeUpCandidate(): void
     {
-        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+        $workspace = create_temporary_file(temp_dir(), 'workspace');
 
-        Filesystem\delete_file($workspace);
-        Filesystem\create_directory($workspace);
-        Filesystem\create_directory($workspace . '/.git');
+        delete_file($workspace);
+        create_directory($workspace);
+        create_directory($workspace . '/.git');
 
-        $this->variables->method('githubWorkspacePath')
+        $this->environment->method('githubWorkspacePath')
             ->willReturn($workspace);
 
         $this->loadEvent->method('__invoke')
@@ -220,7 +216,7 @@ JSON
         $this->getMilestone->method('__invoke')
             ->willReturn($this->milestone);
 
-        /** @psalm-var ChangelogReleaseNotes&MockObject $releaseNotes */
+        /** @psalm-var MockObject&ChangelogReleaseNotes $releaseNotes */
         $releaseNotes = $this->createMock(ChangelogReleaseNotes::class);
 
         $this->createReleaseText->method('__invoke')
