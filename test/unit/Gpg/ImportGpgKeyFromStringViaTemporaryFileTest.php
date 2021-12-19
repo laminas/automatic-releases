@@ -7,7 +7,8 @@ namespace Laminas\AutomaticReleases\Test\Unit\Gpg;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
-use Psl\Filesystem;
+
+use function Psl\Filesystem\read_file;
 
 /** @covers \Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile */
 final class ImportGpgKeyFromStringViaTemporaryFileTest extends TestCase
@@ -17,7 +18,7 @@ final class ImportGpgKeyFromStringViaTemporaryFileTest extends TestCase
         self::assertEquals(
             SecretKeyId::fromBase16String('8CA5C026AE941316'),
             (new ImportGpgKeyFromStringViaTemporaryFile())(
-                Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc')
+                read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc')
             )
         );
     }

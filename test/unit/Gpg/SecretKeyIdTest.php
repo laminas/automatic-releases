@@ -21,7 +21,9 @@ final class SecretKeyIdTest extends TestCase
         SecretKeyId::fromBase16String($invalid);
     }
 
-    /** @return iterable <array-keys, array<int, string>> */
+    /**
+     * @return Generator<array-key, array<array-key, string>>
+     */
     public function invalidKeys(): Generator
     {
         yield 'empty-string' => [''];
@@ -42,14 +44,18 @@ final class SecretKeyIdTest extends TestCase
         );
     }
 
-    /** @return array<int, array<int, string>> */
-    public function validKeys(): array
+    /** @return Generator<array-key, array<array-key, string>> */
+    public function validKeys(): Generator
     {
-        return [
-            ['123'],
-            ['abc'],
-            ['aaaaaaaaaaaaaaaaaaaa'],
-            ['AAAAAAAAAAAAAAAAAAAA'],
-        ];
+        foreach (
+            [
+                '123',
+                'abc',
+                'aaaaaaaaaaaaaaaaaaaa',
+                'AAAAAAAAAAAAAAAAAAAA',
+            ] as $key
+        ) {
+            yield $key => [$key];
+        }
     }
 }

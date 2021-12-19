@@ -10,13 +10,15 @@ use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Filesystem;
 use Psl\Shell;
+use function Psl\Type\non_empty_string;
 
-/** @covers \Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
+/**
+ * @covers \Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches
+ * @psalm-suppress MissingConstructor
+ */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
 {
-    /** @psalm-var non-empty-string */
     private string $source;
-    /** @psalm-var non-empty-string */
     private string $destination;
 
     protected function setUp(): void
@@ -54,7 +56,9 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
                 BranchName::fromName('master'),
             ),
             (new GetMergeTargetCandidateBranchesFromRemoteBranches())
-                ->__invoke($this->destination)
+                ->__invoke(
+                    non_empty_string()->coerce($this->destination)
+                )
         );
     }
 }

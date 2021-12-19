@@ -11,7 +11,6 @@ use Laminas\AutomaticReleases\Twitter\Value\Tweet;
 
 use function Psl\Str\format;
 
-/** @psalm-suppress MissingConstructor */
 final class TweetTest extends TestCase
 {
     private Milestone $milestone;

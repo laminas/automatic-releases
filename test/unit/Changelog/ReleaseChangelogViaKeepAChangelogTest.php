@@ -14,6 +14,7 @@ use Laminas\AutomaticReleases\Git\Push;
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Lcobucci\Clock\FrozenClock;
 use Phly\KeepAChangelog\Common\ChangelogEntry;
@@ -52,7 +53,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
     private LoggerInterface $logger;
 
     private CommitReleaseChangelogViaKeepAChangelog $releaseChangelog;
-    private string $gpgKey;
+    private SecretKeyId $secretKeyId;
 
     protected function setUp(): void
     {

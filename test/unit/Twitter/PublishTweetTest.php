@@ -13,6 +13,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneChangelog\Res
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Laminas\AutomaticReleases\Twitter\PublishTweet;
 use Laminas\AutomaticReleases\Twitter\Value\Tweet;
+use PHPUnit\Framework\MockObject\MockObject;
 use Throwable;
 
 /**
@@ -21,7 +22,9 @@ use Throwable;
  */
 final class PublishTweetTest extends TestCase
 {
+    /** @var MockObject&TwitterOAuth */
     private TwitterOAuth $twitter;
+    /** @var MockObject&Variables */
     private Variables $environment;
     private Publish $publishTweet;
     private Announcement $tweet;
