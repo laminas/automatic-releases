@@ -1,6 +1,0 @@
-name: 'Tweet on Release'
-on:
-  release:
-    types: [released]
-
-jobs:
