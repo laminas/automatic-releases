@@ -10,6 +10,7 @@ use Laminas\AutomaticReleases\Git\Value\MergeTargetCandidateBranches;
 use Laminas\AutomaticReleases\Test\Unit\TestCase;
 use Psl\Filesystem;
 use Psl\Shell;
+
 use function Psl\Type\non_empty_string;
 
 /**
