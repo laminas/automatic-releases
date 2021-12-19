@@ -36,7 +36,7 @@ final class PublishTweet implements Publish
             ['status' => (string) $message]
         );
 
-        if ($this->isNotSuccessful()) {
+        if ($this->twitter->getLastHttpCode() !== 200) {
             throw new TwitterOAuthException(
                 strJoin([
                     'Tweet: ' . $message,
@@ -45,10 +45,5 @@ final class PublishTweet implements Publish
                 ], PHP_EOL)
             );
         }
-    }
-
-    private function isNotSuccessful(): bool
-    {
-        return $this->twitter->getLastHttpCode() !== 200;
     }
 }
