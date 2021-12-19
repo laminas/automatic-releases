@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="v4.15.0@a1b5e489e6fcebe40cb804793d964e99fc347820">
+  <file src="src/Twitter/Value/Tweet.php">
+    <PossiblyNullArgument occurrences="1"/>
+  </file>
+  <file src="test/unit/Application/BumpChangelogForReleaseBranchTest.php">
+    <MixedMethodCall occurrences="10">
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+    </MixedMethodCall>
+    <UndefinedInterfaceMethod occurrences="6">
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/unit/Application/CreateMergeUpPullRequestTest.php">
+    <MixedMethodCall occurrences="26">
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+    </MixedMethodCall>
+    <UndefinedInterfaceMethod occurrences="16">
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+    </UndefinedInterfaceMethod>
+    <UndefinedMethod occurrences="1">
+      <code>expects</code>
+    </UndefinedMethod>
+    <UnnecessaryVarAnnotation occurrences="1">
+      <code>MockObject&amp;ChangelogReleaseNotes</code>
+    </UnnecessaryVarAnnotation>
+  </file>
+  <file src="test/unit/Application/ReleaseCommandTest.php">
+    <MixedMethodCall occurrences="21">
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+    </MixedMethodCall>
+    <UndefinedInterfaceMethod occurrences="11">
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/unit/Application/SwitchDefaultBranchToNextMinorTest.php">
+    <MixedMethodCall occurrences="31">
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>willReturn</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+    </MixedMethodCall>
+    <UndefinedInterfaceMethod occurrences="21">
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/unit/Changelog/BumpAndCommitChangelogVersionViaKeepAChangelogTest.php">
+    <MixedMethodCall occurrences="11">
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>method</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+      <code>with</code>
+    </MixedMethodCall>
+    <PossiblyInvalidArgument occurrences="1">
+      <code>testAddsNewReleaseVersionUsingBumpTypeToChangelogFileAndCommitsAndPushes</code>
+    </PossiblyInvalidArgument>
+    <UndefinedInterfaceMethod occurrences="6">
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+      <code>expects</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/unit/Changelog/ReleaseChangelogViaKeepAChangelogTest.php">
+    <MixedArgument occurrences="3">
+      <code>$this-&gt;secretKeyId</code>
+      <code>$this-&gt;secretKeyId</code>
+      <code>$this-&gt;secretKeyId</code>
+    </MixedArgument>
+    <UndefinedThisPropertyAssignment occurrences="1">
+      <code>$this-&gt;secretKeyId</code>
+    </UndefinedThisPropertyAssignment>
+    <UndefinedThisPropertyFetch occurrences="3">
+      <code>$this-&gt;secretKeyId</code>
+      <code>$this-&gt;secretKeyId</code>
+      <code>$this-&gt;secretKeyId</code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="test/unit/Git/GetMergeTargetCandidateBranchesFromRemoteBranchesTest.php">
+    <PropertyTypeCoercion occurrences="2">
+      <code>$this-&gt;createTemporaryFile('GetMergeTargetDestination')</code>
+      <code>$this-&gt;createTemporaryFile('GetMergeTargetSource')</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="test/unit/Gpg/SecretKeyIdTest.php">
+    <MismatchingDocblockReturnType occurrences="1">
+      <code>iterable</code>
+    </MismatchingDocblockReturnType>
+    <MixedInferredReturnType occurrences="1">
+      <code>iterable</code>
+    </MixedInferredReturnType>
+  </file>
+</files>
