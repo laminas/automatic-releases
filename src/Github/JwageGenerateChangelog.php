@@ -50,6 +50,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
         $config = (new ChangelogConfig())
             ->setUser($repositoryName->owner())
             ->setRepository($repositoryName->name())
+            ->setNonGroupedLabel('Changes')
             ->setMilestone($semVerVersion->fullReleaseName())
             ->setGitHubCredentials($this->gitHubCredentials);
 
