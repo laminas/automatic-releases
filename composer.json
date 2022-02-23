@@ -30,7 +30,10 @@
         "vimeo/psalm": "^4.7.2"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.0.99"
+        }
     },
     "autoload": {
         "psr-4": {
