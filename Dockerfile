@@ -15,8 +15,9 @@ LABEL "maintainer"="https://github.com/laminas/technical-steering-committee/"
 
 WORKDIR /app
 
-RUN apk add --no-cache git gnupg libzip icu-dev \
+RUN apk add --no-cache git git-lfs gnupg libzip icu-dev \
     && apk add --no-cache --virtual .build-deps libzip-dev \
+    && git lfs install --skip-repo \
     && docker-php-ext-install zip \
     && docker-php-ext-install bcmath \
     && docker-php-ext-configure intl \
