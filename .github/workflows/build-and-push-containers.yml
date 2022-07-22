@@ -19,7 +19,7 @@ jobs:
           echo "::set-output name=tags::[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v2
