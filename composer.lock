@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99dca71d8f1f88f16a2ff56451916a62",
+    "content-hash": "0f23763bc123ccefee7e528b17cf0b2d",
     "packages": [
         {
             "name": "azjezz/psl",
@@ -4658,21 +4658,24 @@
         },
         {
             "name": "php-standard-library/psalm-plugin",
-            "version": "1.1.5",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-standard-library/psalm-plugin.git",
-                "reference": "134176c5e36f0aed80bc791095d9c8e1bde9c1b6"
+                "reference": "acec87621b2a08b907d40b46c5551215eb4b2154"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-standard-library/psalm-plugin/zipball/134176c5e36f0aed80bc791095d9c8e1bde9c1b6",
-                "reference": "134176c5e36f0aed80bc791095d9c8e1bde9c1b6",
+                "url": "https://api.github.com/repos/php-standard-library/psalm-plugin/zipball/acec87621b2a08b907d40b46c5551215eb4b2154",
+                "reference": "acec87621b2a08b907d40b46c5551215eb4b2154",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4 || ^8.0",
+                "php": "^8.1",
                 "vimeo/psalm": "^4.20 || ^5.0"
+            },
+            "conflict": {
+                "azjezz/psl": "<2.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.18",
@@ -4703,9 +4706,9 @@
             "description": "Psalm plugin for the PHP Standard Library",
             "support": {
                 "issues": "https://github.com/php-standard-library/psalm-plugin/issues",
-                "source": "https://github.com/php-standard-library/psalm-plugin/tree/1.1.5"
+                "source": "https://github.com/php-standard-library/psalm-plugin/tree/2.0.2"
             },
-            "time": "2022-02-27T20:14:21+00:00"
+            "time": "2022-02-27T20:08:05+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
