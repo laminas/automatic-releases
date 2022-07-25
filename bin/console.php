@@ -107,7 +107,6 @@ use const STDERR;
         $logger
     );
 
-    /** @psalm-suppress DeprecatedClass */
     $application = new Application(Versions::rootPackageName(), Versions::getVersion('laminas/automatic-releases'));
 
     $application->addCommands([

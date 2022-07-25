@@ -233,4 +233,37 @@ OUTPUT
             $output->fetch()
         );
     }
+
+    public function testWillRefuseToOperateWhenNotGivenAGitWorkingDirectory(): void
+    {
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+
+        $this->variables->method('githubWorkspacePath')
+            ->willReturn($workspace);
+
+        $this->loadEvent->method('__invoke')
+            ->willReturn($this->event);
+
+        $this->fetch->expects(self::never())
+            ->method('__invoke');
+
+        $this->getMergeTargets->expects(self::never())
+            ->method('__invoke');
+
+        $this->push->expects(self::never())
+            ->method('__invoke');
+
+        $this->bumpChangelogVersion->expects(self::never())
+            ->method('__invoke');
+
+        $this->setDefaultBranch->expects(self::never())
+            ->method('__invoke');
+
+        $this->expectExceptionMessage('Workspace is not a GIT repository.');
+
+        $this->command->run(new ArrayInput([]), new NullOutput());
+    }
 }

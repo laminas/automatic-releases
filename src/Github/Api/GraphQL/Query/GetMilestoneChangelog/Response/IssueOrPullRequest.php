@@ -27,8 +27,6 @@ final class IssueOrPullRequest
     /**
      * @psalm-param non-empty-string $title
      * @psalm-param list<Label> $labels
-     *
-     * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
         int $number,

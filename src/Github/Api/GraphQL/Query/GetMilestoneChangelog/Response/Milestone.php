@@ -30,8 +30,6 @@ final class Milestone
      * @param array<int, IssueOrPullRequest> $entries
      * @psalm-param non-empty-string $title
      * @psalm-param list<IssueOrPullRequest> $entries
-     *
-     * @psalm-suppress ImpurePropertyAssignment {@see UriInterface} is pure
      */
     private function __construct(
         int $number,
