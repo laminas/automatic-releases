@@ -14,9 +14,12 @@ use Psl\Filesystem;
 use Psl\Shell;
 use Psr\Http\Message\UriInterface;
 
+use function Psl\File\read;
+
 /** @covers \Laminas\AutomaticReleases\Git\CreateTagViaConsole */
 final class CreateTagViaConsoleTest extends TestCase
 {
+    /** @var non-empty-string */
     private string $repository;
     private SecretKeyId $key;
 
@@ -25,7 +28,7 @@ final class CreateTagViaConsoleTest extends TestCase
         parent::setUp();
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $this->repository = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateTagViaConsoleRepository');
 

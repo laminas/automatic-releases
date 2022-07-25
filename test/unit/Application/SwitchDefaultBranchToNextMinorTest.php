@@ -26,6 +26,8 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function Psl\File\read;
+
 final class SwitchDefaultBranchToNextMinorTest extends TestCase
 {
     /** @var MockObject&Variables */
@@ -82,7 +84,7 @@ JSON
         );
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $this->variables->method('signingSecretKey')->willReturn($key);
 

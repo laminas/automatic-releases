@@ -27,7 +27,7 @@ final class EnvironmentVariablesTest extends TestCase
         'GITHUB_WORKSPACE',
     ];
 
-    /** @var array<string, ?string> */
+    /** @var array<non-empty-string, ?string> */
     private array $originalValues = [];
 
     protected function setUp(): void

@@ -11,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Type;
 
 /** @covers \Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches */
 final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCase
@@ -27,9 +26,6 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
 
         $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetSource');
         $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'GetMergeTargetDestination');
-
-        Type\non_empty_string()->assert($source);
-        Type\non_empty_string()->assert($destination);
 
         $this->source      = $source;
         $this->destination = $destination;

@@ -64,7 +64,7 @@ final class MergeTargetCandidateBranches
             return null;
         }
 
-        $lastBranch      = Type\object(BranchName::class)->assert(Iter\last($this->sortedBranches));
+        $lastBranch      = Type\instance_of(BranchName::class)->assert(Iter\last($this->sortedBranches));
         $targetBranchKey = array_search($targetBranch, $this->sortedBranches, true);
 
         $branch = Type\int()->matches($targetBranchKey)

@@ -21,8 +21,10 @@ use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
-use Psl\Type;
 use Psr\Log\LoggerInterface;
+
+use function Psl\File\read;
+use function Psl\File\write;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
 {
@@ -52,7 +54,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testReturnsEarlyWhenNoChangelogFilePresent(): void
@@ -111,7 +113,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         string $expectedVersion
     ): void {
         $changelogFile = $this->createMockChangelog();
-        $repoDir       = Type\non_empty_string()->assert(Filesystem\get_directory($changelogFile));
+        $repoDir       = Filesystem\get_directory($changelogFile);
         $sourceBranch  = BranchName::fromName($branchName);
         $version       = SemVerVersion::fromMilestoneName('1.0.1');
 
@@ -173,7 +175,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->key
         );
 
-        $changelogContents = Filesystem\read_file($changelogFile);
+        $changelogContents = read($changelogFile);
         self::assertMatchesRegularExpression(
             '/^## ' . $expectedVersion . ' - TBD$/m',
             $changelogContents,
@@ -195,9 +197,9 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
 
-        $changelogFile = Str\format('%s/CHANGELOG.md', $repo);
+        $changelogFile = $repo . '/CHANGELOG.md';
 
-        Filesystem\write_file($changelogFile, self::CHANGELOG_STUB);
+        write($changelogFile, self::CHANGELOG_STUB);
 
         Shell\execute('git', ['init', '.'], $repo);
         Shell\execute('git', ['config', 'user.email', 'me@example.com'], $repo);
@@ -206,7 +208,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
         Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
 
-        return Type\non_empty_string()->assert($changelogFile);
+        return $changelogFile;
     }
 
     private const CHANGELOG_STUB = <<< 'CHANGELOG'

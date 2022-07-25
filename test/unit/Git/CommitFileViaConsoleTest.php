@@ -13,8 +13,10 @@ use Psl\Env;
 use Psl\Exception\InvariantViolationException;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Str;
 use Psl\Type;
+
+use function Psl\File\read;
+use function Psl\File\write;
 
 final class CommitFileViaConsoleTest extends TestCase
 {
@@ -25,7 +27,7 @@ final class CommitFileViaConsoleTest extends TestCase
     public function setUp(): void
     {
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $checkout = Type\non_empty_string()
             ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'CommitFileViaConsoleTestCheckout'));
@@ -46,9 +48,8 @@ final class CommitFileViaConsoleTest extends TestCase
 
     public function testAddsAndCommitsFileProvidedWithAuthorAndCommitMessageProvided(): void
     {
-        $filename = Str\format('%s/README.md', $this->checkout);
-        Filesystem\write_file(
-            $filename,
+        write(
+            $this->checkout . '/README.md',
             "# README\n\nThis is a test file to test commits from laminas/automatic-releases."
         );
 
@@ -74,8 +75,7 @@ final class CommitFileViaConsoleTest extends TestCase
     {
         Shell\execute('git', ['switch', '-c', '1.1.x'], $this->checkout);
 
-        $filename = Str\format('%s/README.md', $this->checkout);
-        Filesystem\write_file($filename, "# README\n\nThis is a test file to test commits from laminas/automatic-releases.");
+        write($this->checkout . '/README.md', "# README\n\nThis is a test file to test commits from laminas/automatic-releases.");
 
         $this->expectException(InvariantViolationException::class);
         $this->expectExceptionMessage('CommitFile: Cannot commit file README.md to branch 1.0.x, as a different branch is currently checked out (1.1.x).');

@@ -6,7 +6,8 @@ namespace Laminas\AutomaticReleases\Github\Event\Factory;
 
 use Laminas\AutomaticReleases\Environment\EnvironmentVariables;
 use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
-use Psl\Filesystem;
+
+use function Psl\File\read;
 
 final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
 {
@@ -21,6 +22,6 @@ final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGit
     {
         $path = $this->variables->githubEventPath();
 
-        return MilestoneClosedEvent::fromEventJson(Filesystem\read_file($path));
+        return MilestoneClosedEvent::fromEventJson(read($path));
     }
 }

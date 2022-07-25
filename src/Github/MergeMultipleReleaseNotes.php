@@ -45,7 +45,7 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
             null
         );
 
-        return Type\object(ChangelogReleaseNotes::class)->assert($releaseNotes);
+        return Type\instance_of(ChangelogReleaseNotes::class)->assert($releaseNotes);
     }
 
     public function canCreateReleaseText(

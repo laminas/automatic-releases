@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Str;
-use Psl\Type;
+
+use function Psl\File\write;
 
 class ChangelogExistsViaConsoleTest extends TestCase
 {
@@ -49,8 +49,8 @@ class ChangelogExistsViaConsoleTest extends TestCase
 
         Filesystem\create_directory($repo);
 
-        Filesystem\write_file(
-            Str\format('%s/%s', $repo, 'CHANGELOG.md'),
+        write(
+            $repo . '/CHANGELOG.md',
             <<< 'CHANGELOG'
                 # Changelog
                 
@@ -88,7 +88,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
         Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
         Shell\execute('git', ['switch', '-c', '1.0.x'], $repo);
 
-        return Type\non_empty_string()->assert($repo);
+        return $repo;
     }
 
     /**
@@ -103,6 +103,6 @@ class ChangelogExistsViaConsoleTest extends TestCase
 
         Shell\execute('git', ['clone', $origin, $repo]);
 
-        return Type\non_empty_string()->assert($repo);
+        return $repo;
     }
 }
