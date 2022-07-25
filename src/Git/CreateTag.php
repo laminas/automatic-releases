@@ -9,6 +9,7 @@ use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 interface CreateTag
 {
+    /** @param non-empty-string $repositoryDirectory */
     public function __invoke(
         string $repositoryDirectory,
         BranchName $sourceBranch,

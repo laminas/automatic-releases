@@ -18,7 +18,8 @@ use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
-use Psl\Type;
+
+use function Psl\File\write;
 
 class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 {
@@ -183,7 +184,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
 
-        Filesystem\write_file(Str\format('%s/%s', $repo, $filename), $template);
+        write($repo . '/' . $filename, $template);
 
         Shell\execute('git', ['init', '.'], $repo);
         Shell\execute('git', ['add', '.'], $repo);
@@ -192,7 +193,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         Shell\execute('git', ['commit', '-m', 'Initial import'], $repo);
         Shell\execute('git', ['switch', '-c', $initialBranch], $repo);
 
-        return Type\non_empty_string()->assert($repo);
+        return $repo;
     }
 
     /**
@@ -207,7 +208,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         Shell\execute('git', ['clone', $origin, $repo]);
 
-        return Type\non_empty_string()->assert($repo);
+        return $repo;
     }
 
     private const INVALID_CHANGELOG = <<< 'END'

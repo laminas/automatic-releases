@@ -109,6 +109,7 @@ class EnvironmentVariables implements Variables
     }
 
     /**
+     * @psalm-param  non-empty-string $key
      * @psalm-param  non-empty-string $default
      *
      * @psalm-return non-empty-string

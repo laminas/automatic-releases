@@ -77,8 +77,8 @@ final class Milestone
             $payload['title'],
             $payload['description'],
             Vec\concat(
-                Vec\map($payload['issues']['nodes'], [IssueOrPullRequest::class, 'fromPayload']),
-                Vec\map($payload['pullRequests']['nodes'], [IssueOrPullRequest::class, 'fromPayload'])
+                Vec\map($payload['issues']['nodes'], IssueOrPullRequest::fromPayload(...)),
+                Vec\map($payload['pullRequests']['nodes'], IssueOrPullRequest::fromPayload(...))
             ),
             new Uri($payload['url'])
         );

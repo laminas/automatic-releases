@@ -12,7 +12,6 @@ use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
-use Psl\Type;
 use Psr\Http\Message\UriInterface;
 
 /** @covers \Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
@@ -33,9 +32,6 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'FetchSource');
         $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'FetchDestination');
-
-        Type\non_empty_string()->assert($source);
-        Type\non_empty_string()->assert($destination);
 
         $this->source      = $source;
         $this->destination = $destination;

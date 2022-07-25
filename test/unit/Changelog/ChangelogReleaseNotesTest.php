@@ -16,6 +16,9 @@ use Psl\Vec;
 use ReflectionProperty;
 use RuntimeException;
 
+use function Psl\File\read;
+use function Psl\File\write;
+
 /**
  * @covers \Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes
  */
@@ -51,11 +54,9 @@ class ChangelogReleaseNotesTest extends TestCase
 
     public function testWriteChangelogIsNoOpIfNoUpdatesAreRequired(): void
     {
-        $filename = Type\non_empty_string()->assert(
-            Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogReleaseNotes')
-        );
+        $filename = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogReleaseNotes');
 
-        Filesystem\write_file($filename, 'Original contents');
+        write($filename, 'Original contents');
 
         $entry           = new ChangelogEntry();
         $entry->contents = 'Changelog contents';
@@ -71,7 +72,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $filename = Type\non_empty_string()
             ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogReleaseNotes'));
 
-        Filesystem\write_file($filename, self::CHANGELOG_STUB);
+        write($filename, self::CHANGELOG_STUB);
 
         $requiredString = Str\join(
             Vec\values(Dict\take(Str\split(self::CHANGELOG_STUB, "\n"), 4)),
@@ -89,7 +90,7 @@ class ChangelogReleaseNotesTest extends TestCase
 
         $releaseNotes::writeChangelogFile($filename, $releaseNotes);
 
-        $contents = Filesystem\read_file($filename);
+        $contents = read($filename);
 
         $this->assertStringContainsString($requiredString, $contents);
         $this->assertStringContainsString($releaseNotes->contents() . "\n", $contents);

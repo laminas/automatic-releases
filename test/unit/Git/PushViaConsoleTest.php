@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
-use Psl\Type;
 
 /** @covers \Laminas\AutomaticReleases\Git\PushViaConsole */
 final class PushViaConsoleTest extends TestCase
@@ -23,11 +22,8 @@ final class PushViaConsoleTest extends TestCase
     {
         parent::setUp();
 
-        $source      = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestSource');
-        $destination = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestDestination');
-
-        $this->source      = Type\non_empty_string()->assert($source);
-        $this->destination = Type\non_empty_string()->assert($destination);
+        $this->source      = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestSource');
+        $this->destination = Filesystem\create_temporary_file(Env\temp_dir(), 'PushViaConsoleTestDestination');
 
         Filesystem\delete_file($this->source);
         Filesystem\delete_file($this->destination);

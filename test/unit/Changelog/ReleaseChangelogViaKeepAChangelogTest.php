@@ -28,6 +28,9 @@ use Psl\Type;
 use Psl\Vec;
 use Psr\Log\LoggerInterface;
 
+use function Psl\File\read;
+use function Psl\File\write;
+
 class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 {
     private FrozenClock $frozenClock;
@@ -64,7 +67,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
     }
 
     public function testNoOpWhenChangelogFileDoesNotExist(): void
@@ -214,7 +217,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         );
 
         $changelogFile = $checkout . '/CHANGELOG.md';
-        $contents      = Filesystem\read_file($changelogFile);
+        $contents      = read($changelogFile);
         $this->assertStringContainsString(
             Str\join(
                 Vec\values(Dict\take(Str\split(self::READY_CHANGELOG, "\n"), 4)),
@@ -238,8 +241,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
 
         Filesystem\delete_file($repo);
         Filesystem\create_directory($repo);
-        Filesystem\write_file(
-            Str\format('%s/%s', $repo, $filename),
+        write(
+            $repo . '/' . $filename,
             $template
         );
 

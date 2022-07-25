@@ -22,6 +22,8 @@ use Psl\Filesystem;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
+use function Psl\File\read;
+
 class BumpChangelogForReleaseBranchTest extends TestCase
 {
     /** @var Variables&MockObject */
@@ -67,7 +69,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             JSON);
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
-            ->__invoke(Filesystem\read_file(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
+            ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'));
 
         $this->environment->method('signingSecretKey')->willReturn($key);
     }

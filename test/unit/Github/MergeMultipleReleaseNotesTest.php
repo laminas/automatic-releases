@@ -59,7 +59,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */
         $generators = [];
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+            $generator = Type\intersection(Type\instance_of(CreateReleaseText::class), Type\instance_of(MockObject::class))
                 ->assert($this->createMock(CreateReleaseText::class));
 
             $generator
@@ -95,7 +95,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         $generators = [];
         /** @var 0|1|2|3|4 $index */
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+            $generator = Type\intersection(Type\instance_of(CreateReleaseText::class), Type\instance_of(MockObject::class))
                 ->assert($this->createMock(CreateReleaseText::class));
 
             if ($index < 2) {
@@ -156,7 +156,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
 
         /** @var 0|1|2|3|4 $index */
         foreach (Vec\range(0, 4) as $index) {
-            $generator = Type\intersection(Type\object(CreateReleaseText::class), Type\object(MockObject::class))
+            $generator = Type\intersection(Type\instance_of(CreateReleaseText::class), Type\instance_of(MockObject::class))
                 ->assert($this->createMock(CreateReleaseText::class));
 
             switch ($index) {

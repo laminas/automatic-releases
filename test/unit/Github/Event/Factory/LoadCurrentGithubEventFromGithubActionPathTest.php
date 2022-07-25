@@ -11,6 +11,8 @@ use PHPUnit\Framework\TestCase;
 use Psl\Env;
 use Psl\Filesystem;
 
+use function Psl\File\write;
+
 /** @covers \Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGithubActionPath */
 final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 {
@@ -32,7 +34,7 @@ final class LoadCurrentGithubEventFromGithubActionPathTest extends TestCase
 JSON;
         $event     = Filesystem\create_temporary_file(Env\temp_dir(), 'github_event');
 
-        Filesystem\write_file($event, $eventData);
+        write($event, $eventData);
 
         $variables->method('githubEventPath')
             ->willReturn($event);

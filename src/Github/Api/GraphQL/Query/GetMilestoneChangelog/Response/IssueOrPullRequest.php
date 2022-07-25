@@ -70,7 +70,7 @@ final class IssueOrPullRequest
             $payload['number'],
             $payload['title'],
             Author::fromPayload($payload['author']),
-            Vec\map($payload['labels']['nodes'], [Label::class, 'fromPayload']),
+            Vec\map($payload['labels']['nodes'], Label::fromPayload(...)),
             isset($payload['merged']) ? $payload['merged'] || $payload['closed'] : $payload['closed'],
             new Uri($payload['url'])
         );
