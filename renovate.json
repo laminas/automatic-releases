@@ -2,5 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>laminas/.github:renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchDepTypes": ["require"],
+      "rangeStrategy": "bump"
+    }
   ]
 }
