@@ -55,9 +55,7 @@ class ChangelogReleaseNotes
             $changelogEntry = clone $changelogEntry;
         }
 
-        $this->contents = $contents;
-
-        /** @psalm-suppress ImpurePropertyAssignment */
+        $this->contents       = $contents;
         $this->changelogEntry = $changelogEntry;
     }
 
@@ -69,6 +67,7 @@ class ChangelogReleaseNotes
         return $this->contents;
     }
 
+    /** @throws RuntimeException if release notes already exist in both merged objects. */
     public function merge(self $next): self
     {
         if ($this->changelogEntry && $next->changelogEntry) {
@@ -83,9 +82,8 @@ class ChangelogReleaseNotes
             $changelogEntry = clone $changelogEntry;
         }
 
-        $merged            = clone $this;
-        $merged->contents .= self::CONCATENATION_STRING . $next->contents;
-        /** @psalm-suppress ImpurePropertyAssignment */
+        $merged                 = clone $this;
+        $merged->contents      .= self::CONCATENATION_STRING . $next->contents;
         $merged->changelogEntry = $changelogEntry;
 
         return $merged;

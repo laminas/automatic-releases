@@ -105,7 +105,6 @@ class ChangelogReleaseNotesTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        /** @psalm-suppress UnusedMethodCall */
         $original->merge($toMerge);
     }
 
