@@ -51,12 +51,13 @@ final class SwitchDefaultBranchToNextMinor extends Command
     {
         $event          = $this->loadGithubEvent->__invoke();
         $repositoryPath = $this->variables->githubWorkspacePath();
+        $repositoryName = $event->repository();
 
         Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
         $this->fetch->__invoke(
-            $event->repository()
-                ->uriWithTokenAuthentication($this->variables->githubToken()),
+            $repositoryName->uri(),
+            $repositoryName->uriWithTokenAuthentication($this->variables->githubToken()),
             $repositoryPath
         );
 

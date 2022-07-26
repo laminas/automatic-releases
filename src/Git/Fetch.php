@@ -11,6 +11,7 @@ interface Fetch
     /** @psalm-param non-empty-string $repositoryRootDirectory */
     public function __invoke(
         UriInterface $repositoryUri,
+        UriInterface $uriWithCredentials,
         string $repositoryRootDirectory
     ): void;
 }
