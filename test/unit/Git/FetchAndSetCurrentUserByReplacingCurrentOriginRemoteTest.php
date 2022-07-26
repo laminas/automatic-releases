@@ -13,6 +13,7 @@ use Psl\Filesystem;
 use Psl\Shell;
 use Psl\Str;
 use Psr\Http\Message\UriInterface;
+use Throwable;
 
 /** @covers \Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote */
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends TestCase
@@ -62,7 +63,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
             ->willReturn($this->source);
 
         (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
-            ->__invoke($sourceUri, $this->destination);
+            ->__invoke($sourceUri, $sourceUri, $this->destination);
 
         self::assertSame(
             'Mr. Magoo Set',
@@ -89,7 +90,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
         Shell\execute('git', ['remote', 'rm', 'origin'], $this->destination);
 
         (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
-            ->__invoke($sourceUri, $this->destination);
+            ->__invoke($sourceUri, $sourceUri, $this->destination);
 
         self::assertSame(
             'Mr. Magoo Set',
@@ -104,5 +105,28 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         self::assertStringContainsString('origin/initial-branch', $fetchedBranches);
         self::assertStringContainsString('origin/new-branch', $fetchedBranches);
+    }
+
+    public function testFailingToSetARemoteWillNotLeadToSecretExfiltration(): void
+    {
+        $sourceUri            = $this->createMock(UriInterface::class);
+        $sourceUriWithSecrets = $this->createMock(UriInterface::class);
+
+        $sourceUri->method('__toString')
+            ->willReturn('https://github.com/laminas/this-repository-does-not-exist.git');
+        $sourceUriWithSecrets->method('__toString')
+            ->willReturn('https://SUPERSECRET:x-oauth-basic@github.com/laminas/this-repository-does-not-exist.git');
+
+        $notAGitDirectory = Filesystem\create_temporary_file();
+
+        Filesystem\delete_file($notAGitDirectory);
+        Filesystem\create_directory($notAGitDirectory);
+
+        try {
+            (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
+                ->__invoke($sourceUri, $sourceUriWithSecrets, $notAGitDirectory);
+        } catch (Throwable $failure) {
+            self::assertDoesNotMatchRegularExpression('/SUPERSECRET/m', $failure->getMessage());
+        }
     }
 }

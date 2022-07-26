@@ -44,12 +44,15 @@ final class BumpChangelogForReleaseBranch extends Command
     {
         $milestoneClosedEvent = ($this->loadEvent)();
         $repositoryName       = $milestoneClosedEvent->repository();
-        $repositoryCloneUri   = $repositoryName->uriWithTokenAuthentication($this->environment->githubToken());
         $repositoryPath       = $this->environment->githubWorkspacePath();
 
         Psl\invariant(Filesystem\is_directory($repositoryPath . '/.git'), 'Workspace is not a GIT repository.');
 
-        ($this->fetch)($repositoryCloneUri, $repositoryPath);
+        ($this->fetch)(
+            $repositoryName->uri(),
+            $repositoryName->uriWithTokenAuthentication($this->environment->githubToken()),
+            $repositoryPath
+        );
 
         $mergeCandidates = ($this->getMergeTargets)($repositoryPath);
         $releaseVersion  = $milestoneClosedEvent->version();

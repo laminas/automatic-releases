@@ -113,7 +113,11 @@ JSON
 
         $this->fetch->expects(self::once())
             ->method('__invoke')
-            ->with('https://github-auth-token:x-oauth-basic@github.com/foo/bar.git', $workspace);
+            ->with(
+                'https://github.com/foo/bar.git',
+                'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
+                $workspace
+            );
 
         $this->getMergeTargets->method('__invoke')
             ->with($workspace)
@@ -156,7 +160,11 @@ JSON
 
         $this->fetch->expects(self::once())
             ->method('__invoke')
-            ->with('https://github-auth-token:x-oauth-basic@github.com/foo/bar.git', $workspace);
+            ->with(
+                'https://github.com/foo/bar.git',
+                'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
+                $workspace
+            );
 
         $this->getMergeTargets->method('__invoke')
             ->with($workspace)
@@ -205,7 +213,11 @@ JSON
 
         $this->fetch->expects(self::once())
             ->method('__invoke')
-            ->with('https://github-auth-token:x-oauth-basic@github.com/foo/bar.git', $workspace);
+            ->with(
+                'https://github.com/foo/bar.git',
+                'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
+                $workspace
+            );
 
         $this->getMergeTargets->method('__invoke')
             ->with($workspace)

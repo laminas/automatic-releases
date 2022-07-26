@@ -94,6 +94,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
         $this->fetch->expects(self::once())
             ->method('__invoke')
             ->with(
+                'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
                 $workspace
             );
