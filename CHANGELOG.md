@@ -3,27 +3,24 @@
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
 
-## 1.14.1 - TBD
+## 1.14.1 - 2022-07-26
 
-### Added
 
-- Nothing.
+-----
 
-### Changed
+### Release Notes for [1.14.1](https://github.com/laminas/automatic-releases/milestone/38)
 
-- Nothing.
+1.14.x bugfix release (patch)
 
-### Deprecated
+### 1.14.1
 
-- Nothing.
+- Total issues resolved: **0**
+- Total pull requests resolved: **1**
+- Total contributors: **1**
 
-### Removed
+#### Bug
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
+ - [202: Make sure git `safe.directory` is disabled before removing `origin` remote](https://github.com/laminas/automatic-releases/pull/202) thanks to @Ocramius
 
 ## 1.14.1 - TBD
 
