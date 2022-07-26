@@ -31,6 +31,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetc
 
         $credentialStore = Filesystem\create_temporary_file();
 
+        Shell\execute('git', ['config', '--global', '--add', 'safe.directory', '*'], $repositoryRootDirectory);
         Shell\execute('git', ['config', 'credential.helper', 'store --file=' . $credentialStore], $repositoryRootDirectory);
         File\write($credentialStore, $uriWithCredentials->__toString());
         Shell\execute('git', ['remote', 'add', 'origin', $repositoryUri->__toString()], $repositoryRootDirectory);

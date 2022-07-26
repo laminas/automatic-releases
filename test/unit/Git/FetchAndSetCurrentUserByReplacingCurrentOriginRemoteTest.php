@@ -129,4 +129,20 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
             self::assertDoesNotMatchRegularExpression('/SUPERSECRET/m', $failure->getMessage());
         }
     }
+
+    public function testGlobalGitConfigurationIsAdaptedToAllowCheckedOutRepositoryUsage(): void
+    {
+        $sourceUri = $this->createMock(UriInterface::class);
+
+        $sourceUri->method('__toString')
+            ->willReturn($this->source);
+
+        (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
+            ->__invoke($sourceUri, $sourceUri, $this->destination);
+
+        self::assertSame(
+            '*',
+            Str\trim(Shell\execute('git', ['config', '--get', 'safe.directory'], $this->destination))
+        );
+    }
 }
