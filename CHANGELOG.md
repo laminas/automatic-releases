@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.14.0 - 2022-07-25
+## 1.14.0 - 2022-07-26
 
 
 -----
@@ -39,6 +39,51 @@ Feature release (minor)
 - Total issues resolved: **1**
 - Total pull requests resolved: **15**
 - Total contributors: **4**
+
+#### renovate
+
+ - [197: chore(deps): lock file maintenance](https://github.com/laminas/automatic-releases/pull/197) thanks to @renovate[bot]
+ - [196: chore(deps): update docker/setup-qemu-action action to v2](https://github.com/laminas/automatic-releases/pull/196) thanks to @renovate[bot]
+ - [195: chore(deps): update docker/setup-buildx-action action to v2](https://github.com/laminas/automatic-releases/pull/195) thanks to @renovate[bot]
+ - [194: chore(deps): update docker/login-action action to v2](https://github.com/laminas/automatic-releases/pull/194) thanks to @renovate[bot]
+ - [193: chore(deps): update docker/build-push-action action to v3](https://github.com/laminas/automatic-releases/pull/193) thanks to @renovate[bot]
+ - [190: chore(deps): update dependency monolog/monolog to v3](https://github.com/laminas/automatic-releases/pull/190) thanks to @renovate[bot]
+ - [189: chore(deps): update dependency azjezz/psl to v2](https://github.com/laminas/automatic-releases/pull/189) thanks to @renovate[bot]
+ - [188: chore(deps): update actions/checkout action to v3](https://github.com/laminas/automatic-releases/pull/188) thanks to @renovate[bot]
+ - [185: Configure Renovate](https://github.com/laminas/automatic-releases/pull/185) thanks to @renovate[bot]
+
+#### dependencies
+
+ - [184: build(deps): Bump guzzlehttp/guzzle from 7.4.4 to 7.4.5](https://github.com/laminas/automatic-releases/pull/184) thanks to @dependabot[bot]
+ - [183: build(deps): Bump guzzlehttp/guzzle from 7.4.3 to 7.4.4](https://github.com/laminas/automatic-releases/pull/183) thanks to @dependabot[bot]
+ - [182: build(deps): Bump guzzlehttp/guzzle from 7.3.0 to 7.4.3](https://github.com/laminas/automatic-releases/pull/182) thanks to @dependabot[bot]
+
+#### Enhancement
+
+ - [180: Add support for Git LFS](https://github.com/laminas/automatic-releases/pull/180) thanks to @snapshotpl
+ - [178: Prepare for Renovate with reusable workflows](https://github.com/laminas/automatic-releases/pull/178) thanks to @ghostwriter
+
+#### Enhancement,dependencies
+
+ - [172: add continuous integration action](https://github.com/laminas/automatic-releases/pull/172) thanks to @ghostwriter
+
+
+-----
+
+### Release Notes for [1.14.0](https://github.com/laminas/automatic-releases/milestone/37)
+
+Feature release (minor)
+
+### 1.14.0
+
+- Total issues resolved: **2**
+- Total pull requests resolved: **17**
+- Total contributors: **5**
+
+#### Bug
+
+ - [200: Fix #198 - make GIT's `safe.directory` `'*'` by default on repository fetch](https://github.com/laminas/automatic-releases/pull/200) thanks to @Ocramius
+ - [199: Use `git config credential.helper 'store --file=/tmp/file' for `git push`](https://github.com/laminas/automatic-releases/pull/199) thanks to @Ocramius
 
 #### renovate
 
