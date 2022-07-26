@@ -52,6 +52,11 @@ final class RepositoryName
         Psl\invariant(Str\lowercase($owner) === Str\lowercase($this->owner), 'Failed asserting that "%s" matches repository name owner.', $owner);
     }
 
+    public function uri(): UriInterface
+    {
+        return new Uri('https://@github.com/' . $this->owner . '/' . $this->name . '.git');
+    }
+
     /** @psalm-param non-empty-string $token */
     public function uriWithTokenAuthentication(string $token): UriInterface
     {

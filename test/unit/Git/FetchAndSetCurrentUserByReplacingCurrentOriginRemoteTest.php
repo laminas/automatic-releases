@@ -62,7 +62,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
             ->willReturn($this->source);
 
         (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
-            ->__invoke($sourceUri, $this->destination);
+            ->__invoke($sourceUri, $sourceUri, $this->destination);
 
         self::assertSame(
             'Mr. Magoo Set',
@@ -89,7 +89,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
         Shell\execute('git', ['remote', 'rm', 'origin'], $this->destination);
 
         (new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($this->variables))
-            ->__invoke($sourceUri, $this->destination);
+            ->__invoke($sourceUri, $sourceUri, $this->destination);
 
         self::assertSame(
             'Mr. Magoo Set',

@@ -17,6 +17,12 @@ final class RepositoryNameTest extends TestCase
         self::assertSame('foo', $repositoryName->owner());
         self::assertSame('bar', $repositoryName->name());
         self::assertSame(
+            'https://github.com/foo/bar.git',
+            $repositoryName
+                ->uri()
+                ->__toString()
+        );
+        self::assertSame(
             'https://token:x-oauth-basic@github.com/foo/bar.git',
             $repositoryName
                 ->uriWithTokenAuthentication('token')
