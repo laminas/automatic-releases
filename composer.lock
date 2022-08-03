@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49ced38f702d84fa33cc7d26e3e0e602",
+    "content-hash": "7284288a4b248037a798379e157cea53",
     "packages": [
         {
             "name": "azjezz/psl",
@@ -471,39 +471,39 @@
         },
         {
             "name": "jwage/changelog-generator",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jwage/changelog-generator.git",
-                "reference": "cd4d35ebfb78d6350c45ffc5a3445e53ed813a03"
+                "reference": "9f3aab427a27f0facf0a502d095dc6eb26210366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jwage/changelog-generator/zipball/cd4d35ebfb78d6350c45ffc5a3445e53ed813a03",
-                "reference": "cd4d35ebfb78d6350c45ffc5a3445e53ed813a03",
+                "url": "https://api.github.com/repos/jwage/changelog-generator/zipball/9f3aab427a27f0facf0a502d095dc6eb26210366",
+                "reference": "9f3aab427a27f0facf0a502d095dc6eb26210366",
                 "shasum": ""
             },
             "require": {
+                "composer-runtime-api": "^2.2.0",
                 "ext-mbstring": "*",
-                "laminas/laminas-diactoros": "^2.1.0",
-                "ocramius/package-versions": "^1.3.0 || ^2.0.0",
-                "php": "^7.4.0 || ^8.0.0",
-                "php-http/curl-client": "^2.0",
-                "php-http/discovery": "^1.6",
-                "php-http/httplug": "^2.0",
-                "psr/http-client": "^1.0",
-                "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.0",
-                "symfony/console": "^4.0.0 || ^5.0.0"
+                "laminas/laminas-diactoros": "^2.13.0",
+                "php": "^8.1.0",
+                "php-http/curl-client": "^2.2.1",
+                "php-http/discovery": "^1.14.3",
+                "php-http/httplug": "^2.3.0",
+                "psr/http-client": "^1.0.1",
+                "psr/http-factory": "^1.0.1",
+                "psr/http-message": "^1.0.1",
+                "symfony/console": "^5.0.0 || ^6.1.2"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^8.2.0",
+                "doctrine/coding-standard": "^9.0.0",
                 "phpstan/extension-installer": "^1.1.0",
-                "phpstan/phpstan": "^0.12.65",
-                "phpstan/phpstan-deprecation-rules": "^0.12.6",
-                "phpstan/phpstan-phpunit": "^0.12.17",
-                "phpstan/phpstan-strict-rules": "^0.12.7",
-                "phpunit/phpunit": "^9.5.0"
+                "phpstan/phpstan": "^1.8.2",
+                "phpstan/phpstan-deprecation-rules": "^1.0.0",
+                "phpstan/phpstan-phpunit": "^1.1.1",
+                "phpstan/phpstan-strict-rules": "^1.3.0",
+                "phpunit/phpunit": "^9.5.21"
             },
             "bin": [
                 "bin/changelog-generator"
@@ -537,9 +537,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jwage/changelog-generator/issues",
-                "source": "https://github.com/jwage/changelog-generator/tree/1.3.1"
+                "source": "https://github.com/jwage/changelog-generator/tree/1.4.0"
             },
-            "time": "2021-04-11T20:58:31+00:00"
+            "time": "2022-07-27T22:12:57+00:00"
         },
         {
             "name": "knplabs/github-api",
