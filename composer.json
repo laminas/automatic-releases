@@ -7,7 +7,7 @@
         "php": "~8.1.0",
         "azjezz/psl": "^2.0.3",
         "jwage/changelog-generator": "^1.4.0",
-        "laminas/laminas-diactoros": "^2.14.0",
+        "laminas/laminas-diactoros": "^2.15.0",
         "lcobucci/clock": "^2.2.0",
         "monolog/monolog": "^3.2.0",
         "ocramius/package-versions": "^2.5.1",
