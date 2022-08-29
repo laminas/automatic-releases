@@ -21,7 +21,7 @@
         "symfony/console": "^5.4.12"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^9.0.0",
+        "doctrine/coding-standard": "^10.0.0",
         "php-standard-library/psalm-plugin": "^2.0.2",
         "phpunit/phpunit": "^9.5.0",
         "psalm/plugin-phpunit": "^0.17.0",
