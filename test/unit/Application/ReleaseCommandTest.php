@@ -87,18 +87,19 @@ final class ReleaseCommandTest extends TestCase
             $this->createRelease,
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
-{
-    "milestone": {
-        "title": "1.2.3",
-        "number": 123
-    },
-    "repository": {
-        "full_name": "foo/bar"
-    },
-    "action": "closed"
-}
-JSON,
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.2.3",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
         );
 
         $this->branches = MergeTargetCandidateBranches::fromAllBranches(

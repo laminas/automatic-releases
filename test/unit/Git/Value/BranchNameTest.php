@@ -11,9 +11,7 @@ use Psl\Type\Exception\AssertException;
 
 final class BranchNameTest extends TestCase
 {
-    /**
-     * @dataProvider genericBranchNames
-     */
+    /** @dataProvider genericBranchNames */
     public function testAllowsAnyBranchName(string $inputName): void
     {
         $branch = BranchName::fromName($inputName);
@@ -44,9 +42,7 @@ final class BranchNameTest extends TestCase
         BranchName::fromName('');
     }
 
-    /**
-     * @dataProvider releaseBranches
-     */
+    /** @dataProvider releaseBranches */
     public function testDetectsReleaseBranchVersions(string $inputName, int $major, int $minor): void
     {
         $branch = BranchName::fromName($inputName);
@@ -75,9 +71,7 @@ final class BranchNameTest extends TestCase
         self::assertTrue(BranchName::fromName('foo')->equals(BranchName::fromName('foo')));
     }
 
-    /**
-     * @dataProvider versionEqualityProvider
-     */
+    /** @dataProvider versionEqualityProvider */
     public function testIsForVersion(string $milestoneName, string $branchName, bool $expected): void
     {
         self::assertSame(
@@ -104,9 +98,7 @@ final class BranchNameTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider newerVersionComparisonProvider
-     */
+    /** @dataProvider newerVersionComparisonProvider */
     public function testIsForNewerVersionThan(string $milestoneName, string $branchName, bool $expected): void
     {
         self::assertSame(
@@ -134,9 +126,7 @@ final class BranchNameTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider targetVersionProvider
-     */
+    /** @dataProvider targetVersionProvider */
     public function testTargetMinorReleaseVersion(string $branchName, string $expectedVersion): void
     {
         self::assertEquals(

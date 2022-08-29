@@ -8,9 +8,7 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 
 interface CheckoutBranch
 {
-    /**
-     * @psalm-param non-empty-string $repositoryDirectory
-     */
+    /** @psalm-param non-empty-string $repositoryDirectory */
     public function __invoke(
         string $repositoryDirectory,
         BranchName $branchName,

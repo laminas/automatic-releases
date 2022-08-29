@@ -44,9 +44,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         $this->logger          = $logger;
     }
 
-    /**
-     * @psalm-param non-empty-string $repositoryDirectory
-     */
+    /** @psalm-param non-empty-string $repositoryDirectory */
     public function __invoke(
         ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,

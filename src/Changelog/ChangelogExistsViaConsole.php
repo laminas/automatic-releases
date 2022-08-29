@@ -9,9 +9,7 @@ use Psl\Shell;
 
 class ChangelogExistsViaConsole implements ChangelogExists
 {
-    /**
-     * @param non-empty-string $repositoryDirectory
-     */
+    /** @param non-empty-string $repositoryDirectory */
     public function __invoke(
         BranchName $sourceBranch,
         string $repositoryDirectory,

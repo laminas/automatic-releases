@@ -10,9 +10,7 @@ use Psl;
 use Psl\Str;
 use RuntimeException;
 
-/**
- * @psalm-immutable
- */
+/** @psalm-immutable */
 class ChangelogReleaseNotes
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
@@ -22,9 +20,7 @@ class ChangelogReleaseNotes
     /** @psalm-var non-empty-string */
     private string $contents;
 
-    /**
-     * @psalm-param non-empty-string $changelogFile
-     */
+    /** @psalm-param non-empty-string $changelogFile */
     public static function writeChangelogFile(string $changelogFile, self $releaseNotes): void
     {
         // Nothing to do
@@ -44,9 +40,7 @@ class ChangelogReleaseNotes
         );
     }
 
-    /**
-     * @psalm-param non-empty-string $contents
-     */
+    /** @psalm-param non-empty-string $contents */
     public function __construct(
         string $contents,
         ?ChangelogEntry $changelogEntry = null,
@@ -59,9 +53,7 @@ class ChangelogReleaseNotes
         $this->changelogEntry = $changelogEntry;
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     public function contents(): string
     {
         return $this->contents;

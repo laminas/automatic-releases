@@ -51,11 +51,12 @@ final class RunGraphQLQueryTest extends TestCase
     {
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "data": {"foo": "bar"}
-}
-JSON,
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this
@@ -98,11 +99,12 @@ JSON,
         $validResponse = (new Response())
             ->withStatus($responseCode);
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "data": {"foo": "bar"}
-}
-JSON,
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this
@@ -152,12 +154,13 @@ JSON,
     {
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "errors": ["nope"],
-    "data": {"foo": "bar"}
-}
-JSON,
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "errors": ["nope"],
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this

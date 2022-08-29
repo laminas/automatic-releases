@@ -39,9 +39,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
         );
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     private function createMockRepositoryWithChangelog(): string
     {
         $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExists');

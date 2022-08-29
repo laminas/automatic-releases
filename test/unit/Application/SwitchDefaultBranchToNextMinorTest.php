@@ -69,18 +69,19 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
             $this->bumpChangelogVersion,
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
-{
-    "milestone": {
-        "title": "1.2.3",
-        "number": 123
-    },
-    "repository": {
-        "full_name": "foo/bar"
-    },
-    "action": "closed"
-}
-JSON,
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.2.3",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
         );
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
@@ -239,10 +240,10 @@ JSON,
         self::assertSame(0, $this->command->run(new ArrayInput([]), $output));
 
         self::assertSame(
-            <<<OUTPUT
-No stable branches found: cannot switch default branch
-
-OUTPUT
+            <<<'OUTPUT'
+            No stable branches found: cannot switch default branch
+            
+            OUTPUT
             ,
             $output->fetch(),
         );

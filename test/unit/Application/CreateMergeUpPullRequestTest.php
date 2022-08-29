@@ -77,18 +77,19 @@ final class CreateMergeUpPullRequestTest extends TestCase
             $this->createPullRequest,
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
-{
-    "milestone": {
-        "title": "1.2.3",
-        "number": 123
-    },
-    "repository": {
-        "full_name": "foo/bar"
-    },
-    "action": "closed"
-}
-JSON,
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.2.3",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
         );
 
         $this->branches = MergeTargetCandidateBranches::fromAllBranches(
@@ -245,10 +246,10 @@ JSON,
         self::assertSame(0, $this->command->run(new ArrayInput([]), $output));
 
         self::assertSame(
-            <<<OUTPUT
-No merge-up candidate for release 1.2.3 - skipping pull request creation
-
-OUTPUT
+            <<<'OUTPUT'
+            No merge-up candidate for release 1.2.3 - skipping pull request creation
+            
+            OUTPUT
             ,
             $output->fetch(),
         );

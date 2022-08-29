@@ -229,9 +229,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         $this->assertStringNotContainsString($existingChangelog, $contents);
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     private function createMockRepositoryWithChangelog(
         string $template,
         string $filename = 'CHANGELOG.md',

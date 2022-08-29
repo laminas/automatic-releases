@@ -172,9 +172,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         ]);
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     private function createMockRepositoryWithChangelog(
         string $template,
         string $filename = 'CHANGELOG.md',

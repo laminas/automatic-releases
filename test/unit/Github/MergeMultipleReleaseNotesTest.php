@@ -51,9 +51,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         $this->version        = SemVerVersion::fromMilestoneName('1.0.1');
     }
 
-    /**
-     * @psalm-suppress UnusedVariable
-     */
+    /** @psalm-suppress UnusedVariable */
     public function testIndicatesCannotCreateReleaseTextIfNoGeneratorCan(): void
     {
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */

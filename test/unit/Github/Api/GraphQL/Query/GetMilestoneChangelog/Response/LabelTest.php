@@ -48,9 +48,7 @@ final class LabelTest extends TestCase
         Label::fromPayload($payload);
     }
 
-    /**
-     * @return iterable<int, list<array<string, mixed>>>
-     */
+    /** @return iterable<int, list<array<string, mixed>>> */
     public function provideInvalidPayload(): iterable
     {
         yield [

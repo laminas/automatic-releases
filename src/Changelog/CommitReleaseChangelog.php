@@ -10,9 +10,7 @@ use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 interface CommitReleaseChangelog
 {
-    /**
-     * @psalm-param non-empty-string $repositoryDirectory
-     */
+    /** @psalm-param non-empty-string $repositoryDirectory */
     public function __invoke(
         ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,

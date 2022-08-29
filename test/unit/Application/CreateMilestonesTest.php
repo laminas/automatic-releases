@@ -16,9 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 
-/**
- * @covers \Laminas\AutomaticReleases\Application\Command\CreateMilestones
- */
+/** @covers \Laminas\AutomaticReleases\Application\Command\CreateMilestones */
 final class CreateMilestonesTest extends TestCase
 {
     /** @var LoadCurrentGithubEvent&MockObject */
@@ -45,7 +43,8 @@ final class CreateMilestonesTest extends TestCase
             $this->createMilestone,
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
             {
                 "milestone": {
                     "title": "1.2.3",
@@ -56,7 +55,7 @@ final class CreateMilestonesTest extends TestCase
                 },
                 "action": "closed"
             }
-        JSON,
+            JSON,
         );
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');

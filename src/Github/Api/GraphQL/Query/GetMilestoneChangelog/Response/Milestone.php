@@ -116,9 +116,7 @@ final class Milestone
         return $this->url;
     }
 
-    /**
-     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\all()} API is conditionally pure
-     */
+    /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\all()} API is conditionally pure */
     public function assertAllIssuesAreClosed(): void
     {
         Psl\invariant(Iter\all($this->entries, static function (IssueOrPullRequest $entry): bool {
