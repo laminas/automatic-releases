@@ -10,15 +10,11 @@ use Psr\Http\Message\UriInterface;
 
 final class Author
 {
-    /** @psalm-var non-empty-string */
-    private string $name;
-    private UriInterface $url;
-
     /** @psalm-param non-empty-string $name */
-    private function __construct(string $name, UriInterface $url)
-    {
-        $this->name = $name;
-        $this->url  = $url;
+    private function __construct(
+        private readonly string $name,
+        private readonly UriInterface $url,
+    ) {
     }
 
     /** @param array<string, mixed> $payload */

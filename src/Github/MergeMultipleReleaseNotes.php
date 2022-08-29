@@ -41,7 +41,7 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
 
         $releaseNotes = Iter\reduce(
             $items,
-            static fn (?ChangelogReleaseNotes $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item,
+            static fn (ChangelogReleaseNotes|null $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item,
             null,
         );
 

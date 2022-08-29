@@ -11,11 +11,8 @@ use function Psl\File\read;
 
 final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
 {
-    private EnvironmentVariables $variables;
-
-    public function __construct(EnvironmentVariables $variables)
+    public function __construct(private readonly EnvironmentVariables $variables)
     {
-        $this->variables = $variables;
     }
 
     public function __invoke(): MilestoneClosedEvent

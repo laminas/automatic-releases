@@ -19,32 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class SwitchDefaultBranchToNextMinor extends Command
 {
-    private Variables $variables;
-    private LoadCurrentGithubEvent $loadGithubEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeCandidates;
-    private Push $push;
-    private SetDefaultBranch $switchDefaultBranch;
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
-
     public function __construct(
-        Variables $variables,
-        LoadCurrentGithubEvent $loadGithubEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeCandidates,
-        Push $push,
-        SetDefaultBranch $switchDefaultBranch,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion,
+        private readonly Variables $variables,
+        private readonly LoadCurrentGithubEvent $loadGithubEvent,
+        private readonly Fetch $fetch,
+        private readonly GetMergeTargetCandidateBranches $getMergeCandidates,
+        private readonly Push $push,
+        private readonly SetDefaultBranch $switchDefaultBranch,
+        private readonly BumpAndCommitChangelogVersion $bumpChangelogVersion,
     ) {
         parent::__construct('laminas:automatic-releases:switch-default-branch-to-next-minor');
-
-        $this->variables            = $variables;
-        $this->loadGithubEvent      = $loadGithubEvent;
-        $this->fetch                = $fetch;
-        $this->getMergeCandidates   = $getMergeCandidates;
-        $this->push                 = $push;
-        $this->switchDefaultBranch  = $switchDefaultBranch;
-        $this->bumpChangelogVersion = $bumpChangelogVersion;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int

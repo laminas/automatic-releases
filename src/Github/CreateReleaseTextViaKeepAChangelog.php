@@ -34,13 +34,10 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         'Fixed',
     ];
 
-    private ChangelogExists $changelogExists;
-    private Clock $clock;
-
-    public function __construct(ChangelogExists $changelogExists, Clock $clock)
-    {
-        $this->changelogExists = $changelogExists;
-        $this->clock           = $clock;
+    public function __construct(
+        private readonly ChangelogExists $changelogExists,
+        private readonly Clock $clock,
+    ) {
     }
 
     public function __invoke(

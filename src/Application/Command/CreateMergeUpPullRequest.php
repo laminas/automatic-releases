@@ -23,35 +23,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CreateMergeUpPullRequest extends Command
 {
-    private Variables $variables;
-    private LoadCurrentGithubEvent $loadGithubEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeCandidates;
-    private GetGithubMilestone $getMilestone;
-    private CreateReleaseText $createReleaseText;
-    private Push $push;
-    private CreatePullRequest $createPullRequest;
-
     public function __construct(
-        Variables $variables,
-        LoadCurrentGithubEvent $loadGithubEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeCandidates,
-        GetGithubMilestone $getMilestone,
-        CreateReleaseText $createReleaseText,
-        Push $push,
-        CreatePullRequest $createPullRequest,
+        private readonly Variables $variables,
+        private readonly LoadCurrentGithubEvent $loadGithubEvent,
+        private readonly Fetch $fetch,
+        private readonly GetMergeTargetCandidateBranches $getMergeCandidates,
+        private readonly GetGithubMilestone $getMilestone,
+        private readonly CreateReleaseText $createReleaseText,
+        private readonly Push $push,
+        private readonly CreatePullRequest $createPullRequest,
     ) {
         parent::__construct('laminas:automatic-releases:create-merge-up-pull-request');
-
-        $this->variables          = $variables;
-        $this->loadGithubEvent    = $loadGithubEvent;
-        $this->fetch              = $fetch;
-        $this->getMergeCandidates = $getMergeCandidates;
-        $this->getMilestone       = $getMilestone;
-        $this->createReleaseText  = $createReleaseText;
-        $this->push               = $push;
-        $this->createPullRequest  = $createPullRequest;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int

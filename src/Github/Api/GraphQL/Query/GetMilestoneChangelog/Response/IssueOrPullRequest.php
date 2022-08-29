@@ -12,36 +12,19 @@ use Psr\Http\Message\UriInterface;
 /** @psalm-immutable */
 final class IssueOrPullRequest
 {
-    private int $number;
-    /** @psalm-var non-empty-string */
-    private string $title;
-    private Author $author;
     /**
-     * @var array<int, Label>
-     * @psalm-var list<Label>
-     */
-    private array $labels;
-    private bool $closed;
-    private UriInterface $url;
-
-    /**
+     * @param array<int, Label> $labels
      * @psalm-param non-empty-string $title
      * @psalm-param list<Label> $labels
      */
     private function __construct(
-        int $number,
-        string $title,
-        Author $author,
-        array $labels,
-        bool $closed,
-        UriInterface $url,
+        private readonly int $number,
+        private readonly string $title,
+        private readonly Author $author,
+        private readonly array $labels,
+        private readonly bool $closed,
+        private readonly UriInterface $url,
     ) {
-        $this->number = $number;
-        $this->title  = $title;
-        $this->author = $author;
-        $this->labels = $labels;
-        $this->closed = $closed;
-        $this->url    = $url;
     }
 
     /**

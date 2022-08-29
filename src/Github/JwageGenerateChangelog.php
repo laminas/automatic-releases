@@ -20,13 +20,10 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 final class JwageGenerateChangelog implements GenerateChangelog
 {
-    private ChangelogGenerator $changelogGenerator;
-    private GitHubCredentials $gitHubCredentials;
-
-    public function __construct(ChangelogGenerator $changelogGenerator, GitHubCredentials $gitHubCredentials)
-    {
-        $this->changelogGenerator = $changelogGenerator;
-        $this->gitHubCredentials  = $gitHubCredentials;
+    public function __construct(
+        private readonly ChangelogGenerator $changelogGenerator,
+        private readonly GitHubCredentials $gitHubCredentials,
+    ) {
     }
 
     public static function create(

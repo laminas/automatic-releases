@@ -20,19 +20,16 @@ use function preg_quote;
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
-### Release Notes for %release%
+        ### Release Notes for %release%
+        
+        %description%
+        
+        %changelogText%
+        
+        MARKDOWN;
 
-%description%
-
-%changelogText%
-
-MARKDOWN;
-
-    private GenerateChangelog $generateChangelog;
-
-    public function __construct(GenerateChangelog $generateChangelog)
+    public function __construct(private readonly GenerateChangelog $generateChangelog)
     {
-        $this->generateChangelog = $generateChangelog;
     }
 
     public function __invoke(

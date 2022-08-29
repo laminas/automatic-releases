@@ -44,7 +44,7 @@ final class EnvironmentVariablesTest extends TestCase
     {
         $originalValues = $this->originalValues;
 
-        Dict\map_with_key($originalValues, static function (string $key, ?string $value): void {
+        Dict\map_with_key($originalValues, static function (string $key, string|null $value): void {
             if ($value === null) {
                 Env\remove_var($key);
 

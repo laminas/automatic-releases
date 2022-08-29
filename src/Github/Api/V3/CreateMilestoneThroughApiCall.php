@@ -17,26 +17,13 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    private RequestFactoryInterface $messageFactory;
-
-    private ClientInterface $client;
-
-    /** @psalm-var non-empty-string */
-    private string $apiToken;
-
-    private LoggerInterface $logger;
-
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        RequestFactoryInterface $messageFactory,
-        ClientInterface $client,
-        string $apiToken,
-        LoggerInterface $logger,
+        private readonly RequestFactoryInterface $messageFactory,
+        private readonly ClientInterface $client,
+        private readonly string $apiToken,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->messageFactory = $messageFactory;
-        $this->client         = $client;
-        $this->apiToken       = $apiToken;
-        $this->logger         = $logger;
     }
 
     public function __invoke(RepositoryName $repository, SemVerVersion $version): void

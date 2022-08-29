@@ -12,11 +12,8 @@ use Psr\Http\Message\UriInterface;
 
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
-    private EnvironmentVariables $variables;
-
-    public function __construct(EnvironmentVariables $variables)
+    public function __construct(private readonly EnvironmentVariables $variables)
     {
-        $this->variables = $variables;
     }
 
     public function __invoke(

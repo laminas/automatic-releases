@@ -12,7 +12,7 @@ final class PushViaConsole implements Push
     public function __invoke(
         string $repositoryDirectory,
         string $symbol,
-        ?string $alias = null,
+        string|null $alias = null,
     ): void {
         if ($alias === null) {
             Shell\execute('git', ['push', 'origin', $symbol], $repositoryDirectory);

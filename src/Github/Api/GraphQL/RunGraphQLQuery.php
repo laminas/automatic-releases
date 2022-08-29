@@ -16,21 +16,12 @@ final class RunGraphQLQuery implements RunQuery
 {
     private const ENDPOINT = 'https://api.github.com/graphql';
 
-    private RequestFactoryInterface $messageFactory;
-
-    private ClientInterface $client;
-
-    private string $apiToken;
-
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        RequestFactoryInterface $messageFactory,
-        ClientInterface $client,
-        string $apiToken,
+        private readonly RequestFactoryInterface $messageFactory,
+        private readonly ClientInterface $client,
+        private readonly string $apiToken,
     ) {
-        $this->messageFactory = $messageFactory;
-        $this->client         = $client;
-        $this->apiToken       = $apiToken;
     }
 
     /** {@inheritDoc} */

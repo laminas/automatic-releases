@@ -15,11 +15,6 @@ class ChangelogReleaseNotes
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
 
-    private ?ChangelogEntry $changelogEntry;
-
-    /** @psalm-var non-empty-string */
-    private string $contents;
-
     /** @psalm-param non-empty-string $changelogFile */
     public static function writeChangelogFile(string $changelogFile, self $releaseNotes): void
     {
@@ -42,14 +37,13 @@ class ChangelogReleaseNotes
 
     /** @psalm-param non-empty-string $contents */
     public function __construct(
-        string $contents,
-        ?ChangelogEntry $changelogEntry = null,
+        private string $contents,
+        private ChangelogEntry|null $changelogEntry = null,
     ) {
         if ($changelogEntry) {
             $changelogEntry = clone $changelogEntry;
         }
 
-        $this->contents       = $contents;
         $this->changelogEntry = $changelogEntry;
     }
 

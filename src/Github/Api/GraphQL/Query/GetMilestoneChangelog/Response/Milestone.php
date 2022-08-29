@@ -14,37 +14,19 @@ use Psr\Http\Message\UriInterface;
 /** @psalm-immutable */
 final class Milestone
 {
-    private int $number;
-    private bool $closed;
-    /** @psalm-var non-empty-string */
-    private string $title;
-    private ?string $description;
-    /**
-     * @var array<int, IssueOrPullRequest>
-     * @psalm-var list<IssueOrPullRequest>
-     */
-    private array $entries;
-    private UriInterface $url;
-
     /**
      * @param array<int, IssueOrPullRequest> $entries
      * @psalm-param non-empty-string $title
      * @psalm-param list<IssueOrPullRequest> $entries
      */
     private function __construct(
-        int $number,
-        bool $closed,
-        string $title,
-        ?string $description,
-        array $entries,
-        UriInterface $url,
+        private readonly int $number,
+        private readonly bool $closed,
+        private readonly string $title,
+        private readonly string|null $description,
+        private readonly array $entries,
+        private readonly UriInterface $url,
     ) {
-        $this->number      = $number;
-        $this->closed      = $closed;
-        $this->title       = $title;
-        $this->description = $description;
-        $this->entries     = $entries;
-        $this->url         = $url;
     }
 
     /**
@@ -100,7 +82,7 @@ final class Milestone
         return $this->title;
     }
 
-    public function description(): ?string
+    public function description(): string|null
     {
         return $this->description;
     }

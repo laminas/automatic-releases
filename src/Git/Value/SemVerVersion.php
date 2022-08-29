@@ -10,15 +10,11 @@ use Psl\Regex;
 /** @psalm-immutable */
 final class SemVerVersion
 {
-    private int $major;
-    private int $minor;
-    private int $patch;
-
-    private function __construct(int $major, int $minor, int $patch)
-    {
-        $this->major = $major;
-        $this->minor = $minor;
-        $this->patch = $patch;
+    private function __construct(
+        private readonly int $major,
+        private readonly int $minor,
+        private readonly int $patch,
+    ) {
     }
 
     /**
