@@ -34,13 +34,10 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         'Fixed',
     ];
 
-    private ChangelogExists $changelogExists;
-    private Clock $clock;
-
-    public function __construct(ChangelogExists $changelogExists, Clock $clock)
-    {
-        $this->changelogExists = $changelogExists;
-        $this->clock           = $clock;
+    public function __construct(
+        private readonly ChangelogExists $changelogExists,
+        private readonly Clock $clock,
+    ) {
     }
 
     public function __invoke(
@@ -48,11 +45,11 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes {
         $changelogEntry = $this->fetchChangelogEntry(
             $this->fetchChangelogContentsFromBranch($sourceBranch, $repositoryDirectory),
-            $semVerVersion->fullReleaseName()
+            $semVerVersion->fullReleaseName(),
         );
 
         $contents = $changelogEntry->contents();
@@ -62,9 +59,9 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         return new ChangelogReleaseNotes(
             $this->updateReleaseDate(
                 $this->removeDefaultContents($contents),
-                $semVerVersion->fullReleaseName()
+                $semVerVersion->fullReleaseName(),
             ),
-            $changelogEntry
+            $changelogEntry,
         );
     }
 
@@ -73,7 +70,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             return false;
@@ -83,7 +80,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
             $changelog = (new ChangelogParser())
                 ->findChangelogForVersion(
                     $this->fetchChangelogContentsFromBranch($sourceBranch, $repositoryDirectory),
-                    $semVerVersion->fullReleaseName()
+                    $semVerVersion->fullReleaseName(),
                 );
 
             return ! Str\is_empty($changelog);
@@ -99,7 +96,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
      */
     private function fetchChangelogContentsFromBranch(
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): string {
         $contents = Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);
 
@@ -140,7 +137,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
                 "/\n\#{3} " . $section . "\n\n- Nothing.\n/s",
                 '',
             ),
-            $changelog
+            $changelog,
         );
 
         return Type\non_empty_string()->assert($contents);

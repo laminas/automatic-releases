@@ -22,8 +22,8 @@ class ChangelogExistsViaConsoleTest extends TestCase
         self::assertFalse(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('0.99.x'),
-                $workingDir
-            )
+                $workingDir,
+            ),
         );
     }
 
@@ -34,14 +34,12 @@ class ChangelogExistsViaConsoleTest extends TestCase
         self::assertTrue(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('1.0.x'),
-                $workingDir
-            )
+                $workingDir,
+            ),
         );
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     private function createMockRepositoryWithChangelog(): string
     {
         $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'ChangelogExists');
@@ -78,7 +76,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
                 
                 - Nothing.
                 
-                CHANGELOG
+                CHANGELOG,
         );
 
         Shell\execute('git', ['init', '.'], $repo);

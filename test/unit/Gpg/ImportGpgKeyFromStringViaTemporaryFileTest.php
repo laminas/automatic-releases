@@ -18,7 +18,7 @@ final class ImportGpgKeyFromStringViaTemporaryFileTest extends TestCase
         self::assertEquals(
             SecretKeyId::fromBase16String('8CA5C026AE941316'),
             (new ImportGpgKeyFromStringViaTemporaryFile())
-                ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc'))
+                ->__invoke(read(__DIR__ . '/../../asset/dummy-gpg-key.asc')),
         );
     }
 }

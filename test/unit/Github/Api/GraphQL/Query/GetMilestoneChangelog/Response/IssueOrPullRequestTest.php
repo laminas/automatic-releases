@@ -47,7 +47,7 @@ final class IssueOrPullRequestTest extends TestCase
                 'login' => 'Magoo',
                 'url'   => 'https://example.com/author',
             ]),
-            $issue->author()
+            $issue->author(),
         );
         self::assertEquals(
             [
@@ -62,7 +62,7 @@ final class IssueOrPullRequestTest extends TestCase
                     'url'   => 'https://example.com/question',
                 ]),
             ],
-            $issue->labels()
+            $issue->labels(),
         );
     }
 
@@ -103,7 +103,7 @@ final class IssueOrPullRequestTest extends TestCase
                 'login' => 'Magoo',
                 'url'   => 'http://example.com/author',
             ]),
-            $issue->author()
+            $issue->author(),
         );
         self::assertEquals(
             [
@@ -118,7 +118,7 @@ final class IssueOrPullRequestTest extends TestCase
                     'url'   => 'http://example.com/question',
                 ]),
             ],
-            $issue->labels()
+            $issue->labels(),
         );
     }
 }

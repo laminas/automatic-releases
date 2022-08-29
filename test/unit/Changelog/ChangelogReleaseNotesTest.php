@@ -19,9 +19,7 @@ use RuntimeException;
 use function Psl\File\read;
 use function Psl\File\write;
 
-/**
- * @covers \Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes
- */
+/** @covers \Laminas\AutomaticReleases\Changelog\ChangelogReleaseNotes */
 class ChangelogReleaseNotesTest extends TestCase
 {
     public function testInitialContentsAreThoseProvidedToConstructor(): void
@@ -119,7 +117,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $this->assertNotSame($second, $merged);
         $this->assertMatchesRegularExpression(
             '/' . $original->contents() . '.*' . $second->contents() . '/s',
-            $merged->contents()
+            $merged->contents(),
         );
     }
 
@@ -150,13 +148,11 @@ class ChangelogReleaseNotesTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider releaseNotesProvider
-     */
+    /** @dataProvider releaseNotesProvider */
     public function testMergedInstanceContainsChangelogEntryFromTheInstanceThatHadOne(
         ChangelogReleaseNotes $original,
         ChangelogReleaseNotes $secondary,
-        ChangelogEntry $expectedEntry
+        ChangelogEntry $expectedEntry,
     ): void {
         $merged = $original->merge($secondary);
 

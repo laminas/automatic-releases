@@ -15,17 +15,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CreateMilestones extends Command
 {
-    private LoadCurrentGithubEvent $loadEvent;
-    private CreateMilestone $createMilestone;
-
     public function __construct(
-        LoadCurrentGithubEvent $loadEvent,
-        CreateMilestone $createMilestone
+        private readonly LoadCurrentGithubEvent $loadEvent,
+        private readonly CreateMilestone $createMilestone,
     ) {
         parent::__construct('laminas:automatic-releases:create-milestones');
-
-        $this->loadEvent       = $loadEvent;
-        $this->createMilestone = $createMilestone;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int

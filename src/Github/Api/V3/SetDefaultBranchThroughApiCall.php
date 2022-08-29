@@ -16,31 +16,22 @@ final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    private RequestFactoryInterface $messageFactory;
-
-    private ClientInterface $client;
-
-    private string $apiToken;
-
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        RequestFactoryInterface $messageFactory,
-        ClientInterface $client,
-        string $apiToken
+        private readonly RequestFactoryInterface $messageFactory,
+        private readonly ClientInterface $client,
+        private readonly string $apiToken,
     ) {
-        $this->messageFactory = $messageFactory;
-        $this->client         = $client;
-        $this->apiToken       = $apiToken;
     }
 
     public function __invoke(
         RepositoryName $repository,
-        BranchName $defaultBranch
+        BranchName $defaultBranch,
     ): void {
         $request = $this->messageFactory
             ->createRequest(
                 'PATCH',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name()
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name(),
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

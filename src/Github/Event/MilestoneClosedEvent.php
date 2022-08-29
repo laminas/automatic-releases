@@ -12,18 +12,11 @@ use Psl\Type;
 /** @psalm-immutable */
 final class MilestoneClosedEvent
 {
-    private SemVerVersion $version;
-    private RepositoryName $repository;
-    private int $milestoneNumber;
-
     private function __construct(
-        SemVerVersion $version,
-        RepositoryName $repository,
-        int $milestoneNumber
+        private readonly SemVerVersion $version,
+        private readonly RepositoryName $repository,
+        private readonly int $milestoneNumber,
     ) {
-        $this->version         = $version;
-        $this->repository      = $repository;
-        $this->milestoneNumber = $milestoneNumber;
     }
 
     public static function fromEventJson(string $json): self
@@ -42,7 +35,7 @@ final class MilestoneClosedEvent
         return new self(
             SemVerVersion::fromMilestoneName($event['milestone']['title']),
             RepositoryName::fromFullName($event['repository']['full_name']),
-            $event['milestone']['number']
+            $event['milestone']['number'],
         );
     }
 

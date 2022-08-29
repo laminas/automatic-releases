@@ -63,7 +63,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
-            $this->logger
+            $this->logger,
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
@@ -99,8 +99,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 __DIR__,
                 SemVerVersion::fromMilestoneName('0.99.99'),
                 BranchName::fromName('0.99.x'),
-                $this->key
-            )
+                $this->key,
+            ),
         );
     }
 
@@ -138,8 +138,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 $branch,
-                $this->key
-            )
+                $this->key,
+            ),
         );
     }
 
@@ -171,7 +171,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 - Nothing.
                 
                 CHANGELOG,
-            $this->frozenClock->now()->format('Y-m-d')
+            $this->frozenClock->now()->format('Y-m-d'),
         ));
         $repositoryPath    = $this->createMockRepositoryWithChangelog($existingChangelog);
         $checkout          = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
@@ -195,7 +195,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $this->equalTo($checkout),
                 $this->equalTo($sourceBranch),
                 $this->equalTo('CHANGELOG.md'),
-                $this->stringContains('1.0.0 readiness')
+                $this->stringContains('1.0.0 readiness'),
             );
 
         $this->push
@@ -212,8 +212,8 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 $checkout,
                 SemVerVersion::fromMilestoneName('1.0.0'),
                 BranchName::fromName('1.0.x'),
-                $this->key
-            )
+                $this->key,
+            ),
         );
 
         $changelogFile = $checkout . '/CHANGELOG.md';
@@ -223,18 +223,16 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
                 Vec\values(Dict\take(Str\split(self::READY_CHANGELOG, "\n"), 4)),
                 "\n",
             ),
-            $contents
+            $contents,
         );
         $this->assertStringContainsString($expectedChangelog, $contents);
         $this->assertStringNotContainsString($existingChangelog, $contents);
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     private function createMockRepositoryWithChangelog(
         string $template,
-        string $filename = 'CHANGELOG.md'
+        string $filename = 'CHANGELOG.md',
     ): string {
         $repo = Type\non_empty_string()
             ->assert(Filesystem\create_temporary_file(Env\temp_dir(), 'ReleaseChangelogViaKeepAChangelog'));
@@ -243,7 +241,7 @@ class ReleaseChangelogViaKeepAChangelogTest extends TestCase
         Filesystem\create_directory($repo);
         write(
             $repo . '/' . $filename,
-            $template
+            $template,
         );
 
         Shell\execute('git', ['init', '.'], $repo);

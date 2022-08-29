@@ -12,17 +12,14 @@ use Psr\Http\Message\UriInterface;
 
 final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
-    private EnvironmentVariables $variables;
-
-    public function __construct(EnvironmentVariables $variables)
+    public function __construct(private readonly EnvironmentVariables $variables)
     {
-        $this->variables = $variables;
     }
 
     public function __invoke(
         UriInterface $repositoryUri,
         UriInterface $uriWithCredentials,
-        string $repositoryRootDirectory
+        string $repositoryRootDirectory,
     ): void {
         Shell\execute('git', ['config', '--global', '--add', 'safe.directory', '*'], $repositoryRootDirectory);
 

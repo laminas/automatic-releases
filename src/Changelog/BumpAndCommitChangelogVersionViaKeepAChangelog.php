@@ -25,24 +25,13 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         Updates the %s file to add a changelog entry for a new %s version.
         COMMIT;
 
-    private ChangelogExists $changelogExists;
-    private CheckoutBranch $checkoutBranch;
-    private CommitFile $commitFile;
-    private Push $push;
-    private LoggerInterface $logger;
-
     public function __construct(
-        ChangelogExists $changelogExists,
-        CheckoutBranch $checkoutBranch,
-        CommitFile $commitFile,
-        Push $push,
-        LoggerInterface $logger
+        private readonly ChangelogExists $changelogExists,
+        private readonly CheckoutBranch $checkoutBranch,
+        private readonly CommitFile $commitFile,
+        private readonly Push $push,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->changelogExists = $changelogExists;
-        $this->checkoutBranch  = $checkoutBranch;
-        $this->commitFile      = $commitFile;
-        $this->push            = $push;
-        $this->logger          = $logger;
     }
 
     public function __invoke(
@@ -50,7 +39,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
@@ -76,7 +65,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $keyId,
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
@@ -85,7 +74,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             'BumpAndCommitChangelogVersion: bumped %s to version %s in branch %s',
             self::CHANGELOG_FILE,
             $newVersion,
-            $sourceBranch->name()
+            $sourceBranch->name(),
         ));
     }
 }

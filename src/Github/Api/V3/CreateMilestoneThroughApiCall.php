@@ -17,26 +17,13 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    private RequestFactoryInterface $messageFactory;
-
-    private ClientInterface $client;
-
-    /** @psalm-var non-empty-string */
-    private string $apiToken;
-
-    private LoggerInterface $logger;
-
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        RequestFactoryInterface $messageFactory,
-        ClientInterface $client,
-        string $apiToken,
-        LoggerInterface $logger
+        private readonly RequestFactoryInterface $messageFactory,
+        private readonly ClientInterface $client,
+        private readonly string $apiToken,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->messageFactory = $messageFactory;
-        $this->client         = $client;
-        $this->apiToken       = $apiToken;
-        $this->logger         = $logger;
     }
 
     public function __invoke(RepositoryName $repository, SemVerVersion $version): void
@@ -45,13 +32,13 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             '[CreateMilestoneThroughApiCall] Creating milestone "%s" for "%s/%s"',
             $version->fullReleaseName(),
             $repository->owner(),
-            $repository->name()
+            $repository->name(),
         ));
 
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/milestones'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/milestones',
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')
@@ -76,9 +63,9 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             $this->logger->error(
                 Str\format(
                     '[CreateMilestoneThroughApiCall] Failed to create milestone "%s"',
-                    $version->fullReleaseName()
+                    $version->fullReleaseName(),
                 ),
-                ['exception' => $responseData]
+                ['exception' => $responseData],
             );
 
             throw CreateMilestoneFailed::forVersion($version->fullReleaseName());
@@ -88,7 +75,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 
         $this->logger->info(Str\format(
             '[CreateMilestoneThroughApiCall] Milestone "%s" created',
-            $version->fullReleaseName()
+            $version->fullReleaseName(),
         ));
     }
 

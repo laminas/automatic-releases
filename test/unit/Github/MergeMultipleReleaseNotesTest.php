@@ -51,9 +51,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
         $this->version        = SemVerVersion::fromMilestoneName('1.0.1');
     }
 
-    /**
-     * @psalm-suppress UnusedVariable
-     */
+    /** @psalm-suppress UnusedVariable */
     public function testIndicatesCannotCreateReleaseTextIfNoGeneratorCan(): void
     {
         /** @psalm-var non-empty-list<CreateReleaseText> $generators */
@@ -70,7 +68,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                     self::equalTo($this->repositoryName),
                     self::equalTo($this->version),
                     self::equalTo($this->sourceBranch),
-                    self::equalTo($this->repositoryPath)
+                    self::equalTo($this->repositoryPath),
                 )
                 ->willReturn(false);
             $generators[] = $generator;
@@ -84,8 +82,8 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                 $this->repositoryName,
                 $this->version,
                 $this->sourceBranch,
-                $this->repositoryPath
-            )
+                $this->repositoryPath,
+            ),
         );
     }
 
@@ -107,7 +105,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                         $this->equalTo($this->repositoryName),
                         $this->equalTo($this->version),
                         $this->equalTo($this->sourceBranch),
-                        $this->equalTo($this->repositoryPath)
+                        $this->equalTo($this->repositoryPath),
                     )
                     ->willReturn(false);
                 $generators[] = $generator;
@@ -130,7 +128,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                     $this->equalTo($this->repositoryName),
                     $this->equalTo($this->version),
                     $this->equalTo($this->sourceBranch),
-                    $this->equalTo($this->repositoryPath)
+                    $this->equalTo($this->repositoryPath),
                 )
                 ->willReturn(true);
             $generators[] = $generator;
@@ -144,8 +142,8 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                 $this->repositoryName,
                 $this->version,
                 $this->sourceBranch,
-                $this->repositoryPath
-            )
+                $this->repositoryPath,
+            ),
         );
     }
 
@@ -173,7 +171,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                             $this->equalTo($this->repositoryName),
                             $this->equalTo($this->version),
                             $this->equalTo($this->sourceBranch),
-                            $this->equalTo($this->repositoryPath)
+                            $this->equalTo($this->repositoryPath),
                         )
                         ->willReturn(true);
                     $generator
@@ -184,7 +182,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                             $this->equalTo($this->repositoryName),
                             $this->equalTo($this->version),
                             $this->equalTo($this->sourceBranch),
-                            $this->equalTo($this->repositoryPath)
+                            $this->equalTo($this->repositoryPath),
                         )
                         ->willReturn(new ChangelogReleaseNotes('GENERATOR ' . $index));
                     break;
@@ -197,7 +195,7 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                             $this->equalTo($this->repositoryName),
                             $this->equalTo($this->version),
                             $this->equalTo($this->sourceBranch),
-                            $this->equalTo($this->repositoryPath)
+                            $this->equalTo($this->repositoryPath),
                         )
                         ->willReturn(false);
                     $generator
@@ -230,8 +228,8 @@ final class MergeMultipleReleaseNotesTest extends TestCase
                 $this->repositoryName,
                 $this->version,
                 $this->sourceBranch,
-                $this->repositoryPath
-            )->contents()
+                $this->repositoryPath,
+            )->contents(),
         );
     }
 }

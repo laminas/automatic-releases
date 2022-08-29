@@ -11,6 +11,6 @@ interface CreateMilestone
 {
     public function __invoke(
         RepositoryName $repository,
-        SemVerVersion $version
+        SemVerVersion $version,
     ): void;
 }

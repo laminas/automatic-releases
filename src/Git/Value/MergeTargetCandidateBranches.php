@@ -13,18 +13,11 @@ use function array_search;
 final class MergeTargetCandidateBranches
 {
     /**
-     * @var BranchName[] branches that can be used for releases, sorted in ascending version number
-     * @psalm-var list<BranchName>
-     */
-    private array $sortedBranches;
-
-    /**
-     * @param BranchName[] $sortedBranches
+     * @param BranchName[] $sortedBranches branches that can be used for releases, sorted in ascending version number
      * @psalm-param list<BranchName> $sortedBranches
      */
-    private function __construct(array $sortedBranches)
+    private function __construct(private readonly array $sortedBranches)
     {
-        $this->sortedBranches = $sortedBranches;
     }
 
     public static function fromAllBranches(BranchName ...$branches): self
@@ -40,7 +33,7 @@ final class MergeTargetCandidateBranches
         return new self($mergeTargetBranches);
     }
 
-    public function targetBranchFor(SemVerVersion $version): ?BranchName
+    public function targetBranchFor(SemVerVersion $version): BranchName|null
     {
         foreach ($this->sortedBranches as $branch) {
             if ($branch->isForNewerVersionThan($version)) {
@@ -55,7 +48,7 @@ final class MergeTargetCandidateBranches
         return null;
     }
 
-    public function branchToMergeUp(SemVerVersion $version): ?BranchName
+    public function branchToMergeUp(SemVerVersion $version): BranchName|null
     {
         $targetBranch = $this->targetBranchFor($version);
 
@@ -77,7 +70,7 @@ final class MergeTargetCandidateBranches
             : $branch;
     }
 
-    public function newestReleaseBranch(): ?BranchName
+    public function newestReleaseBranch(): BranchName|null
     {
         return Iter\first(Vec\reverse($this->sortedBranches));
     }
@@ -90,7 +83,7 @@ final class MergeTargetCandidateBranches
             Vec\reverse($this->sortedBranches),
             static function (BranchName $branch) use ($nextMinor): bool {
                 return $nextMinor->lessThanEqual($branch->targetMinorReleaseVersion());
-            }
+            },
         );
 
         return Iter\first($futureReleaseBranch) ?? $nextMinor->targetReleaseBranchName();

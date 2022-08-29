@@ -17,7 +17,7 @@ final class CommitFileViaConsole implements CommitFile
         BranchName $sourceBranch,
         string $filename,
         string $commitMessage,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         $this->assertWeAreOnBranch($sourceBranch, $repositoryDirectory, $filename);
 
@@ -32,7 +32,7 @@ final class CommitFileViaConsole implements CommitFile
     private function assertWeAreOnBranch(
         BranchName $expectedBranch,
         string $repositoryDirectory,
-        string $filename
+        string $filename,
     ): void {
         $output = Str\trim(Shell\execute('git', ['branch', '--show-current'], $repositoryDirectory));
 
@@ -40,7 +40,7 @@ final class CommitFileViaConsole implements CommitFile
             'CommitFile: Cannot commit file %s to branch %s, as a different branch is currently checked out (%s).',
             $filename,
             $expectedBranch->name(),
-            $output
+            $output,
         ));
     }
 }

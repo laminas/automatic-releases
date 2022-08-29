@@ -10,21 +10,12 @@ use Psl;
 use Psl\Str;
 use RuntimeException;
 
-/**
- * @psalm-immutable
- */
+/** @psalm-immutable */
 class ChangelogReleaseNotes
 {
     private const CONCATENATION_STRING = "\n\n-----\n\n";
 
-    private ?ChangelogEntry $changelogEntry;
-
-    /** @psalm-var non-empty-string */
-    private string $contents;
-
-    /**
-     * @psalm-param non-empty-string $changelogFile
-     */
+    /** @psalm-param non-empty-string $changelogFile */
     public static function writeChangelogFile(string $changelogFile, self $releaseNotes): void
     {
         // Nothing to do
@@ -40,28 +31,23 @@ class ChangelogReleaseNotes
         $editor->update(
             $changelogFile,
             $changelogEntry,
-            $releaseNotes->changelogEntry
+            $releaseNotes->changelogEntry,
         );
     }
 
-    /**
-     * @psalm-param non-empty-string $contents
-     */
+    /** @psalm-param non-empty-string $contents */
     public function __construct(
-        string $contents,
-        ?ChangelogEntry $changelogEntry = null
+        private string $contents,
+        private ChangelogEntry|null $changelogEntry = null,
     ) {
         if ($changelogEntry) {
             $changelogEntry = clone $changelogEntry;
         }
 
-        $this->contents       = $contents;
         $this->changelogEntry = $changelogEntry;
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
+    /** @psalm-return non-empty-string */
     public function contents(): string
     {
         return $this->contents;
@@ -73,7 +59,7 @@ class ChangelogReleaseNotes
         if ($this->changelogEntry && $next->changelogEntry) {
             throw new RuntimeException(
                 'Aborting: Both current release notes and next contain a ChangelogEntry;'
-                . ' only one CreateReleaseText implementation should resolve one.'
+                . ' only one CreateReleaseText implementation should resolve one.',
             );
         }
 

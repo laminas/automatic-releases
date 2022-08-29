@@ -10,9 +10,7 @@ use Psl\Exception\InvariantViolationException;
 
 final class SecretKeyIdTest extends TestCase
 {
-    /**
-     * @dataProvider invalidKeys
-     */
+    /** @dataProvider invalidKeys */
     public function testRejectsInvalidKeyIds(string $invalid): void
     {
         $this->expectException(InvariantViolationException::class);
@@ -32,15 +30,13 @@ final class SecretKeyIdTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider validKeys
-     */
+    /** @dataProvider validKeys */
     public function testAcceptsValidKeyIds(string $valid): void
     {
         self::assertSame(
             $valid,
             SecretKeyId::fromBase16String($valid)
-                       ->id()
+                       ->id(),
         );
     }
 

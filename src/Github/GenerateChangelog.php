@@ -11,6 +11,6 @@ interface GenerateChangelog
 {
     public function __invoke(
         RepositoryName $repositoryName,
-        SemVerVersion $semVerVersion
+        SemVerVersion $semVerVersion,
     ): string;
 }

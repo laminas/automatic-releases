@@ -20,7 +20,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
             BranchName::fromName('master'),
             BranchName::fromName('1.0'),
             BranchName::fromName('a/b/c'), // filtered out
-            BranchName::fromName('1.5')
+            BranchName::fromName('1.5'),
         );
 
         self::assertNull($branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.99.0')));
@@ -31,27 +31,27 @@ final class MergeTargetCandidateBranchesTest extends TestCase
 
         self::assertEquals(
             BranchName::fromName('1.2'),
-            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.2.3'))
+            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.2.3')),
         );
         self::assertEquals(
             BranchName::fromName('1.4'), // note: there is no 1.3
-            $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.2.3'))
+            $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.2.3')),
         );
 
         self::assertEquals(
             BranchName::fromName('1.5'),
-            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.5.99'))
+            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.5.99')),
         );
         self::assertNull($branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.5.99')));
         self::assertNull($branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.6.0')));
 
         self::assertEquals(
             BranchName::fromName('1.0'),
-            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.0.1'))
+            $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.0.1')),
         );
         self::assertEquals(
             BranchName::fromName('1.1'),
-            $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.0.1'))
+            $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.0.1')),
         );
     }
 
@@ -60,28 +60,28 @@ final class MergeTargetCandidateBranchesTest extends TestCase
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1'),
             BranchName::fromName('1.2'),
-            BranchName::fromName('potato')
+            BranchName::fromName('potato'),
         );
 
         self::assertNull(
             $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.6.0')),
-            'Cannot release next minor, since next minor branch does not exist'
+            'Cannot release next minor, since next minor branch does not exist',
         );
         self::assertNull(
             $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.6.0')),
-            'Cannot merge up next minor, since no next branch exists'
+            'Cannot merge up next minor, since no next branch exists',
         );
         self::assertNull(
             $branches->targetBranchFor(SemVerVersion::fromMilestoneName('2.0.0')),
-            'Cannot release next major, since next major branch does not exist'
+            'Cannot release next major, since next major branch does not exist',
         );
         self::assertNull(
             $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('2.0.0')),
-            'Cannot merge up next major, since no next branch exists'
+            'Cannot merge up next major, since no next branch exists',
         );
         self::assertNull(
             $branches->branchToMergeUp(SemVerVersion::fromMilestoneName('1.2.1')),
-            'Cannot merge up: no master branch exists'
+            'Cannot merge up: no master branch exists',
         );
     }
 
@@ -90,12 +90,12 @@ final class MergeTargetCandidateBranchesTest extends TestCase
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.2.x'),
-            BranchName::fromName('master')
+            BranchName::fromName('master'),
         );
 
         self::assertNull(
             $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.1.0')),
-            '1.1.0 can\'t have a target branch, since 1.2.x already exists'
+            '1.1.0 can\'t have a target branch, since 1.2.x already exists',
         );
     }
 
@@ -104,12 +104,12 @@ final class MergeTargetCandidateBranchesTest extends TestCase
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.0.x'),
-            BranchName::fromName('master')
+            BranchName::fromName('master'),
         );
 
         self::assertNull(
             $branches->targetBranchFor(SemVerVersion::fromMilestoneName('1.1.1')),
-            '1.1.1 can\'t have a target branch, since 1.1.x doesn\'t exist, but patches require a release branch'
+            '1.1.1 can\'t have a target branch, since 1.1.x doesn\'t exist, but patches require a release branch',
         );
     }
 
@@ -123,39 +123,39 @@ final class MergeTargetCandidateBranchesTest extends TestCase
 
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.0.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.0.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.1'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.1')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.2.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.2.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.1'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.1')),
         );
         self::assertEquals(
             BranchName::fromName('1.5.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.4.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.4.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.6.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.5.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.5.0')),
         );
         self::assertEquals(
             BranchName::fromName('2.1.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('2.0.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('2.0.0')),
         );
     }
 
@@ -170,39 +170,39 @@ final class MergeTargetCandidateBranchesTest extends TestCase
 
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.0.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.0.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.1'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.1')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.2.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.2.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.4.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.1'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.1')),
         );
         self::assertEquals(
             BranchName::fromName('1.5.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.4.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.4.0')),
         );
         self::assertEquals(
             BranchName::fromName('1.6.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.5.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.5.0')),
         );
         self::assertEquals(
             BranchName::fromName('2.1.x'),
-            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('2.0.0'))
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('2.0.0')),
         );
     }
 
@@ -232,7 +232,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
                 BranchName::fromName('1.1'),
                 BranchName::fromName('1.1.x'),
                 BranchName::fromName('1.2.x'),
-            )->newestReleaseBranch()
+            )->newestReleaseBranch(),
         );
 
         self::assertEquals(
@@ -242,7 +242,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
                 BranchName::fromName('1.1.x'),
                 BranchName::fromName('1.4.x'),
                 BranchName::fromName('1.2.x'),
-            )->newestReleaseBranch()
+            )->newestReleaseBranch(),
         );
 
         self::assertEquals(
@@ -253,7 +253,7 @@ final class MergeTargetCandidateBranchesTest extends TestCase
                 BranchName::fromName('1.4.x'),
                 BranchName::fromName('1.2.x'),
                 BranchName::fromName('2.0.x'),
-            )->newestReleaseBranch()
+            )->newestReleaseBranch(),
         );
 
         self::assertEquals(
@@ -262,15 +262,15 @@ final class MergeTargetCandidateBranchesTest extends TestCase
                 BranchName::fromName('1.1.x'),
                 BranchName::fromName('2.0.x'),
                 BranchName::fromName('master'),
-            )->newestReleaseBranch()
+            )->newestReleaseBranch(),
         );
 
         self::assertNull(
             MergeTargetCandidateBranches::fromAllBranches(
                 BranchName::fromName('foo'),
                 BranchName::fromName('develop'),
-                BranchName::fromName('master')
-            )->newestReleaseBranch()
+                BranchName::fromName('master'),
+            )->newestReleaseBranch(),
         );
     }
 }

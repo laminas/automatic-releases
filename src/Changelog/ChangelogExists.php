@@ -8,11 +8,9 @@ use Laminas\AutomaticReleases\Git\Value\BranchName;
 
 interface ChangelogExists
 {
-    /**
-     * @param non-empty-string $repositoryDirectory
-     */
+    /** @param non-empty-string $repositoryDirectory */
     public function __invoke(
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool;
 }

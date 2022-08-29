@@ -12,15 +12,13 @@ use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 
 interface CreateReleaseText
 {
-    /**
-     * @psalm-param non-empty-string $repositoryDirectory
-     */
+    /** @psalm-param non-empty-string $repositoryDirectory */
     public function __invoke(
         Milestone $milestone,
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes;
 
     /** @psalm-param non-empty-string $repositoryDirectory */
@@ -29,6 +27,6 @@ interface CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool;
 }

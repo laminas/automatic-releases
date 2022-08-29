@@ -41,7 +41,7 @@ final class CreatePullRequestTest extends TestCase
         $this->createPullRequest = new CreatePullRequestThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
     }
 
@@ -60,7 +60,7 @@ final class CreatePullRequestTest extends TestCase
             {
                 "url": "http://another-domain.com/the-pr"
             }
-            JSON
+            JSON,
         );
         $this->httpClient
             ->expects(self::once())
@@ -73,7 +73,7 @@ final class CreatePullRequestTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -87,7 +87,7 @@ final class CreatePullRequestTest extends TestCase
                         "draft": false
                     }
                     JSON,
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -99,7 +99,7 @@ final class CreatePullRequestTest extends TestCase
             BranchName::fromName('the/source-branch'),
             BranchName::fromName('the/target-branch'),
             'the-title',
-            'the-body'
+            'the-body',
         );
     }
 }

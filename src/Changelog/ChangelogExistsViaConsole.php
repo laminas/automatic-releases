@@ -9,12 +9,10 @@ use Psl\Shell;
 
 class ChangelogExistsViaConsole implements ChangelogExists
 {
-    /**
-     * @param non-empty-string $repositoryDirectory
-     */
+    /** @param non-empty-string $repositoryDirectory */
     public function __invoke(
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         try {
             Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);

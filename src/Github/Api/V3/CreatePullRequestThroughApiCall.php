@@ -16,21 +16,12 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
 {
     private const API_ROOT = 'https://api.github.com/';
 
-    private RequestFactoryInterface $messageFactory;
-
-    private ClientInterface $client;
-
-    private string $apiToken;
-
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        RequestFactoryInterface $messageFactory,
-        ClientInterface $client,
-        string $apiToken
+        private readonly RequestFactoryInterface $messageFactory,
+        private readonly ClientInterface $client,
+        private readonly string $apiToken,
     ) {
-        $this->messageFactory = $messageFactory;
-        $this->client         = $client;
-        $this->apiToken       = $apiToken;
     }
 
     public function __invoke(
@@ -38,12 +29,12 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
         BranchName $head,
         BranchName $target,
         string $title,
-        string $body
+        string $body,
     ): void {
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls',
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

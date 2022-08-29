@@ -13,24 +13,15 @@ use Psr\Http\Message\UriInterface;
 /** @psalm-immutable */
 final class Label
 {
-    /** @psalm-var non-empty-string */
-    private string $colour;
-    /** @psalm-var non-empty-string */
-    private string $name;
-    private UriInterface $url;
-
     /**
      * @psalm-param non-empty-string $colour
      * @psalm-param non-empty-string $name
      */
     private function __construct(
-        string $colour,
-        string $name,
-        UriInterface $url
+        private readonly string $colour,
+        private readonly string $name,
+        private readonly UriInterface $url,
     ) {
-        $this->colour = $colour;
-        $this->name   = $name;
-        $this->url    = $url;
     }
 
     /**
@@ -54,7 +45,7 @@ final class Label
         return new self(
             $payload['color'],
             $payload['name'],
-            new Uri($payload['url'])
+            new Uri($payload['url']),
         );
     }
 

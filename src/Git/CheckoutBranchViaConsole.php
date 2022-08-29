@@ -11,7 +11,7 @@ class CheckoutBranchViaConsole implements CheckoutBranch
 {
     public function __invoke(
         string $repositoryDirectory,
-        BranchName $branchName
+        BranchName $branchName,
     ): void {
         Shell\execute('git', ['switch', $branchName->name()], $repositoryDirectory);
     }

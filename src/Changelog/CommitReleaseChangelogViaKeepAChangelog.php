@@ -24,35 +24,22 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         Updates the %s to set the release date.
         COMMIT;
 
-    private ChangelogExists $changelogExists;
-    private CheckoutBranch $checkoutBranch;
-    private CommitFile $commitFile;
-    private Push $push;
-    private LoggerInterface $logger;
-
     public function __construct(
-        ChangelogExists $changelogExists,
-        CheckoutBranch $checkoutBranch,
-        CommitFile $commitFile,
-        Push $push,
-        LoggerInterface $logger
+        private readonly ChangelogExists $changelogExists,
+        private readonly CheckoutBranch $checkoutBranch,
+        private readonly CommitFile $commitFile,
+        private readonly Push $push,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->changelogExists = $changelogExists;
-        $this->checkoutBranch  = $checkoutBranch;
-        $this->commitFile      = $commitFile;
-        $this->push            = $push;
-        $this->logger          = $logger;
     }
 
-    /**
-     * @psalm-param non-empty-string $repositoryDirectory
-     */
+    /** @psalm-param non-empty-string $repositoryDirectory */
     public function __invoke(
         ChangelogReleaseNotes $releaseNotes,
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         if (! $releaseNotes->requiresUpdatingChangelogFile()) {
             // Nothing to commit
@@ -83,7 +70,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $keyId,
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());

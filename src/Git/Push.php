@@ -14,6 +14,6 @@ interface Push
     public function __invoke(
         string $repositoryDirectory,
         string $symbol,
-        ?string $alias = null
+        string|null $alias = null,
     ): void;
 }

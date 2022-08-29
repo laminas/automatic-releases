@@ -24,7 +24,7 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranches implements GetMerg
             $sanitizedBranch = Regex\replace(
                 Str\trim($branch, "* \t\n\r\0\x0B"),
                 '~^(?:remotes/)?origin/~',
-                ''
+                '',
             );
 
             return BranchName::fromName($sanitizedBranch);

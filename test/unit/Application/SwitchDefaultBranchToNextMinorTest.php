@@ -66,21 +66,22 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
             $this->getMergeTargets,
             $this->push,
             $this->setDefaultBranch,
-            $this->bumpChangelogVersion
+            $this->bumpChangelogVersion,
         );
 
-        $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
-{
-    "milestone": {
-        "title": "1.2.3",
-        "number": 123
-    },
-    "repository": {
-        "full_name": "foo/bar"
-    },
-    "action": "closed"
-}
-JSON
+        $this->event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.2.3",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
         );
 
         $key = (new ImportGpgKeyFromStringViaTemporaryFile())
@@ -116,7 +117,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -138,7 +139,7 @@ JSON
             ->method('__invoke')
             ->with(
                 self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                self::equalTo(BranchName::fromName('1.3.x'))
+                self::equalTo(BranchName::fromName('1.3.x')),
             );
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
@@ -163,7 +164,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -184,14 +185,14 @@ JSON
                 BumpAndCommitChangelogVersion::BUMP_MINOR,
                 $workspace,
                 SemVerVersion::fromMilestoneName('1.2.3'),
-                BranchName::fromName('1.3.x')
+                BranchName::fromName('1.3.x'),
             );
 
         $this->setDefaultBranch->expects(self::once())
             ->method('__invoke')
             ->with(
                 self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                self::equalTo(BranchName::fromName('1.3.x'))
+                self::equalTo(BranchName::fromName('1.3.x')),
             );
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
@@ -216,7 +217,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -239,12 +240,12 @@ JSON
         self::assertSame(0, $this->command->run(new ArrayInput([]), $output));
 
         self::assertSame(
-            <<<OUTPUT
-No stable branches found: cannot switch default branch
-
-OUTPUT
+            <<<'OUTPUT'
+            No stable branches found: cannot switch default branch
+            
+            OUTPUT
             ,
-            $output->fetch()
+            $output->fetch(),
         );
     }
 

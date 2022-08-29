@@ -29,7 +29,7 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes {
         $items = Vec\map(
             Vec\filter(
@@ -41,8 +41,8 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
 
         $releaseNotes = Iter\reduce(
             $items,
-            static fn (?ChangelogReleaseNotes $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item,
-            null
+            static fn (ChangelogReleaseNotes|null $releaseNotes, ChangelogReleaseNotes $item): ChangelogReleaseNotes => $releaseNotes ? $releaseNotes->merge($item) : $item,
+            null,
         );
 
         return Type\instance_of(ChangelogReleaseNotes::class)->assert($releaseNotes);
@@ -53,7 +53,7 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         foreach ($this->releaseTextGenerators as $generator) {
             if (
@@ -62,7 +62,7 @@ final class MergeMultipleReleaseNotes implements CreateReleaseText
                     $repositoryName,
                     $semVerVersion,
                     $sourceBranch,
-                    $repositoryDirectory
+                    $repositoryDirectory,
                 )
             ) {
                 return true;

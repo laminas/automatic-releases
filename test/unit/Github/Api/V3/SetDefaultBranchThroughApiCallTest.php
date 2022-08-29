@@ -39,7 +39,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
         $this->createRelease  = new SetDefaultBranchThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
     }
 
@@ -72,13 +72,13 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
                     '{"default_branch": "foo-bar-baz"}',
                     $request->getBody()
-                        ->__toString()
+                        ->__toString(),
                 );
 
                 return true;
@@ -87,7 +87,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
         $this->createRelease->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            BranchName::fromName('foo-bar-baz')
+            BranchName::fromName('foo-bar-baz'),
         );
     }
 
@@ -124,13 +124,13 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
                     '{"default_branch": "foo-bar-baz"}',
                     $request->getBody()
-                        ->__toString()
+                        ->__toString(),
                 );
 
                 return true;
@@ -142,7 +142,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
         $this->createRelease->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            BranchName::fromName('foo-bar-baz')
+            BranchName::fromName('foo-bar-baz'),
         );
     }
 
@@ -175,13 +175,13 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
                     '{"default_branch": "foo-bar-baz"}',
                     $request->getBody()
-                        ->__toString()
+                        ->__toString(),
                 );
 
                 return true;
@@ -193,7 +193,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
 
         $this->createRelease->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            BranchName::fromName('foo-bar-baz')
+            BranchName::fromName('foo-bar-baz'),
         );
     }
 

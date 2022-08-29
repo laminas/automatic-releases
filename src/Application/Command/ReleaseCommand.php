@@ -23,41 +23,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ReleaseCommand extends Command
 {
-    private Variables $environment;
-    private LoadCurrentGithubEvent $loadEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    private GetGithubMilestone $getMilestone;
-    private CommitReleaseChangelog $commitChangelog;
-    private CreateReleaseText $createChangelogText;
-    private CreateTag $createTag;
-    private Push $push;
-    private CreateRelease $createRelease;
-
     public function __construct(
-        Variables $environment,
-        LoadCurrentGithubEvent $loadEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeTargets,
-        GetGithubMilestone $getMilestone,
-        CommitReleaseChangelog $commitChangelog,
-        CreateReleaseText $createChangelogText,
-        CreateTag $createTag,
-        Push $push,
-        CreateRelease $createRelease
+        private readonly Variables $environment,
+        private readonly LoadCurrentGithubEvent $loadEvent,
+        private readonly Fetch $fetch,
+        private readonly GetMergeTargetCandidateBranches $getMergeTargets,
+        private readonly GetGithubMilestone $getMilestone,
+        private readonly CommitReleaseChangelog $commitChangelog,
+        private readonly CreateReleaseText $createChangelogText,
+        private readonly CreateTag $createTag,
+        private readonly Push $push,
+        private readonly CreateRelease $createRelease,
     ) {
         parent::__construct('laminas:automatic-releases:release');
-
-        $this->environment         = $environment;
-        $this->loadEvent           = $loadEvent;
-        $this->fetch               = $fetch;
-        $this->getMergeTargets     = $getMergeTargets;
-        $this->getMilestone        = $getMilestone;
-        $this->commitChangelog     = $commitChangelog;
-        $this->createChangelogText = $createChangelogText;
-        $this->createTag           = $createTag;
-        $this->push                = $push;
-        $this->createRelease       = $createRelease;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -71,7 +49,7 @@ final class ReleaseCommand extends Command
         ($this->fetch)(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->environment->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = ($this->getMergeTargets)($repositoryPath);
@@ -90,7 +68,7 @@ final class ReleaseCommand extends Command
             $repositoryName,
             $releaseVersion,
             $releaseBranch,
-            $repositoryPath
+            $repositoryPath,
         );
 
         ($this->commitChangelog)(
@@ -98,7 +76,7 @@ final class ReleaseCommand extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
 
         $tagName = $releaseVersion->fullReleaseName();
@@ -108,7 +86,7 @@ final class ReleaseCommand extends Command
             $releaseBranch,
             $tagName,
             $changelogReleaseNotes->contents(),
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
         ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());

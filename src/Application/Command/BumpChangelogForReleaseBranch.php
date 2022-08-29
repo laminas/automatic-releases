@@ -18,26 +18,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class BumpChangelogForReleaseBranch extends Command
 {
-    private Variables $environment;
-    private LoadCurrentGithubEvent $loadEvent;
-    private Fetch $fetch;
-    private GetMergeTargetCandidateBranches $getMergeTargets;
-    private BumpAndCommitChangelogVersion $bumpChangelogVersion;
-
     public function __construct(
-        Variables $environment,
-        LoadCurrentGithubEvent $loadEvent,
-        Fetch $fetch,
-        GetMergeTargetCandidateBranches $getMergeTargets,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion
+        private readonly Variables $environment,
+        private readonly LoadCurrentGithubEvent $loadEvent,
+        private readonly Fetch $fetch,
+        private readonly GetMergeTargetCandidateBranches $getMergeTargets,
+        private readonly BumpAndCommitChangelogVersion $bumpChangelogVersion,
     ) {
         parent::__construct('laminas:automatic-releases:bump-changelog');
-
-        $this->environment          = $environment;
-        $this->loadEvent            = $loadEvent;
-        $this->fetch                = $fetch;
-        $this->getMergeTargets      = $getMergeTargets;
-        $this->bumpChangelogVersion = $bumpChangelogVersion;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -51,7 +39,7 @@ final class BumpChangelogForReleaseBranch extends Command
         ($this->fetch)(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->environment->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = ($this->getMergeTargets)($repositoryPath);
@@ -65,7 +53,7 @@ final class BumpChangelogForReleaseBranch extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
 
         return 0;

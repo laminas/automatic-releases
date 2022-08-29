@@ -38,7 +38,7 @@ final class RunGraphQLQueryTest extends TestCase
         $this->runQuery = new RunGraphQLQuery(
             $messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
 
         $messageFactory
@@ -51,11 +51,12 @@ final class RunGraphQLQueryTest extends TestCase
     {
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "data": {"foo": "bar"}
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this
@@ -70,12 +71,12 @@ JSON
                         'User-Agent'    => ['Ocramius\'s minimal GraphQL client - stolen from Dunglas'],
                         'Authorization' => ['bearer ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertSame(
                     '{"query":"the-query","variables":{"a":"b"}}',
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -84,7 +85,7 @@ JSON
 
         self::assertSame(
             ['foo' => 'bar'],
-            $this->runQuery->__invoke('the-query', ['a' => 'b'])
+            $this->runQuery->__invoke('the-query', ['a' => 'b']),
         );
     }
 
@@ -98,11 +99,12 @@ JSON
         $validResponse = (new Response())
             ->withStatus($responseCode);
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "data": {"foo": "bar"}
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this
@@ -117,12 +119,12 @@ JSON
                         'User-Agent'    => ['Ocramius\'s minimal GraphQL client - stolen from Dunglas'],
                         'Authorization' => ['bearer ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertSame(
                     '{"query":"the-query","variables":{"a":"b"}}',
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -133,7 +135,7 @@ JSON
 
         self::assertSame(
             ['foo' => 'bar'],
-            $this->runQuery->__invoke('the-query', ['a' => 'b'])
+            $this->runQuery->__invoke('the-query', ['a' => 'b']),
         );
     }
 
@@ -152,12 +154,13 @@ JSON
     {
         $validResponse = new Response();
 
-        $validResponse->getBody()->write(<<<'JSON'
-{
-    "errors": ["nope"],
-    "data": {"foo": "bar"}
-}
-JSON
+        $validResponse->getBody()->write(
+            <<<'JSON'
+            {
+                "errors": ["nope"],
+                "data": {"foo": "bar"}
+            }
+            JSON,
         );
 
         $this
@@ -172,12 +175,12 @@ JSON
                         'User-Agent'    => ['Ocramius\'s minimal GraphQL client - stolen from Dunglas'],
                         'Authorization' => ['bearer ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertSame(
                     '{"query":"the-query","variables":{"a":"b"}}',
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -189,7 +192,7 @@ JSON
 
         self::assertSame(
             ['foo' => 'bar'],
-            $this->runQuery->__invoke('the-query', ['a' => 'b'])
+            $this->runQuery->__invoke('the-query', ['a' => 'b']),
         );
     }
 }

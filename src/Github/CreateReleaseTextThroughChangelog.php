@@ -20,19 +20,16 @@ use function preg_quote;
 final class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
-### Release Notes for %release%
+        ### Release Notes for %release%
+        
+        %description%
+        
+        %changelogText%
+        
+        MARKDOWN;
 
-%description%
-
-%changelogText%
-
-MARKDOWN;
-
-    private GenerateChangelog $generateChangelog;
-
-    public function __construct(GenerateChangelog $generateChangelog)
+    public function __construct(private readonly GenerateChangelog $generateChangelog)
     {
-        $this->generateChangelog = $generateChangelog;
     }
 
     public function __invoke(
@@ -40,7 +37,7 @@ MARKDOWN;
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes {
         $text = Str\replace_every(self::TEMPLATE, [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
@@ -48,9 +45,9 @@ MARKDOWN;
             '%changelogText%' => $this->normalizeChangelog(
                 $this->generateChangelog->__invoke(
                     $repositoryName,
-                    $semVerVersion
+                    $semVerVersion,
                 ),
-                $semVerVersion->fullReleaseName()
+                $semVerVersion->fullReleaseName(),
             ),
         ]);
 
@@ -64,7 +61,7 @@ MARKDOWN;
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         return true;
     }

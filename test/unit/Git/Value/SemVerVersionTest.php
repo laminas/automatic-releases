@@ -11,14 +11,12 @@ use Psl\Exception\InvariantViolationException;
 
 final class SemVerVersionTest extends TestCase
 {
-    /**
-     * @dataProvider detectableReleases
-     */
+    /** @dataProvider detectableReleases */
     public function testDetectedReleaseVersions(
         string $milestoneName,
         int $expectedMajor,
         int $expectedMinor,
-        string $expectedVersionName
+        string $expectedVersionName,
     ): void {
         $version = SemVerVersion::fromMilestoneName($milestoneName);
 
@@ -41,9 +39,7 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider invalidReleases
-     */
+    /** @dataProvider invalidReleases */
     public function testRejectsInvalidReleaseStrings(string $invalid): void
     {
         $this->expectException(InvariantViolationException::class);
@@ -67,15 +63,13 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider releaseBranchNames
-     */
+    /** @dataProvider releaseBranchNames */
     public function testReleaseBranchNames(string $milestoneName, string $expectedTargetBranch): void
     {
         self::assertEquals(
             BranchName::fromName($expectedTargetBranch),
             SemVerVersion::fromMilestoneName($milestoneName)
-                ->targetReleaseBranchName()
+                ->targetReleaseBranchName(),
         );
     }
 
@@ -89,15 +83,13 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider newMinorReleasesProvider
-     */
+    /** @dataProvider newMinorReleasesProvider */
     public function testIsNewMinorRelease(string $milestoneName, bool $expected): void
     {
         self::assertSame(
             $expected,
             SemVerVersion::fromMilestoneName($milestoneName)
-                ->isNewMinorRelease()
+                ->isNewMinorRelease(),
         );
     }
 
@@ -117,15 +109,13 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider newMajorReleasesProvider
-     */
+    /** @dataProvider newMajorReleasesProvider */
     public function testIsNewMajorRelease(string $milestoneName, bool $expected): void
     {
         self::assertSame(
             $expected,
             SemVerVersion::fromMilestoneName($milestoneName)
-                         ->isNewMajorRelease()
+                         ->isNewMajorRelease(),
         );
     }
 
@@ -148,15 +138,13 @@ final class SemVerVersionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider lessThanEqualProvider
-     */
+    /** @dataProvider lessThanEqualProvider */
     public function testLessThanEqual(string $a, string $b, bool $expected): void
     {
         self::assertEquals(
             $expected,
             SemVerVersion::fromMilestoneName($a)
-                ->lessThanEqual(SemVerVersion::fromMilestoneName($b))
+                ->lessThanEqual(SemVerVersion::fromMilestoneName($b)),
         );
     }
 

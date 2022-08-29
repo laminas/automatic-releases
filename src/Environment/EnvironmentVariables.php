@@ -33,20 +33,6 @@ class EnvironmentVariables implements Variables
         'EMERGENCY',
     ];
 
-    /** @psalm-var non-empty-string */
-    private string $githubToken;
-    private SecretKeyId $signingSecretKey;
-    /** @psalm-var non-empty-string */
-    private string $gitAuthorName;
-    /** @psalm-var non-empty-string */
-    private string $gitAuthorEmail;
-    /** @psalm-var non-empty-string */
-    private string $githubEventPath;
-    /** @psalm-var non-empty-string */
-    private string $workspacePath;
-    /** @psalm-var non-empty-string */
-    private string $logLevel;
-
     /**
      * @psalm-param non-empty-string $githubToken
      * @psalm-param non-empty-string $gitAuthorName
@@ -56,29 +42,20 @@ class EnvironmentVariables implements Variables
      * @psalm-param non-empty-string $logLevel
      */
     private function __construct(
-        string $githubToken,
-        SecretKeyId $signingSecretKey,
-        string $gitAuthorName,
-        string $gitAuthorEmail,
-        string $githubEventPath,
-        string $workspacePath,
-        string $logLevel
+        private readonly string $githubToken,
+        private readonly SecretKeyId $signingSecretKey,
+        private readonly string $gitAuthorName,
+        private readonly string $gitAuthorEmail,
+        private readonly string $githubEventPath,
+        private readonly string $workspacePath,
+        private readonly string $logLevel,
     ) {
-        $this->githubToken      = $githubToken;
-        $this->signingSecretKey = $signingSecretKey;
-        $this->gitAuthorName    = $gitAuthorName;
-        $this->gitAuthorEmail   = $gitAuthorEmail;
-        $this->githubEventPath  = $githubEventPath;
-        $this->workspacePath    = $workspacePath;
-
         /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\contains()} API is conditionally pure */
         Psl\invariant(
             Iter\contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
-            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
+            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels',
         );
-
-        $this->logLevel = $logLevel;
     }
 
     public static function fromEnvironment(ImportGpgKeyFromString $importKey): self
