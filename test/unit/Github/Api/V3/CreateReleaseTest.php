@@ -37,7 +37,7 @@ final class CreateReleaseTest extends TestCase
         $this->createRelease  = new CreateReleaseThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
     }
 
@@ -55,7 +55,7 @@ final class CreateReleaseTest extends TestCase
             {
                 "html_url": "https://another-domain.com/the-pr"
             }
-            JSON
+            JSON,
         );
 
         $this->httpClient
@@ -69,7 +69,7 @@ final class CreateReleaseTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -80,7 +80,7 @@ final class CreateReleaseTest extends TestCase
                         "body": "the-body"
                     }
                     JSON,
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -92,8 +92,8 @@ final class CreateReleaseTest extends TestCase
             $this->createRelease->__invoke(
                 RepositoryName::fromFullName('foo/bar'),
                 SemVerVersion::fromMilestoneName('1.2.3'),
-                'the-body'
-            )
+                'the-body',
+            ),
         );
     }
 }

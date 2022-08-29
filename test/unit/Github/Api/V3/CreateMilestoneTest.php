@@ -40,7 +40,7 @@ class CreateMilestoneTest extends TestCase
             $this->messageFactory,
             $this->httpClient,
             $this->apiToken,
-            $this->createMock(LoggerInterface::class)
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -58,7 +58,7 @@ class CreateMilestoneTest extends TestCase
             {
                 "html_url": "https://another-domain.com/the-pr"
             }
-            JSON
+            JSON,
         );
 
         $this->httpClient
@@ -72,7 +72,7 @@ class CreateMilestoneTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -82,7 +82,7 @@ class CreateMilestoneTest extends TestCase
                         "title": "1.2.3"
                     }
                     JSON,
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -91,7 +91,7 @@ class CreateMilestoneTest extends TestCase
 
         $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            SemVerVersion::fromMilestoneName('1.2.3')
+            SemVerVersion::fromMilestoneName('1.2.3'),
         );
     }
 
@@ -117,7 +117,7 @@ class CreateMilestoneTest extends TestCase
                 ],
                 "message": "Validation Failed"
             }
-            JSON
+            JSON,
         );
 
         $this->httpClient
@@ -131,7 +131,7 @@ class CreateMilestoneTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -141,7 +141,7 @@ class CreateMilestoneTest extends TestCase
                         "title": "2.1.0"
                     }
                     JSON,
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -152,7 +152,7 @@ class CreateMilestoneTest extends TestCase
 
         $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            SemVerVersion::fromMilestoneName('2.1.0')
+            SemVerVersion::fromMilestoneName('2.1.0'),
         );
     }
 
@@ -170,7 +170,7 @@ class CreateMilestoneTest extends TestCase
             {
                 "html_url": "https://another-domain.com/the-pr"
             }
-            JSON
+            JSON,
         );
 
         $this->httpClient
@@ -184,7 +184,7 @@ class CreateMilestoneTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -194,7 +194,7 @@ class CreateMilestoneTest extends TestCase
                         "title": "3.0.0"
                     }
                     JSON,
-                    $request->getBody()->__toString()
+                    $request->getBody()->__toString(),
                 );
 
                 return true;
@@ -203,7 +203,7 @@ class CreateMilestoneTest extends TestCase
 
         $this->createMilestone->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            SemVerVersion::fromMilestoneName('3.0.0')
+            SemVerVersion::fromMilestoneName('3.0.0'),
         );
     }
 }

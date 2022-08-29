@@ -22,8 +22,8 @@ class ChangelogExistsViaConsoleTest extends TestCase
         self::assertFalse(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('0.99.x'),
-                $workingDir
-            )
+                $workingDir,
+            ),
         );
     }
 
@@ -34,8 +34,8 @@ class ChangelogExistsViaConsoleTest extends TestCase
         self::assertTrue(
             (new ChangelogExistsViaConsole())(
                 BranchName::fromName('1.0.x'),
-                $workingDir
-            )
+                $workingDir,
+            ),
         );
     }
 
@@ -78,7 +78,7 @@ class ChangelogExistsViaConsoleTest extends TestCase
                 
                 - Nothing.
                 
-                CHANGELOG
+                CHANGELOG,
         );
 
         Shell\execute('git', ['init', '.'], $repo);

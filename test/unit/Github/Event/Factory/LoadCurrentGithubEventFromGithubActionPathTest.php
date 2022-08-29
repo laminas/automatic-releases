@@ -42,7 +42,7 @@ JSON;
         self::assertEquals(
             MilestoneClosedEvent::fromEventJson($eventData),
             (new LoadCurrentGithubEventFromGithubActionPath($variables))
-                ->__invoke()
+                ->__invoke(),
         );
     }
 }

@@ -42,7 +42,7 @@ final class CreateMilestonesTest extends TestCase
 
         $this->command = new CreateMilestones(
             $this->loadEvent,
-            $this->createMilestone
+            $this->createMilestone,
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
@@ -56,7 +56,7 @@ final class CreateMilestonesTest extends TestCase
                 },
                 "action": "closed"
             }
-        JSON
+        JSON,
         );
 
         $this->releaseVersion = SemVerVersion::fromMilestoneName('1.2.3');

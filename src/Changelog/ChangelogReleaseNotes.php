@@ -40,7 +40,7 @@ class ChangelogReleaseNotes
         $editor->update(
             $changelogFile,
             $changelogEntry,
-            $releaseNotes->changelogEntry
+            $releaseNotes->changelogEntry,
         );
     }
 
@@ -49,7 +49,7 @@ class ChangelogReleaseNotes
      */
     public function __construct(
         string $contents,
-        ?ChangelogEntry $changelogEntry = null
+        ?ChangelogEntry $changelogEntry = null,
     ) {
         if ($changelogEntry) {
             $changelogEntry = clone $changelogEntry;
@@ -73,7 +73,7 @@ class ChangelogReleaseNotes
         if ($this->changelogEntry && $next->changelogEntry) {
             throw new RuntimeException(
                 'Aborting: Both current release notes and next contain a ChangelogEntry;'
-                . ' only one CreateReleaseText implementation should resolve one.'
+                . ' only one CreateReleaseText implementation should resolve one.',
             );
         }
 

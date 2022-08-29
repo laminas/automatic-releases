@@ -37,7 +37,7 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
                     'repositoryName'  => 'bar',
                     'owner'           => 'foo',
                     'milestoneNumber' => 123,
-                ]
+                ],
             )
             ->willReturn([
                 'repository' => [
@@ -88,7 +88,7 @@ final class GetMilestoneFirst100IssuesAndPullRequestsTest extends TestCase
 
         $this->query->__invoke(
             RepositoryName::fromFullName('foo/bar'),
-            123
+            123,
         );
     }
 }

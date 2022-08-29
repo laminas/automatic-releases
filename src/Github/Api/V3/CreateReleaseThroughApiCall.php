@@ -29,7 +29,7 @@ final class CreateReleaseThroughApiCall implements CreateRelease
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        string $apiToken
+        string $apiToken,
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
@@ -39,12 +39,12 @@ final class CreateReleaseThroughApiCall implements CreateRelease
     public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version,
-        string $releaseNotes
+        string $releaseNotes,
     ): UriInterface {
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/releases'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/releases',
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

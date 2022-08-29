@@ -26,7 +26,7 @@ final class RunGraphQLQuery implements RunQuery
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        string $apiToken
+        string $apiToken,
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
@@ -36,7 +36,7 @@ final class RunGraphQLQuery implements RunQuery
     /** {@inheritDoc} */
     public function __invoke(
         string $query,
-        array $variables = []
+        array $variables = [],
     ): array {
         $request = $this->messageFactory
             ->createRequest('POST', self::ENDPOINT)

@@ -98,7 +98,7 @@ final class ReleaseCommandTest extends TestCase
     },
     "action": "closed"
 }
-JSON
+JSON,
         );
 
         $this->branches = MergeTargetCandidateBranches::fromAllBranches(
@@ -155,7 +155,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -192,7 +192,7 @@ JSON
                 $releaseNotes,
                 self::equalTo($workspace),
                 self::equalTo($this->releaseVersion),
-                self::equalTo(BranchName::fromName('1.2.x'))
+                self::equalTo(BranchName::fromName('1.2.x')),
             );
 
         $this->createTag->expects(self::once())
@@ -202,7 +202,7 @@ JSON
                 self::equalTo(BranchName::fromName('1.2.x')),
                 '1.2.3',
                 'text of the changelog',
-                self::equalTo($this->signingKey)
+                self::equalTo($this->signingKey),
             );
 
         $this->push->expects(self::exactly(2))
@@ -214,7 +214,7 @@ JSON
             ->with(
                 self::equalTo(RepositoryName::fromFullName('foo/bar')),
                 self::equalTo($this->releaseVersion),
-                'text of the changelog'
+                'text of the changelog',
             );
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));

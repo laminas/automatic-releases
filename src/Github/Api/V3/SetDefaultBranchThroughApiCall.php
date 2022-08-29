@@ -26,7 +26,7 @@ final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        string $apiToken
+        string $apiToken,
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
@@ -35,12 +35,12 @@ final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 
     public function __invoke(
         RepositoryName $repository,
-        BranchName $defaultBranch
+        BranchName $defaultBranch,
     ): void {
         $request = $this->messageFactory
             ->createRequest(
                 'PATCH',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name()
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name(),
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

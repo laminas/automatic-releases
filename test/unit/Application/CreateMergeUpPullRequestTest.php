@@ -74,7 +74,7 @@ final class CreateMergeUpPullRequestTest extends TestCase
             $this->getMilestone,
             $this->createReleaseText,
             $this->push,
-            $this->createPullRequest
+            $this->createPullRequest,
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<<'JSON'
@@ -88,7 +88,7 @@ final class CreateMergeUpPullRequestTest extends TestCase
     },
     "action": "closed"
 }
-JSON
+JSON,
         );
 
         $this->branches = MergeTargetCandidateBranches::fromAllBranches(
@@ -145,7 +145,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -167,7 +167,7 @@ JSON
             ->with(
                 self::equalTo($this->milestone),
                 self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                self::equalTo($this->releaseVersion)
+                self::equalTo($this->releaseVersion),
             )
             ->willReturn($releaseNotes);
 
@@ -176,7 +176,7 @@ JSON
             ->with(
                 $workspace,
                 '1.2.x',
-                self::stringStartsWith('1.2.x-merge-up-into-1.3.x_')
+                self::stringStartsWith('1.2.x-merge-up-into-1.3.x_'),
             );
 
         $this->createPullRequest->expects(self::once())
@@ -190,7 +190,7 @@ JSON
                 }),
                 self::equalTo(BranchName::fromName('1.3.x')),
                 'Merge release 1.2.3 into 1.3.x',
-                'text of the changelog'
+                'text of the changelog',
             );
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
@@ -215,7 +215,7 @@ JSON
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
 
         $this->getMergeTargets->method('__invoke')
@@ -250,7 +250,7 @@ No merge-up candidate for release 1.2.3 - skipping pull request creation
 
 OUTPUT
             ,
-            $output->fetch()
+            $output->fetch(),
         );
     }
 }

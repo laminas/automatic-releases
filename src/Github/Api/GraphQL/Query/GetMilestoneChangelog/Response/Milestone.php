@@ -37,7 +37,7 @@ final class Milestone
         string $title,
         ?string $description,
         array $entries,
-        UriInterface $url
+        UriInterface $url,
     ) {
         $this->number      = $number;
         $this->closed      = $closed;
@@ -78,9 +78,9 @@ final class Milestone
             $payload['description'],
             Vec\concat(
                 Vec\map($payload['issues']['nodes'], IssueOrPullRequest::fromPayload(...)),
-                Vec\map($payload['pullRequests']['nodes'], IssueOrPullRequest::fromPayload(...))
+                Vec\map($payload['pullRequests']['nodes'], IssueOrPullRequest::fromPayload(...)),
             ),
-            new Uri($payload['url'])
+            new Uri($payload['url']),
         );
     }
 

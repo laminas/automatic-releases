@@ -75,7 +75,7 @@ GRAPHQL;
 
     public function __invoke(
         RepositoryName $repositoryName,
-        int $milestoneNumber
+        int $milestoneNumber,
     ): Milestone {
         $queryResult = $this->runQuery->__invoke(
             self::QUERY,
@@ -83,7 +83,7 @@ GRAPHQL;
                 'repositoryName'  => $repositoryName->name(),
                 'owner'           => $repositoryName->owner(),
                 'milestoneNumber' => $milestoneNumber,
-            ]
+            ],
         );
 
         $queryResult = Type\shape([

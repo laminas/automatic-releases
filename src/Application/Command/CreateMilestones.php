@@ -20,7 +20,7 @@ final class CreateMilestones extends Command
 
     public function __construct(
         LoadCurrentGithubEvent $loadEvent,
-        CreateMilestone $createMilestone
+        CreateMilestone $createMilestone,
     ) {
         parent::__construct('laminas:automatic-releases:create-milestones');
 

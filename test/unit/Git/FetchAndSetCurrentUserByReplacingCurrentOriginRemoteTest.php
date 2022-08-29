@@ -67,11 +67,11 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         self::assertSame(
             'Mr. Magoo Set',
-            Str\trim(Shell\execute('git', ['config', '--get', 'user.name'], $this->destination))
+            Str\trim(Shell\execute('git', ['config', '--get', 'user.name'], $this->destination)),
         );
         self::assertSame(
             'magoo-set@example.com',
-            Str\trim(Shell\execute('git', ['config', '--get', 'user.email'], $this->destination))
+            Str\trim(Shell\execute('git', ['config', '--get', 'user.email'], $this->destination)),
         );
 
         $fetchedBranches = Shell\execute('git', ['branch', '-r'], $this->destination);
@@ -94,11 +94,11 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         self::assertSame(
             'Mr. Magoo Set',
-            Str\trim(Shell\execute('git', ['config', '--get', 'user.name'], $this->destination))
+            Str\trim(Shell\execute('git', ['config', '--get', 'user.name'], $this->destination)),
         );
         self::assertSame(
             'magoo-set@example.com',
-            Str\trim(Shell\execute('git', ['config', '--get', 'user.email'], $this->destination))
+            Str\trim(Shell\execute('git', ['config', '--get', 'user.email'], $this->destination)),
         );
 
         $fetchedBranches = Shell\execute('git', ['branch', '-r'], $this->destination);
@@ -142,7 +142,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemoteTest extends Tes
 
         self::assertSame(
             '*',
-            Str\trim(Shell\execute('git', ['config', '--get', 'safe.directory'], $this->destination))
+            Str\trim(Shell\execute('git', ['config', '--get', 'safe.directory'], $this->destination)),
         );
     }
 }

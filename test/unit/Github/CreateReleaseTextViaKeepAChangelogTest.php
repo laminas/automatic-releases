@@ -36,7 +36,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
     {
         $repositoryPath = $this->createMockRepositoryWithChangelog(
             self::INVALID_CHANGELOG,
-            'NOT-A-CHANGELOG.md'
+            'NOT-A-CHANGELOG.md',
         );
         $workingPath    = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
@@ -47,8 +47,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $workingPath
-                )
+                    $workingPath,
+                ),
         );
     }
 
@@ -64,8 +64,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $workingPath
-                )
+                    $workingPath,
+                ),
         );
     }
 
@@ -84,8 +84,8 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $workingPath
-                )
+                    $workingPath,
+                ),
         );
     }
 
@@ -112,9 +112,9 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('1.0.0'),
                     BranchName::fromName('1.0.x'),
-                    $workingPath
+                    $workingPath,
                 )
-                ->contents()
+                ->contents(),
         );
     }
 
@@ -125,7 +125,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         $repositoryPath    = $this->createMockRepositoryWithChangelog(
             $changelogContents,
             'CHANGELOG.md',
-            '2.3.x'
+            '2.3.x',
         );
         $workingPath       = $this->checkoutMockRepositoryWithChangelog($repositoryPath);
 
@@ -149,9 +149,9 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
                     RepositoryName::fromFullName('example/repo'),
                     SemVerVersion::fromMilestoneName('2.3.12'),
                     BranchName::fromName('2.3.x'),
-                    $workingPath
+                    $workingPath,
                 )
-                ->contents()
+                ->contents(),
         );
     }
 
@@ -178,7 +178,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
     private function createMockRepositoryWithChangelog(
         string $template,
         string $filename = 'CHANGELOG.md',
-        string $initialBranch = '1.0.x'
+        string $initialBranch = '1.0.x',
     ): string {
         $repo = Filesystem\create_temporary_file(Env\temp_dir(), 'CreateReleaseTextViaKeepAChangelog');
         Filesystem\delete_file($repo);

@@ -57,7 +57,7 @@ use const STDERR;
         static function (int $errorCode, string $message = '', string $file = '', int $line = 0): bool {
             throw new ErrorException($message, 0, $errorCode, $file, $line);
         },
-        E_STRICT | E_NOTICE | E_WARNING
+        E_STRICT | E_NOTICE | E_WARNING,
     );
 
     $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
@@ -72,7 +72,7 @@ use const STDERR;
     $getMilestone         = new GetMilestoneFirst100IssuesAndPullRequests(new RunGraphQLQuery(
         $makeRequests,
         $httpClient,
-        $githubToken
+        $githubToken,
     ));
     $changelogExists      = new ChangelogExistsViaConsole();
     $checkoutBranch       = new CheckoutBranchViaConsole();
@@ -83,12 +83,12 @@ use const STDERR;
         $checkoutBranch,
         $commit,
         $push,
-        $logger
+        $logger,
     );
     $createCommitText     = new CreateReleaseTextThroughChangelog(JwageGenerateChangelog::create(
         $makeRequests,
         $httpClient,
-        new GitHubOAuthToken($githubToken)
+        new GitHubOAuthToken($githubToken),
     ));
     $createReleaseText    = new MergeMultipleReleaseNotes([
         new CreateReleaseTextViaKeepAChangelog($changelogExists, new SystemClock(new DateTimeZone('UTC'))),
@@ -97,14 +97,14 @@ use const STDERR;
     $createRelease        = new CreateReleaseThroughApiCall(
         $makeRequests,
         $httpClient,
-        $githubToken
+        $githubToken,
     );
     $bumpChangelogVersion = new BumpAndCommitChangelogVersionViaKeepAChangelog(
         $changelogExists,
         $checkoutBranch,
         $commit,
         $push,
-        $logger
+        $logger,
     );
 
     $application = new Application(Versions::rootPackageName(), Versions::getVersion('laminas/automatic-releases'));
@@ -120,7 +120,7 @@ use const STDERR;
             $createReleaseText,
             new CreateTagViaConsole(),
             $push,
-            $createRelease
+            $createRelease,
         ),
         new CreateMergeUpPullRequest(
             $variables,
@@ -133,8 +133,8 @@ use const STDERR;
             new CreatePullRequestThroughApiCall(
                 $makeRequests,
                 $httpClient,
-                $githubToken
-            )
+                $githubToken,
+            ),
         ),
         new SwitchDefaultBranchToNextMinor(
             $variables,
@@ -145,16 +145,16 @@ use const STDERR;
             new SetDefaultBranchThroughApiCall(
                 $makeRequests,
                 $httpClient,
-                $githubToken
+                $githubToken,
             ),
-            $bumpChangelogVersion
+            $bumpChangelogVersion,
         ),
         new BumpChangelogForReleaseBranch(
             $variables,
             $loadEvent,
             $fetch,
             $getCandidateBranches,
-            $bumpChangelogVersion
+            $bumpChangelogVersion,
         ),
         new CreateMilestones(
             $loadEvent,
@@ -162,8 +162,8 @@ use const STDERR;
                 $makeRequests,
                 $httpClient,
                 $githubToken,
-                $logger
-            )
+                $logger,
+            ),
         ),
     ]);
 

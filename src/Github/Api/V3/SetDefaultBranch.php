@@ -12,6 +12,6 @@ interface SetDefaultBranch
     /** @psalm-param non-empty-string $title */
     public function __invoke(
         RepositoryName $repository,
-        BranchName $defaultBranch
+        BranchName $defaultBranch,
     ): void;
 }

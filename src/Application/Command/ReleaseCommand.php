@@ -44,7 +44,7 @@ final class ReleaseCommand extends Command
         CreateReleaseText $createChangelogText,
         CreateTag $createTag,
         Push $push,
-        CreateRelease $createRelease
+        CreateRelease $createRelease,
     ) {
         parent::__construct('laminas:automatic-releases:release');
 
@@ -71,7 +71,7 @@ final class ReleaseCommand extends Command
         ($this->fetch)(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->environment->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = ($this->getMergeTargets)($repositoryPath);
@@ -90,7 +90,7 @@ final class ReleaseCommand extends Command
             $repositoryName,
             $releaseVersion,
             $releaseBranch,
-            $repositoryPath
+            $repositoryPath,
         );
 
         ($this->commitChangelog)(
@@ -98,7 +98,7 @@ final class ReleaseCommand extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
 
         $tagName = $releaseVersion->fullReleaseName();
@@ -108,7 +108,7 @@ final class ReleaseCommand extends Command
             $releaseBranch,
             $tagName,
             $changelogReleaseNotes->contents(),
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
         ($this->push)($repositoryPath, $tagName);
         ($this->push)($repositoryPath, $tagName, $releaseVersion->targetReleaseBranchName()->name());

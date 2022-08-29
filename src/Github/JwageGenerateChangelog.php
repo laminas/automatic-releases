@@ -32,7 +32,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
     public static function create(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        GitHubCredentials $gitHubCredentials
+        GitHubCredentials $gitHubCredentials,
     ): self {
         $issueClient     = new IssueClient($messageFactory, $client);
         $issueFactory    = new IssueFactory();
@@ -45,7 +45,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
 
     public function __invoke(
         RepositoryName $repositoryName,
-        SemVerVersion $semVerVersion
+        SemVerVersion $semVerVersion,
     ): string {
         $config = (new ChangelogConfig())
             ->setUser($repositoryName->owner())
@@ -57,7 +57,7 @@ final class JwageGenerateChangelog implements GenerateChangelog
 
         $this->changelogGenerator->generate(
             $config,
-            $output
+            $output,
         );
 
         return $output->fetch();

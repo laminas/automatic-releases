@@ -14,6 +14,6 @@ interface CreateRelease
     public function __invoke(
         RepositoryName $repository,
         SemVerVersion $version,
-        string $releaseNotes
+        string $releaseNotes,
     ): UriInterface;
 }

@@ -20,13 +20,13 @@ final class RepositoryNameTest extends TestCase
             'https://github.com/foo/bar.git',
             $repositoryName
                 ->uri()
-                ->__toString()
+                ->__toString(),
         );
         self::assertSame(
             'https://token:x-oauth-basic@github.com/foo/bar.git',
             $repositoryName
                 ->uriWithTokenAuthentication('token')
-                ->__toString()
+                ->__toString(),
         );
 
         /** @psalm-suppress UnusedMethodCall */

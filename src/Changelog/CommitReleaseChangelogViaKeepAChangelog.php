@@ -35,7 +35,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         CheckoutBranch $checkoutBranch,
         CommitFile $commitFile,
         Push $push,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->changelogExists = $changelogExists;
         $this->checkoutBranch  = $checkoutBranch;
@@ -52,7 +52,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         if (! $releaseNotes->requiresUpdatingChangelogFile()) {
             // Nothing to commit
@@ -83,7 +83,7 @@ final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChan
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $keyId,
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());

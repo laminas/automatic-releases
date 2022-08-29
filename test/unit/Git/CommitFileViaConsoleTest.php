@@ -50,7 +50,7 @@ final class CommitFileViaConsoleTest extends TestCase
     {
         write(
             $this->checkout . '/README.md',
-            "# README\n\nThis is a test file to test commits from laminas/automatic-releases."
+            "# README\n\nThis is a test file to test commits from laminas/automatic-releases.",
         );
 
         $commitMessage = 'Commit initiated via unit test';
@@ -61,7 +61,7 @@ final class CommitFileViaConsoleTest extends TestCase
                 BranchName::fromName('1.0.x'),
                 'README.md',
                 $commitMessage,
-                $this->key
+                $this->key,
             );
 
         $commitDetails = Shell\execute('git', ['show', '-1', '--pretty=raw'], $this->checkout);
@@ -85,7 +85,7 @@ final class CommitFileViaConsoleTest extends TestCase
                 BranchName::fromName('1.0.x'),
                 'README.md',
                 'commit message',
-                $this->key
+                $this->key,
             );
     }
 }

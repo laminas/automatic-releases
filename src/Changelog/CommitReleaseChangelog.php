@@ -18,6 +18,6 @@ interface CommitReleaseChangelog
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void;
 }

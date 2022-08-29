@@ -52,7 +52,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             $this->loadEvent,
             $this->fetch,
             $this->getMergeTargets,
-            $this->bumpChangelogVersion
+            $this->bumpChangelogVersion,
         );
 
         $this->event = MilestoneClosedEvent::fromEventJson(<<< 'JSON'
@@ -85,7 +85,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
         $branches = MergeTargetCandidateBranches::fromAllBranches(
             BranchName::fromName('1.1.x'),
             BranchName::fromName('1.2.x'),
-            BranchName::fromName('1.3.x')
+            BranchName::fromName('1.3.x'),
         );
 
         $this->loadEvent->method('__invoke')->willReturn($this->event);
@@ -96,7 +96,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
             ->with(
                 'https://github.com/foo/bar.git',
                 'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
-                $workspace
+                $workspace,
             );
         $this->getMergeTargets->expects(self::once())
             ->method('__invoke')
@@ -109,7 +109,7 @@ class BumpChangelogForReleaseBranchTest extends TestCase
                 BumpAndCommitChangelogVersion::BUMP_PATCH,
                 $workspace,
                 self::equalTo(SemVerVersion::fromMilestoneName('1.2.3')),
-                self::equalTo(BranchName::fromName('1.2.x'))
+                self::equalTo(BranchName::fromName('1.2.x')),
             );
 
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));

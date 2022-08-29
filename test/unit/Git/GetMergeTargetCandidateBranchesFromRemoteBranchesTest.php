@@ -59,7 +59,7 @@ final class GetMergeTargetCandidateBranchesFromRemoteBranchesTest extends TestCa
                 BranchName::fromName('master'),
             ),
             (new GetMergeTargetCandidateBranchesFromRemoteBranches())
-                ->__invoke($this->destination)
+                ->__invoke($this->destination),
         );
     }
 }

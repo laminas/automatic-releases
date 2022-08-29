@@ -15,6 +15,6 @@ interface CreateTag
         BranchName $sourceBranch,
         string $tagName,
         string $changelog,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void;
 }

@@ -11,6 +11,6 @@ interface GetGithubMilestone
 {
     public function __invoke(
         RepositoryName $repositoryName,
-        int $milestoneNumber
+        int $milestoneNumber,
     ): Milestone;
 }

@@ -50,7 +50,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
-            $this->logger
+            $this->logger,
         );
 
         $this->key = (new ImportGpgKeyFromStringViaTemporaryFile())
@@ -77,7 +77,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $repoDir,
             $version,
             $sourceBranch,
-            $this->key
+            $this->key,
         );
     }
 
@@ -110,7 +110,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
     public function testAddsNewReleaseVersionUsingBumpTypeToChangelogFileAndCommitsAndPushes(
         string $bumpType,
         string $branchName,
-        string $expectedVersion
+        string $expectedVersion,
     ): void {
         $changelogFile = $this->createMockChangelog();
         $repoDir       = Filesystem\get_directory($changelogFile);
@@ -130,7 +130,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->with(self::stringContains(Str\format(
                 'Bumped CHANGELOG.md to version %s in branch %s',
                 $expectedVersion,
-                $branchName
+                $branchName,
             )));
 
         $this->checkoutBranch
@@ -138,7 +138,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             ->method('__invoke')
             ->with(
                 self::equalTo($repoDir),
-                $sourceBranch
+                $sourceBranch,
             );
 
         $this->commitFile
@@ -150,8 +150,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
                 'CHANGELOG.md',
                 self::stringContains(Str\format(
                     'Bumps changelog version to %s',
-                    $expectedVersion
-                ))
+                    $expectedVersion,
+                )),
             );
 
         $this->push
@@ -164,7 +164,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $this->checkoutBranch,
             $this->commitFile,
             $this->push,
-            $this->logger
+            $this->logger,
         );
 
         $bumpAndCommitChangelog(
@@ -172,7 +172,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             $repoDir,
             $version,
             $sourceBranch,
-            $this->key
+            $this->key,
         );
 
         $changelogContents = read($changelogFile);
@@ -182,8 +182,8 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
             Str\format(
                 'Could not locate entry for new version %s in file %s',
                 $expectedVersion,
-                $changelogFile
-            )
+                $changelogFile,
+            ),
         );
     }
 

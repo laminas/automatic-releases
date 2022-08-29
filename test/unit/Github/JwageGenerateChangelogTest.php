@@ -52,7 +52,7 @@ final class JwageGenerateChangelogTest extends TestCase
         $changeLogGenerator = JwageGenerateChangelog::create(
             $makeRequests,
             $httpClient,
-            $githubToken
+            $githubToken,
         );
 
         $this->assertInstanceOf(JwageGenerateChangelog::class, $changeLogGenerator);

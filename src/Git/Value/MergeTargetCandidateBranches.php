@@ -90,7 +90,7 @@ final class MergeTargetCandidateBranches
             Vec\reverse($this->sortedBranches),
             static function (BranchName $branch) use ($nextMinor): bool {
                 return $nextMinor->lessThanEqual($branch->targetMinorReleaseVersion());
-            }
+            },
         );
 
         return Iter\first($futureReleaseBranch) ?? $nextMinor->targetReleaseBranchName();

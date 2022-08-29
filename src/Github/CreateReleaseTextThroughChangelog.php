@@ -40,7 +40,7 @@ MARKDOWN;
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes {
         $text = Str\replace_every(self::TEMPLATE, [
             '%release%'      => $this->markdownLink($milestone->title(), $milestone->url()),
@@ -48,9 +48,9 @@ MARKDOWN;
             '%changelogText%' => $this->normalizeChangelog(
                 $this->generateChangelog->__invoke(
                     $repositoryName,
-                    $semVerVersion
+                    $semVerVersion,
                 ),
-                $semVerVersion->fullReleaseName()
+                $semVerVersion->fullReleaseName(),
             ),
         ]);
 
@@ -64,7 +64,7 @@ MARKDOWN;
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         return true;
     }

@@ -62,7 +62,7 @@ class EnvironmentVariables implements Variables
         string $gitAuthorEmail,
         string $githubEventPath,
         string $workspacePath,
-        string $logLevel
+        string $logLevel,
     ) {
         $this->githubToken      = $githubToken;
         $this->signingSecretKey = $signingSecretKey;
@@ -75,7 +75,7 @@ class EnvironmentVariables implements Variables
         Psl\invariant(
             Iter\contains(self::LOG_LEVELS, $logLevel),
             'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
-            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
+            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels',
         );
 
         $this->logLevel = $logLevel;

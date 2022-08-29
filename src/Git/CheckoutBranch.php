@@ -13,6 +13,6 @@ interface CheckoutBranch
      */
     public function __invoke(
         string $repositoryDirectory,
-        BranchName $branchName
+        BranchName $branchName,
     ): void;
 }

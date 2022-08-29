@@ -14,7 +14,7 @@ class ChangelogExistsViaConsole implements ChangelogExists
      */
     public function __invoke(
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool {
         try {
             Shell\execute('git', ['show', 'origin/' . $sourceBranch->name() . ':CHANGELOG.md'], $repositoryDirectory);

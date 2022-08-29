@@ -26,7 +26,7 @@ final class Label
     private function __construct(
         string $colour,
         string $name,
-        UriInterface $url
+        UriInterface $url,
     ) {
         $this->colour = $colour;
         $this->name   = $name;
@@ -54,7 +54,7 @@ final class Label
         return new self(
             $payload['color'],
             $payload['name'],
-            new Uri($payload['url'])
+            new Uri($payload['url']),
         );
     }
 

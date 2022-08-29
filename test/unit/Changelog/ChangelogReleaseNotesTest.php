@@ -119,7 +119,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $this->assertNotSame($second, $merged);
         $this->assertMatchesRegularExpression(
             '/' . $original->contents() . '.*' . $second->contents() . '/s',
-            $merged->contents()
+            $merged->contents(),
         );
     }
 
@@ -156,7 +156,7 @@ class ChangelogReleaseNotesTest extends TestCase
     public function testMergedInstanceContainsChangelogEntryFromTheInstanceThatHadOne(
         ChangelogReleaseNotes $original,
         ChangelogReleaseNotes $secondary,
-        ChangelogEntry $expectedEntry
+        ChangelogEntry $expectedEntry,
     ): void {
         $merged = $original->merge($secondary);
 

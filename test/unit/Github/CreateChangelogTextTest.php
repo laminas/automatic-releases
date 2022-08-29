@@ -121,9 +121,9 @@ final class CreateChangelogTextTest extends TestCase
                     $repositoryName,
                     $semVerVersion,
                     BranchName::fromName('2.12.x'),
-                    __DIR__
+                    __DIR__,
                 )
-                ->contents()
+                ->contents(),
         );
     }
 
@@ -188,8 +188,8 @@ final class CreateChangelogTextTest extends TestCase
                     $repositoryName,
                     $semVerVersion,
                     BranchName::fromName('1.0.x'),
-                    __DIR__
-                )
+                    __DIR__,
+                ),
         );
     }
 }

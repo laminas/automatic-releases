@@ -19,7 +19,7 @@ final class MilestoneClosedEvent
     private function __construct(
         SemVerVersion $version,
         RepositoryName $repository,
-        int $milestoneNumber
+        int $milestoneNumber,
     ) {
         $this->version         = $version;
         $this->repository      = $repository;
@@ -42,7 +42,7 @@ final class MilestoneClosedEvent
         return new self(
             SemVerVersion::fromMilestoneName($event['milestone']['title']),
             RepositoryName::fromFullName($event['repository']['full_name']),
-            $event['milestone']['number']
+            $event['milestone']['number'],
         );
     }
 

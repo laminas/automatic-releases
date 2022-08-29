@@ -39,7 +39,7 @@ final class CreatePullRequestThroughApiCallTest extends TestCase
         $this->createPullRequest = new CreatePullRequestThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
     }
 
@@ -72,7 +72,7 @@ final class CreatePullRequestThroughApiCallTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -88,7 +88,7 @@ final class CreatePullRequestThroughApiCallTest extends TestCase
 JSON
                     ,
                     $request->getBody()
-                        ->__toString()
+                        ->__toString(),
                 );
 
                 return true;
@@ -100,7 +100,7 @@ JSON
             BranchName::fromName('foo-bar-baz'),
             BranchName::fromName('target-branch-name'),
             'My awesome pull request',
-            'A description for my awesome pull request'
+            'A description for my awesome pull request',
         );
     }
 
@@ -145,7 +145,7 @@ JSON
             BranchName::fromName('foo-bar-baz'),
             BranchName::fromName('target-branch-name'),
             'My awesome pull request',
-            'A description for my awesome pull request'
+            'A description for my awesome pull request',
         );
     }
 
@@ -186,7 +186,7 @@ JSON
             BranchName::fromName('foo-bar-baz'),
             BranchName::fromName('target-branch-name'),
             'My awesome pull request',
-            'A description for my awesome pull request'
+            'A description for my awesome pull request',
         );
     }
 }

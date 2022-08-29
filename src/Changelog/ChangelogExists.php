@@ -13,6 +13,6 @@ interface ChangelogExists
      */
     public function __invoke(
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool;
 }

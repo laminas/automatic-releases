@@ -18,7 +18,7 @@ final class SemVerVersionTest extends TestCase
         string $milestoneName,
         int $expectedMajor,
         int $expectedMinor,
-        string $expectedVersionName
+        string $expectedVersionName,
     ): void {
         $version = SemVerVersion::fromMilestoneName($milestoneName);
 
@@ -75,7 +75,7 @@ final class SemVerVersionTest extends TestCase
         self::assertEquals(
             BranchName::fromName($expectedTargetBranch),
             SemVerVersion::fromMilestoneName($milestoneName)
-                ->targetReleaseBranchName()
+                ->targetReleaseBranchName(),
         );
     }
 
@@ -97,7 +97,7 @@ final class SemVerVersionTest extends TestCase
         self::assertSame(
             $expected,
             SemVerVersion::fromMilestoneName($milestoneName)
-                ->isNewMinorRelease()
+                ->isNewMinorRelease(),
         );
     }
 
@@ -125,7 +125,7 @@ final class SemVerVersionTest extends TestCase
         self::assertSame(
             $expected,
             SemVerVersion::fromMilestoneName($milestoneName)
-                         ->isNewMajorRelease()
+                         ->isNewMajorRelease(),
         );
     }
 
@@ -156,7 +156,7 @@ final class SemVerVersionTest extends TestCase
         self::assertEquals(
             $expected,
             SemVerVersion::fromMilestoneName($a)
-                ->lessThanEqual(SemVerVersion::fromMilestoneName($b))
+                ->lessThanEqual(SemVerVersion::fromMilestoneName($b)),
         );
     }
 

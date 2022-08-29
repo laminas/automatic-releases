@@ -12,6 +12,6 @@ interface Fetch
     public function __invoke(
         UriInterface $repositoryUri,
         UriInterface $uriWithCredentials,
-        string $repositoryRootDirectory
+        string $repositoryRootDirectory,
     ): void;
 }

@@ -26,7 +26,7 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
     public function __construct(
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
-        string $apiToken
+        string $apiToken,
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
@@ -38,12 +38,12 @@ final class CreatePullRequestThroughApiCall implements CreatePullRequest
         BranchName $head,
         BranchName $target,
         string $title,
-        string $body
+        string $body,
     ): void {
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/pulls',
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')

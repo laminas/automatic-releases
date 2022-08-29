@@ -31,7 +31,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
         RequestFactoryInterface $messageFactory,
         ClientInterface $client,
         string $apiToken,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->messageFactory = $messageFactory;
         $this->client         = $client;
@@ -45,13 +45,13 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             '[CreateMilestoneThroughApiCall] Creating milestone "%s" for "%s/%s"',
             $version->fullReleaseName(),
             $repository->owner(),
-            $repository->name()
+            $repository->name(),
         ));
 
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/milestones'
+                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/milestones',
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')
@@ -76,9 +76,9 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
             $this->logger->error(
                 Str\format(
                     '[CreateMilestoneThroughApiCall] Failed to create milestone "%s"',
-                    $version->fullReleaseName()
+                    $version->fullReleaseName(),
                 ),
-                ['exception' => $responseData]
+                ['exception' => $responseData],
             );
 
             throw CreateMilestoneFailed::forVersion($version->fullReleaseName());
@@ -88,7 +88,7 @@ final class CreateMilestoneThroughApiCall implements CreateMilestone
 
         $this->logger->info(Str\format(
             '[CreateMilestoneThroughApiCall] Milestone "%s" created',
-            $version->fullReleaseName()
+            $version->fullReleaseName(),
         ));
     }
 

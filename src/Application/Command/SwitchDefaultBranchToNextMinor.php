@@ -34,7 +34,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
         GetMergeTargetCandidateBranches $getMergeCandidates,
         Push $push,
         SetDefaultBranch $switchDefaultBranch,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion
+        BumpAndCommitChangelogVersion $bumpChangelogVersion,
     ) {
         parent::__construct('laminas:automatic-releases:switch-default-branch-to-next-minor');
 
@@ -58,7 +58,7 @@ final class SwitchDefaultBranchToNextMinor extends Command
         $this->fetch->__invoke(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->variables->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = $this->getMergeCandidates->__invoke($repositoryPath);
@@ -77,14 +77,14 @@ final class SwitchDefaultBranchToNextMinor extends Command
             $this->push->__invoke(
                 $repositoryPath,
                 $newestBranch->name(),
-                $nextDefaultBranch->name()
+                $nextDefaultBranch->name(),
             );
             ($this->bumpChangelogVersion)(
                 BumpAndCommitChangelogVersion::BUMP_MINOR,
                 $repositoryPath,
                 $releaseVersion,
                 $nextDefaultBranch,
-                $this->variables->signingSecretKey()
+                $this->variables->signingSecretKey(),
             );
         }
 

@@ -57,7 +57,7 @@ final class CreateTagViaConsoleTest extends TestCase
                 BranchName::fromName('tag-branch'),
                 'name-of-the-tag',
                 'changelog text for the tag',
-                $this->key
+                $this->key,
             );
 
         Shell\execute('git', ['tag', '-v', 'name-of-the-tag'], $this->repository);

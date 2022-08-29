@@ -40,7 +40,7 @@ final class CreateMergeUpPullRequest extends Command
         GetGithubMilestone $getMilestone,
         CreateReleaseText $createReleaseText,
         Push $push,
-        CreatePullRequest $createPullRequest
+        CreatePullRequest $createPullRequest,
     ) {
         parent::__construct('laminas:automatic-releases:create-merge-up-pull-request');
 
@@ -65,7 +65,7 @@ final class CreateMergeUpPullRequest extends Command
         $this->fetch->__invoke(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->variables->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = $this->getMergeCandidates->__invoke($repositoryPath);
@@ -77,7 +77,7 @@ final class CreateMergeUpPullRequest extends Command
         if ($mergeUpTarget === null) {
             $output->writeln(Str\format(
                 'No merge-up candidate for release %s - skipping pull request creation',
-                $releaseVersion->fullReleaseName()
+                $releaseVersion->fullReleaseName(),
             ));
 
             return 0;
@@ -90,7 +90,7 @@ final class CreateMergeUpPullRequest extends Command
             . '-merge-up-into-'
             . $mergeUpTarget->name()
             . '_'
-            . SecureRandom\string(8) // This is to ensure that a new merge-up pull request is created even if one already exists
+            . SecureRandom\string(8), // This is to ensure that a new merge-up pull request is created even if one already exists
         );
 
         $releaseNotes = $this->createReleaseText->__invoke(
@@ -98,7 +98,7 @@ final class CreateMergeUpPullRequest extends Command
             $event->repository(),
             $event->version(),
             $releaseBranch,
-            $repositoryPath
+            $repositoryPath,
         );
 
         $this->push->__invoke($repositoryPath, $releaseBranch->name(), $mergeUpBranch->name());
@@ -107,7 +107,7 @@ final class CreateMergeUpPullRequest extends Command
             $mergeUpBranch,
             $mergeUpTarget,
             'Merge release ' . $releaseVersion->fullReleaseName() . ' into ' . $mergeUpTarget->name(),
-            $releaseNotes->contents()
+            $releaseNotes->contents(),
         );
 
         return 0;

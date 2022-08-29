@@ -14,6 +14,6 @@ interface RunQuery
      */
     public function __invoke(
         string $query,
-        array $variables = []
+        array $variables = [],
     ): array;
 }

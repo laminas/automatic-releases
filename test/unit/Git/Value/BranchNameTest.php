@@ -83,7 +83,7 @@ final class BranchNameTest extends TestCase
         self::assertSame(
             $expected,
             BranchName::fromName($branchName)
-                ->isForVersion(SemVerVersion::fromMilestoneName($milestoneName))
+                ->isForVersion(SemVerVersion::fromMilestoneName($milestoneName)),
         );
     }
 
@@ -112,7 +112,7 @@ final class BranchNameTest extends TestCase
         self::assertSame(
             $expected,
             BranchName::fromName($branchName)
-                ->isForNewerVersionThan(SemVerVersion::fromMilestoneName($milestoneName))
+                ->isForNewerVersionThan(SemVerVersion::fromMilestoneName($milestoneName)),
         );
     }
 
@@ -142,7 +142,7 @@ final class BranchNameTest extends TestCase
         self::assertEquals(
             SemVerVersion::fromMilestoneName($expectedVersion),
             BranchName::fromName($branchName)
-                ->targetMinorReleaseVersion()
+                ->targetMinorReleaseVersion(),
         );
     }
 

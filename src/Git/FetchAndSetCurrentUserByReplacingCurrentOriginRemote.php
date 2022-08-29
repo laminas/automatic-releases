@@ -22,7 +22,7 @@ final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetc
     public function __invoke(
         UriInterface $repositoryUri,
         UriInterface $uriWithCredentials,
-        string $repositoryRootDirectory
+        string $repositoryRootDirectory,
     ): void {
         Shell\execute('git', ['config', '--global', '--add', 'safe.directory', '*'], $repositoryRootDirectory);
 

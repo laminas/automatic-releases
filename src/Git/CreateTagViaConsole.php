@@ -18,7 +18,7 @@ final class CreateTagViaConsole implements CreateTag
         BranchName $sourceBranch,
         string $tagName,
         string $changelog,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         $tagFileName = Filesystem\create_temporary_file(Env\temp_dir(), 'created_tag');
 

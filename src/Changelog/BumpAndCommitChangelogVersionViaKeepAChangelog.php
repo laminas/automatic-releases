@@ -36,7 +36,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         CheckoutBranch $checkoutBranch,
         CommitFile $commitFile,
         Push $push,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ) {
         $this->changelogExists = $changelogExists;
         $this->checkoutBranch  = $checkoutBranch;
@@ -50,7 +50,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
         string $repositoryDirectory,
         SemVerVersion $version,
         BranchName $sourceBranch,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void {
         if (! ($this->changelogExists)($sourceBranch, $repositoryDirectory)) {
             // No changelog
@@ -76,7 +76,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             $sourceBranch,
             self::CHANGELOG_FILE,
             $message,
-            $keyId
+            $keyId,
         );
 
         ($this->push)($repositoryDirectory, $sourceBranch->name());
@@ -85,7 +85,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitCha
             'BumpAndCommitChangelogVersion: bumped %s to version %s in branch %s',
             self::CHANGELOG_FILE,
             $newVersion,
-            $sourceBranch->name()
+            $sourceBranch->name(),
         ));
     }
 }

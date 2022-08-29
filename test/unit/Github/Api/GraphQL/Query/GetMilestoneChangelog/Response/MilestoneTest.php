@@ -85,7 +85,7 @@ final class MilestoneTest extends TestCase
                     ],
                 ]),
             ],
-            $milestone->entries()
+            $milestone->entries(),
         );
 
         self::assertSame(123, $milestone->number());

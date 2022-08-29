@@ -29,7 +29,7 @@ final class BumpChangelogForReleaseBranch extends Command
         LoadCurrentGithubEvent $loadEvent,
         Fetch $fetch,
         GetMergeTargetCandidateBranches $getMergeTargets,
-        BumpAndCommitChangelogVersion $bumpChangelogVersion
+        BumpAndCommitChangelogVersion $bumpChangelogVersion,
     ) {
         parent::__construct('laminas:automatic-releases:bump-changelog');
 
@@ -51,7 +51,7 @@ final class BumpChangelogForReleaseBranch extends Command
         ($this->fetch)(
             $repositoryName->uri(),
             $repositoryName->uriWithTokenAuthentication($this->environment->githubToken()),
-            $repositoryPath
+            $repositoryPath,
         );
 
         $mergeCandidates = ($this->getMergeTargets)($repositoryPath);
@@ -65,7 +65,7 @@ final class BumpChangelogForReleaseBranch extends Command
             $repositoryPath,
             $releaseVersion,
             $releaseBranch,
-            $this->environment->signingSecretKey()
+            $this->environment->signingSecretKey(),
         );
 
         return 0;

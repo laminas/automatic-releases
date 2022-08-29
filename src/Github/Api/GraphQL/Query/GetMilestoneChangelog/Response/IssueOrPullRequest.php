@@ -34,7 +34,7 @@ final class IssueOrPullRequest
         Author $author,
         array $labels,
         bool $closed,
-        UriInterface $url
+        UriInterface $url,
     ) {
         $this->number = $number;
         $this->title  = $title;
@@ -72,7 +72,7 @@ final class IssueOrPullRequest
             Author::fromPayload($payload['author']),
             Vec\map($payload['labels']['nodes'], Label::fromPayload(...)),
             isset($payload['merged']) ? $payload['merged'] || $payload['closed'] : $payload['closed'],
-            new Uri($payload['url'])
+            new Uri($payload['url']),
         );
     }
 

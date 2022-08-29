@@ -40,7 +40,7 @@ final class SecretKeyIdTest extends TestCase
         self::assertSame(
             $valid,
             SecretKeyId::fromBase16String($valid)
-                       ->id()
+                       ->id(),
         );
     }
 

@@ -39,7 +39,7 @@ final class CreateReleaseThroughApiCallTest extends TestCase
         $this->createRelease  = new CreateReleaseThroughApiCall(
             $this->messageFactory,
             $this->httpClient,
-            $this->apiToken
+            $this->apiToken,
         );
     }
 
@@ -72,7 +72,7 @@ final class CreateReleaseThroughApiCallTest extends TestCase
                         'User-Agent'    => ['Ocramius\'s minimal API V3 client'],
                         'Authorization' => ['token ' . $this->apiToken],
                     ],
-                    $request->getHeaders()
+                    $request->getHeaders(),
                 );
 
                 self::assertJsonStringEqualsJsonString(
@@ -85,7 +85,7 @@ final class CreateReleaseThroughApiCallTest extends TestCase
 JSON
                     ,
                     $request->getBody()
-                        ->__toString()
+                        ->__toString(),
                 );
 
                 return true;
@@ -98,7 +98,7 @@ JSON
                 RepositoryName::fromFullName('foo/bar'),
                 SemVerVersion::fromMilestoneName('1.2.3'),
                 'A description for my awesome release',
-            )
+            ),
         );
     }
 

@@ -20,7 +20,7 @@ interface CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): ChangelogReleaseNotes;
 
     /** @psalm-param non-empty-string $repositoryDirectory */
@@ -29,6 +29,6 @@ interface CreateReleaseText
         RepositoryName $repositoryName,
         SemVerVersion $semVerVersion,
         BranchName $sourceBranch,
-        string $repositoryDirectory
+        string $repositoryDirectory,
     ): bool;
 }

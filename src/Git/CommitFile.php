@@ -19,6 +19,6 @@ interface CommitFile
         BranchName $sourceBranch,
         string $filename,
         string $commitMessage,
-        SecretKeyId $keyId
+        SecretKeyId $keyId,
     ): void;
 }
