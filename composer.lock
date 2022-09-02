@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7f3f027c8133cb9f2c7a83592ffc8dd",
+    "content-hash": "82c58abdc28b3273c8bfe00386241a03",
     "packages": [
         {
             "name": "azjezz/psl",
@@ -1044,27 +1044,27 @@
         },
         {
             "name": "phly/keep-a-changelog",
-            "version": "2.11.0",
+            "version": "2.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phly/keep-a-changelog.git",
-                "reference": "1a4c19162850e7c003a7a2a45c3c3c78a5ff2854"
+                "reference": "5e19dfa8c01d73f71dba60743b5b4e26cdb3ee42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phly/keep-a-changelog/zipball/1a4c19162850e7c003a7a2a45c3c3c78a5ff2854",
-                "reference": "1a4c19162850e7c003a7a2a45c3c3c78a5ff2854",
+                "url": "https://api.github.com/repos/phly/keep-a-changelog/zipball/5e19dfa8c01d73f71dba60743b5b4e26cdb3ee42",
+                "reference": "5e19dfa8c01d73f71dba60743b5b4e26cdb3ee42",
                 "shasum": ""
             },
             "require": {
-                "knplabs/github-api": "^3.0.0",
+                "composer-runtime-api": "^2.0",
+                "knplabs/github-api": "^3.4",
                 "laminas/laminas-diactoros": "^2.4.1",
-                "m4tthumphrey/php-gitlab-api": "^11.0.0",
-                "ocramius/package-versions": "^1.5.1 || ^2.1.0",
+                "m4tthumphrey/php-gitlab-api": "^11.0",
                 "php": "^7.4 || ^8.0",
-                "php-http/guzzle7-adapter": "^0.1.1",
-                "psr/event-dispatcher": "^1.0.0",
-                "symfony/console": "^5.2.1"
+                "php-http/guzzle7-adapter": "^1.0",
+                "psr/event-dispatcher": "^1.0",
+                "symfony/console": "^5.2.1 || ^6.0"
             },
             "replace": {
                 "laminas/laminas-zendframework-bridge": "*"
@@ -1074,7 +1074,7 @@
                 "captainhook/plugin-composer": "^5.2.3",
                 "laminas/laminas-coding-standard": "^2.1.4",
                 "phpspec/prophecy-phpunit": "^2.0.1",
-                "phpunit/phpunit": "^9.5.0"
+                "phpunit/phpunit": "^9.5"
             },
             "bin": [
                 "bin/keep-a-changelog"
@@ -1098,7 +1098,7 @@
                 "rss": "https://github.com/phly/keep-a-changelog/releases.atom",
                 "source": "https://github.com/phly/keep-a-changelog"
             },
-            "time": "2021-01-20T23:33:12+00:00"
+            "time": "2022-09-02T16:45:50+00:00"
         },
         {
             "name": "php-http/cache-plugin",
@@ -1372,16 +1372,16 @@
         },
         {
             "name": "php-http/guzzle7-adapter",
-            "version": "0.1.1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/guzzle7-adapter.git",
-                "reference": "1967de656b9679a2a6a66d0e4e16fa99bbed1ad1"
+                "reference": "fb075a71dbfa4847cf0c2938c4e5a9c478ef8b01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/guzzle7-adapter/zipball/1967de656b9679a2a6a66d0e4e16fa99bbed1ad1",
-                "reference": "1967de656b9679a2a6a66d0e4e16fa99bbed1ad1",
+                "url": "https://api.github.com/repos/php-http/guzzle7-adapter/zipball/fb075a71dbfa4847cf0c2938c4e5a9c478ef8b01",
+                "reference": "fb075a71dbfa4847cf0c2938c4e5a9c478ef8b01",
                 "shasum": ""
             },
             "require": {
@@ -1428,9 +1428,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/guzzle7-adapter/issues",
-                "source": "https://github.com/php-http/guzzle7-adapter/tree/0.1.1"
+                "source": "https://github.com/php-http/guzzle7-adapter/tree/1.0.0"
             },
-            "time": "2020-10-21T17:30:51+00:00"
+            "time": "2021-03-09T07:35:15+00:00"
         },
         {
             "name": "php-http/httplug",
