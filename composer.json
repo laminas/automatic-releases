@@ -18,7 +18,7 @@
         "psr/http-client": "^1.0.1",
         "psr/http-message": "^1.0.1",
         "psr/log": "^2.0.0",
-        "symfony/console": "^5.4.12"
+        "symfony/console": "^6.1.4"
     },
     "require-dev": {
         "doctrine/coding-standard": "^10.0.0",
