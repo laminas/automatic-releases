@@ -159,6 +159,53 @@ final class MergeTargetCandidateBranchesTest extends TestCase
         );
     }
 
+    public function testWillIgnoreNewMajorBranchesWhenComputingFutureReleaseBranchName(): void
+    {
+        $branches = MergeTargetCandidateBranches::fromAllBranches(
+            BranchName::fromName('2.0.x'),
+            BranchName::fromName('1.1.x'),
+            BranchName::fromName('1.4.x'),
+            BranchName::fromName('1.2.x'),
+        );
+
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.0.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.1.1')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.2.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.4.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.3.1')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.5.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.4.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('1.6.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('1.5.0')),
+        );
+        self::assertEquals(
+            BranchName::fromName('2.1.x'),
+            $branches->newestFutureReleaseBranchAfter(SemVerVersion::fromMilestoneName('2.0.0')),
+        );
+    }
+
     public function testWillIgnoreMasterBranchWhenComputingFutureReleaseBranchName(): void
     {
         $branches = MergeTargetCandidateBranches::fromAllBranches(
