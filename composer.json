@@ -48,5 +48,18 @@
         "psr-4": {
             "Laminas\\AutomaticReleases\\Test\\Unit\\": "test/unit"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@static-analysis",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "static-analysis": "psalm --shepherd --stats",
+        "update-baseline": "psalm --update-baseline",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
     }
 }

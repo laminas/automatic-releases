@@ -40,7 +40,49 @@ Feature: Default branch switching
       | 1.3.x  |
     And the default branch should be "1.3.x"
 
-  Scenario: A pre-existing branch of a greater major release is set as default branch on release
+  Scenario: A new minor branch on a pre-existing major branch is created and set as default branch on release
+    Given following existing branches:
+      | branch |
+      | 1.0.x  |
+      | 1.1.x  |
+      | 1.2.x  |
+      | 2.0.x  |
+    And following open milestones:
+      | name  |
+      | 2.0.0 |
+    And the default branch is "1.0.x"
+    When I close milestone "2.0.0"
+    Then these should be the existing branches:
+      | branch |
+      | 1.0.x  |
+      | 1.1.x  |
+      | 1.2.x  |
+      | 2.0.x  |
+      | 2.1.x  |
+    And the default branch should be "2.1.x"
+
+  Scenario: A pre-existing branch of a new major release is not set as default branch on release
+    Given following existing branches:
+      | branch |
+      | 1.0.x  |
+      | 1.1.x  |
+      | 1.2.x  |
+      | 2.0.x  |
+    And following open milestones:
+      | name  |
+      | 1.2.0 |
+    And the default branch is "1.0.x"
+    When I close milestone "1.2.0"
+    Then these should be the existing branches:
+      | branch |
+      | 1.0.x  |
+      | 1.1.x  |
+      | 1.2.x  |
+      | 1.3.x  |
+      | 2.0.x  |
+    And the default branch should be "1.3.x"
+
+  Scenario: A pre-existing minor branch of a greater major release is set as default branch on release
     Given following existing branches:
       | branch |
       | 1.0.x  |
