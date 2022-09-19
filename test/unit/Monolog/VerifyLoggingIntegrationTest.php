@@ -24,7 +24,7 @@ final class VerifyLoggingIntegrationTest extends TestCase
 {
     public function testMonologProducedMessageStructureMatchesLogProcessorExpectations(): void
     {
-        $request  = Psr17FactoryDiscovery::findRequestFactory()->createRequest('get', 'http://example.com/foo/bar');
+        $request  = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', 'http://example.com/foo/bar');
         $response = Psr17FactoryDiscovery::findResponseFactory()->createResponse(204);
 
         $response->getBody()
