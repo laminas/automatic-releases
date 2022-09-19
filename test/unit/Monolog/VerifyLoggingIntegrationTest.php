@@ -22,7 +22,7 @@ use function stream_get_contents;
  */
 final class VerifyLoggingIntegrationTest extends TestCase
 {
-    public function testLoggedRequestAndResponseBodyPartsDoNotContainSecretsAndPostData(): void
+    public function testMonologProducedMessageStructureMatchesLogProcessorExpectations(): void
     {
         $request  = Psr17FactoryDiscovery::findRequestFactory()->createRequest('get', 'http://example.com/foo/bar');
         $response = Psr17FactoryDiscovery::findResponseFactory()->createResponse(204);

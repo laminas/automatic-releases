@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /** @covers \Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpResponsesIntoStrings */
 final class ConvertLogContextHttpResponsesIntoStringsTest extends TestCase
 {
-    public function testWillScrubSensitiveRequestInformation(): void
+    public function testWillScrubSensitiveResponseInformationAndRenderBody(): void
     {
         $date = new DateTimeImmutable();
 
