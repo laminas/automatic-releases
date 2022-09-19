@@ -26,9 +26,7 @@ final class MergeTargetCandidateBranches
             return $branch->isReleaseBranch();
         });
 
-        $mergeTargetBranches = Vec\sort($mergeTargetBranches, static function (BranchName $a, BranchName $b): int {
-            return $a->majorAndMinor() <=> $b->majorAndMinor();
-        });
+        $mergeTargetBranches = Vec\sort($mergeTargetBranches, self::branchOrder(...));
 
         return new self($mergeTargetBranches);
     }
@@ -97,5 +95,11 @@ final class MergeTargetCandidateBranches
             $this->sortedBranches,
             static fn (BranchName $branch): bool => $needle->equals($branch)
         );
+    }
+
+    /** @return -1|0|1 */
+    private static function branchOrder(BranchName $a, BranchName $b): int
+    {
+        return $a->majorAndMinor() <=> $b->majorAndMinor();
     }
 }

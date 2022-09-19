@@ -20,20 +20,23 @@ final class ConvertLogContextHttpRequestsIntoStrings implements ProcessorInterfa
             $record->channel,
             $record->level,
             $record->message,
-            array_map(static function ($item): mixed {
-                if (! $item instanceof RequestInterface) {
-                    return $item;
-                }
-
-                return $item->getMethod()
-                    . ' '
-                    . $item
-                        ->getUri()
-                        ->withUserInfo('')
-                        ->__toString();
-            }, $record->context),
+            array_map(self::contextItemToMessage(...), $record->context),
             $record->extra,
             $record->formatted,
         );
+    }
+
+    private static function contextItemToMessage(mixed $item): mixed
+    {
+        if (! $item instanceof RequestInterface) {
+            return $item;
+        }
+
+        return $item->getMethod()
+            . ' '
+            . $item
+                ->getUri()
+                ->withUserInfo('')
+                ->__toString();
     }
 }

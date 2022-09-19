@@ -130,17 +130,20 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
      */
     private function removeDefaultContents(string $changelog): string
     {
-        $contents = Iter\reduce(
+        return Type\non_empty_string()->assert(Iter\reduce(
             self::DEFAULT_SECTIONS,
-            static fn (string $changelog, string $section): string => Regex\replace(
-                $changelog,
-                "/\n\#{3} " . $section . "\n\n- Nothing.\n/s",
-                '',
-            ),
+            self::removeEmptyDefaultChangelogSection(...),
             $changelog,
-        );
+        ));
+    }
 
-        return Type\non_empty_string()->assert($contents);
+    private static function removeEmptyDefaultChangelogSection(string $changelog, string $section): string
+    {
+        return Regex\replace(
+            $changelog,
+            "/\n\#{3} " . $section . "\n\n- Nothing.\n/s",
+            '',
+        );
     }
 
     /**
