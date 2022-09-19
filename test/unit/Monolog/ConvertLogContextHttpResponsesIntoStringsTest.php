@@ -6,16 +6,10 @@ namespace Laminas\AutomaticReleases\Test\Unit\Monolog;
 
 use DateTimeImmutable;
 use Http\Discovery\Psr17FactoryDiscovery;
-use Laminas\AutomaticReleases\HttpClient\LoggingHttpClient;
-use Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpRequestsIntoStrings;
 use Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpResponsesIntoStrings;
-use Monolog\Handler\StreamHandler;
 use Monolog\Level;
-use Monolog\Logger;
 use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientInterface;
-use function fopen;
 
 /** @covers \Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpResponsesIntoStrings */
 final class ConvertLogContextHttpResponsesIntoStringsTest extends TestCase
@@ -44,7 +38,7 @@ final class ConvertLogContextHttpResponsesIntoStringsTest extends TestCase
                     'foo'               => 'bar',
                     'plain response'     => '401 ""',
                     'sensitive response' => '403 "this should be printed"',
-                ]
+                ],
             ),
             (new ConvertLogContextHttpResponsesIntoStrings())(new LogRecord(
                 $date,
@@ -55,8 +49,8 @@ final class ConvertLogContextHttpResponsesIntoStringsTest extends TestCase
                     'foo'               => 'bar',
                     'plain response'     => $plainResponse,
                     'sensitive response' => $sensitiveResponse,
-                ]
-            ))
+                ],
+            )),
         );
     }
 }

@@ -38,7 +38,7 @@ final class ConvertLogContextHttpRequestsIntoStringsTest extends TestCase
                     'foo'               => 'bar',
                     'plain request'     => 'GET http://example.com/foo',
                     'sensitive request' => 'POST https://example.com/foo?bar=baz',
-                ]
+                ],
             ),
             (new ConvertLogContextHttpRequestsIntoStrings())(new LogRecord(
                 $date,
@@ -49,8 +49,8 @@ final class ConvertLogContextHttpRequestsIntoStringsTest extends TestCase
                     'foo'               => 'bar',
                     'plain request'     => $plainRequest,
                     'sensitive request' => $sensitiveRequest,
-                ]
-            ))
+                ],
+            )),
         );
     }
 }

@@ -27,7 +27,7 @@ final class LoggingHttpClient implements ClientInterface
             [
                 'request'  => $request,
                 'response' => $response,
-            ]
+            ],
         );
 
         return $response;

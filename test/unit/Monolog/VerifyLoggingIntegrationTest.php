@@ -10,7 +10,10 @@ use Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpResponsesIntoStrings;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
+
 use function fopen;
+use function rewind;
+use function stream_get_contents;
 
 /**
  * Small integration test to ensure future compatibility with monolog in our setup.
@@ -37,7 +40,7 @@ final class VerifyLoggingIntegrationTest extends TestCase
             [
                 new ConvertLogContextHttpRequestsIntoStrings(),
                 new ConvertLogContextHttpResponsesIntoStrings(),
-            ]
+            ],
         );
 
         $logger->debug('message', ['request' => $request, 'response' => $response]);
@@ -47,7 +50,7 @@ final class VerifyLoggingIntegrationTest extends TestCase
         self::assertStringContainsString(
             ': message {"request":"GET http://example.com/foo/bar","response":"204 \"hello world\""} []',
             stream_get_contents($stream),
-            'Request and response contents have been serialized into the final log message'
+            'Request and response contents have been serialized into the final log message',
         );
     }
 }

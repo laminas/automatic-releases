@@ -63,14 +63,14 @@ use const STDERR;
         E_STRICT | E_NOTICE | E_WARNING,
     );
 
-    $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
-    $logger    = new Logger(
+    $variables            = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $logger               = new Logger(
         'automatic-releases',
         [new StreamHandler(STDERR, $variables->logLevel())],
         [
             new ConvertLogContextHttpRequestsIntoStrings(),
             new ConvertLogContextHttpResponsesIntoStrings(),
-        ]
+        ],
     );
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
