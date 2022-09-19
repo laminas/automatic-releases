@@ -37,6 +37,9 @@ use Laminas\AutomaticReleases\Github\Event\Factory\LoadCurrentGithubEventFromGit
 use Laminas\AutomaticReleases\Github\JwageGenerateChangelog;
 use Laminas\AutomaticReleases\Github\MergeMultipleReleaseNotes;
 use Laminas\AutomaticReleases\Gpg\ImportGpgKeyFromStringViaTemporaryFile;
+use Laminas\AutomaticReleases\HttpClient\LoggingHttpClient;
+use Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpRequestsIntoStrings;
+use Laminas\AutomaticReleases\Monolog\ConvertLogContextHttpResponsesIntoStrings;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -60,14 +63,20 @@ use const STDERR;
         E_STRICT | E_NOTICE | E_WARNING,
     );
 
-    $variables = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
-    $logger    = new Logger('automatic-releases');
-    $logger->pushHandler(new StreamHandler(STDERR, $variables->logLevel()));
+    $variables            = EnvironmentVariables::fromEnvironment(new ImportGpgKeyFromStringViaTemporaryFile());
+    $logger               = new Logger(
+        'automatic-releases',
+        [new StreamHandler(STDERR, $variables->logLevel())],
+        [
+            new ConvertLogContextHttpRequestsIntoStrings(),
+            new ConvertLogContextHttpResponsesIntoStrings(),
+        ],
+    );
     $loadEvent            = new LoadCurrentGithubEventFromGithubActionPath($variables);
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
     $makeRequests         = Psr17FactoryDiscovery::findRequestFactory();
-    $httpClient           = HttpClientDiscovery::find();
+    $httpClient           = new LoggingHttpClient(HttpClientDiscovery::find(), $logger);
     $githubToken          = $variables->githubToken();
     $getMilestone         = new GetMilestoneFirst100IssuesAndPullRequests(new RunGraphQLQuery(
         $makeRequests,

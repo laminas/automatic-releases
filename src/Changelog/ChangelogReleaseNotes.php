@@ -58,8 +58,7 @@ class ChangelogReleaseNotes
     {
         if ($this->changelogEntry && $next->changelogEntry) {
             throw new RuntimeException(
-                'Aborting: Both current release notes and next contain a ChangelogEntry;'
-                . ' only one CreateReleaseText implementation should resolve one.',
+                'Aborting: Both current release notes and next contain a ChangelogEntry; only one CreateReleaseText implementation should resolve one.',
             );
         }
 
