@@ -4073,16 +4073,16 @@
         },
         {
             "name": "infection/infection",
-            "version": "0.26.15",
+            "version": "0.26.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/infection/infection.git",
-                "reference": "cac814fab9ec3ee60bfe55f070942306c61c8eb9"
+                "reference": "d646aafe530ba21b8479694cd151570c93c72312"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/infection/infection/zipball/cac814fab9ec3ee60bfe55f070942306c61c8eb9",
-                "reference": "cac814fab9ec3ee60bfe55f070942306c61c8eb9",
+                "url": "https://api.github.com/repos/infection/infection/zipball/d646aafe530ba21b8479694cd151570c93c72312",
+                "reference": "d646aafe530ba21b8479694cd151570c93c72312",
                 "shasum": ""
             },
             "require": {
@@ -4183,7 +4183,7 @@
             ],
             "support": {
                 "issues": "https://github.com/infection/infection/issues",
-                "source": "https://github.com/infection/infection/tree/0.26.15"
+                "source": "https://github.com/infection/infection/tree/0.26.16"
             },
             "funding": [
                 {
@@ -4195,7 +4195,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2022-09-15T21:26:54+00:00"
+            "time": "2022-10-22T10:07:33+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -5421,20 +5421,20 @@
         },
         {
             "name": "roave/infection-static-analysis-plugin",
-            "version": "1.24.0",
+            "version": "1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/infection-static-analysis-plugin.git",
-                "reference": "abf7ed3d8d87d70d0cc6f274e16e3654fe564fba"
+                "reference": "f0b6b72dc9e378fdf0cadf440bc2b8061333392e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/infection-static-analysis-plugin/zipball/abf7ed3d8d87d70d0cc6f274e16e3654fe564fba",
-                "reference": "abf7ed3d8d87d70d0cc6f274e16e3654fe564fba",
+                "url": "https://api.github.com/repos/Roave/infection-static-analysis-plugin/zipball/f0b6b72dc9e378fdf0cadf440bc2b8061333392e",
+                "reference": "f0b6b72dc9e378fdf0cadf440bc2b8061333392e",
                 "shasum": ""
             },
             "require": {
-                "infection/infection": "0.26.15",
+                "infection/infection": "0.26.16",
                 "ocramius/package-versions": "^1.9.0 || ^2.0.0",
                 "php": "~8.0.0|~8.1.0|~8.2.0",
                 "sanmai/later": "^0.1.2",
@@ -5466,9 +5466,9 @@
             "description": "Static analysis on top of mutation testing - prevents escaped mutants from being invalid according to static analysis",
             "support": {
                 "issues": "https://github.com/Roave/infection-static-analysis-plugin/issues",
-                "source": "https://github.com/Roave/infection-static-analysis-plugin/tree/1.24.0"
+                "source": "https://github.com/Roave/infection-static-analysis-plugin/tree/1.25.0"
             },
-            "time": "2022-10-17T08:27:54+00:00"
+            "time": "2022-10-22T11:43:05+00:00"
         },
         {
             "name": "sanmai/later",
@@ -6559,16 +6559,16 @@
         },
         {
             "name": "slevomat/coding-standard",
-            "version": "8.6.1",
+            "version": "8.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slevomat/coding-standard.git",
-                "reference": "71dddfec93c25e8a5dff2774568c2f5ac30f01d3"
+                "reference": "080f592b16f021a3a8e43d95ca8f57b87ddcf4e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/71dddfec93c25e8a5dff2774568c2f5ac30f01d3",
-                "reference": "71dddfec93c25e8a5dff2774568c2f5ac30f01d3",
+                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/080f592b16f021a3a8e43d95ca8f57b87ddcf4e6",
+                "reference": "080f592b16f021a3a8e43d95ca8f57b87ddcf4e6",
                 "shasum": ""
             },
             "require": {
@@ -6608,7 +6608,7 @@
             ],
             "support": {
                 "issues": "https://github.com/slevomat/coding-standard/issues",
-                "source": "https://github.com/slevomat/coding-standard/tree/8.6.1"
+                "source": "https://github.com/slevomat/coding-standard/tree/8.6.2"
             },
             "funding": [
                 {
@@ -6620,7 +6620,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-21T10:23:13+00:00"
+            "time": "2022-10-22T15:42:49+00:00"
         },
         {
             "name": "squizlabs/php_codesniffer",
