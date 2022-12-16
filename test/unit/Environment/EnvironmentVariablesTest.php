@@ -112,4 +112,40 @@ final class EnvironmentVariablesTest extends TestCase
 
         EnvironmentVariables::fromEnvironment($importKey);
     }
+
+    public function testDebugModeOffEnvironmentVariables(): void
+    {
+        // commented to signify a missing env variable.
+        // Env\set_var('ACTIONS_RUNNER_DEBUG', '');
+        Env\set_var('GITHUB_TOKEN', 'token');
+        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
+        Env\set_var('GITHUB_ORGANISATION', 'bbb');
+        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
+        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+
+        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+        $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
+        $variables = EnvironmentVariables::fromEnvironment($importKey);
+        self::assertEquals('INFO', $variables->logLevel());
+    }
+
+    public function testDebugModeOnEnvironmentVariables(): void
+    {
+        Env\set_var('ACTIONS_RUNNER_DEBUG', 'TRUE');
+        Env\set_var('GITHUB_TOKEN', 'token');
+        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
+        Env\set_var('GITHUB_ORGANISATION', 'bbb');
+        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
+        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+
+        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+        $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
+        $variables = EnvironmentVariables::fromEnvironment($importKey);
+
+        self::assertEquals('DEBUG', $variables->logLevel());
+    }
 }
