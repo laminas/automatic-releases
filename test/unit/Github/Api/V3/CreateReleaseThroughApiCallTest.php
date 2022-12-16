@@ -106,7 +106,7 @@ JSON
         );
     }
 
-    /** @psalm-return non-empty-list<array{positive-int}> */
+    /** @psalm-return array<int,array<array-key,positive-int>> */
     public function exampleValidResponseCodes(): array
     {
         return [
@@ -156,7 +156,7 @@ JSON
         );
     }
 
-    /** @psalm-return non-empty-list<array{positive-int}> */
+    /** @psalm-return array<int,array<array-key,positive-int>> */
     public function exampleFailureResponseCodes(): array
     {
         return [
