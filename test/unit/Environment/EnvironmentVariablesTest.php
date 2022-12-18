@@ -115,8 +115,9 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testDebugModeOffEnvironmentVariables(): void
     {
-        // commented to signify a missing env variable.
-        // Env\set_var('ACTIONS_RUNNER_DEBUG', '');
+        // missing env variable.
+        Env\remove_var('ACTIONS_RUNNER_DEBUG');
+
         Env\set_var('GITHUB_TOKEN', 'token');
         Env\set_var('SIGNING_SECRET_KEY', 'aaa');
         Env\set_var('GITHUB_ORGANISATION', 'bbb');
@@ -128,7 +129,7 @@ final class EnvironmentVariablesTest extends TestCase
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
         $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
         $variables = EnvironmentVariables::fromEnvironment($importKey);
-        self::assertEquals('INFO', $variables->logLevel());
+        self::assertSame('INFO', $variables->logLevel());
     }
 
     public function testDebugModeOnEnvironmentVariables(): void
@@ -146,6 +147,6 @@ final class EnvironmentVariablesTest extends TestCase
         $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
         $variables = EnvironmentVariables::fromEnvironment($importKey);
 
-        self::assertEquals('DEBUG', $variables->logLevel());
+        self::assertSame('DEBUG', $variables->logLevel());
     }
 }
