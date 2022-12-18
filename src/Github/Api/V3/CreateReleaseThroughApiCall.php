@@ -71,7 +71,7 @@ final class CreateReleaseThroughApiCall implements CreateRelease
         ]));
 
         invariant_violation(
-            'Failed to create release through GitHub API;' . PHP_EOL . 'Status code: %s' . PHP_EOL . 'Message: %s' . PHP_EOL,
+            "Failed to create release through GitHub API;\nStatus code: %s\nMessage: %s\n",
             $statusCode,
             $errorResponseData['message'],
         );
