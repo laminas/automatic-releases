@@ -9,6 +9,9 @@ use Psl\Type;
 use Psl\Vec;
 
 use function array_search;
+use function Psl\Iter\first;
+use function Psl\Vec\filter;
+use function Psl\Vec\reverse;
 
 final class MergeTargetCandidateBranches
 {
@@ -22,7 +25,7 @@ final class MergeTargetCandidateBranches
 
     public static function fromAllBranches(BranchName ...$branches): self
     {
-        $mergeTargetBranches = Vec\filter($branches, static function (BranchName $branch): bool {
+        $mergeTargetBranches = filter($branches, static function (BranchName $branch): bool {
             return $branch->isReleaseBranch();
         });
 
@@ -70,23 +73,24 @@ final class MergeTargetCandidateBranches
 
     public function newestReleaseBranch(): BranchName|null
     {
-        return Iter\first(Vec\reverse($this->sortedBranches));
+        return first(reverse($this->sortedBranches));
     }
 
     public function newestFutureReleaseBranchAfter(SemVerVersion $version): BranchName
     {
         $nextMinor = $version->nextMinor();
 
-        $futureReleaseBranch = Vec\filter(
-            Vec\reverse($this->sortedBranches),
+        /** @var ?BranchName $futureReleaseBranch */
+        $futureReleaseBranch = first(filter(
+            reverse($this->sortedBranches),
             static function (BranchName $branch) use ($nextMinor): bool {
                 $targetVersion = $branch->targetMinorReleaseVersion();
 
                 return ! $targetVersion->isNewMajorRelease() && $nextMinor->lessThanEqual($targetVersion);
             },
-        );
+        ));
 
-        return Iter\first($futureReleaseBranch) ?? $nextMinor->targetReleaseBranchName();
+        return $futureReleaseBranch ?? $nextMinor->targetReleaseBranchName();
     }
 
     public function contains(BranchName $needle): bool
