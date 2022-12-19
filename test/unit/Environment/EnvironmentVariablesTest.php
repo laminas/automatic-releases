@@ -12,6 +12,7 @@ use Psl\Dict;
 use Psl\Env;
 use Psl\Exception\InvariantViolationException;
 use Psl\SecureRandom;
+
 use function Psl\Env\set_var;
 
 final class EnvironmentVariablesTest extends TestCase
@@ -159,7 +160,8 @@ final class EnvironmentVariablesTest extends TestCase
 
         $this->expectException(InvariantViolationException::class);
         $this->expectExceptionMessage(
-            'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value; see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
+            'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value;'
+            . ' see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels',
         );
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
