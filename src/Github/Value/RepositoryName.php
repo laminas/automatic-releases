@@ -11,6 +11,8 @@ use Psl\Str;
 use Psl\Type;
 use Psr\Http\Message\UriInterface;
 
+use function explode;
+
 /** @psalm-immutable */
 final class RepositoryName
 {
@@ -39,7 +41,7 @@ final class RepositoryName
     {
         Psl\invariant(Regex\matches($fullName, '~^[a-zA-Z0-9_\\.-]+/[a-zA-Z0-9_\\.-]+$~'), 'Invalid repository name.');
 
-        [$owner, $name] = Str\split($fullName, '/');
+        [$owner, $name] = explode('/', $fullName);
 
         return new self(
             Type\non_empty_string()->assert($owner),

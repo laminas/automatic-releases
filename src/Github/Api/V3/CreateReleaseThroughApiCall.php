@@ -7,16 +7,20 @@ namespace Laminas\AutomaticReleases\Github\Api\V3;
 use Laminas\AutomaticReleases\Git\Value\SemVerVersion;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Laminas\Diactoros\Uri;
-use Psl;
-use Psl\Json;
-use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
+use function Psl\invariant_violation;
+use function Psl\Json\encode;
+use function Psl\Json\typed;
+use function Psl\Type\non_empty_string;
+use function Psl\Type\shape;
+use function sprintf;
+
 final class CreateReleaseThroughApiCall implements CreateRelease
 {
-    private const API_ROOT = 'https://api.github.com/';
+    private const API_URI = 'https://api.github.com/repos/%s/%s/releases';
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
@@ -34,32 +38,40 @@ final class CreateReleaseThroughApiCall implements CreateRelease
         $request = $this->messageFactory
             ->createRequest(
                 'POST',
-                self::API_ROOT . 'repos/' . $repository->owner() . '/' . $repository->name() . '/releases',
+                sprintf(self::API_URI, $repository->owner(), $repository->name()),
             )
             ->withAddedHeader('Content-Type', 'application/json')
             ->withAddedHeader('User-Agent', 'Ocramius\'s minimal API V3 client')
             ->withAddedHeader('Authorization', 'token ' . $this->apiToken);
 
-        $request
-            ->getBody()
-            ->write(Json\encode([
-                'tag_name' => $version->fullReleaseName(),
-                'name'     => $version->fullReleaseName(),
-                'body'     => $releaseNotes,
-            ]));
+        $request->getBody()->write(encode([
+            'tag_name' => $version->fullReleaseName(),
+            'name'     => $version->fullReleaseName(),
+            'body'     => $releaseNotes,
+        ]));
 
         $response = $this->client->sendRequest($request);
 
-        Psl\invariant($response->getStatusCode() >= 200 && $response->getStatusCode() <= 299, 'Failed to create release through GitHub API.');
+        $statusCode        = $response->getStatusCode();
+        $responseBody      = (string) $response->getBody();
+        $validResponseCode = $statusCode >= 200 && $statusCode <= 299;
 
-        $responseBody = $response
-            ->getBody()
-            ->__toString();
+        if ($validResponseCode) {
+            $responseData = typed($responseBody, shape([
+                'html_url' => non_empty_string(),
+            ]));
 
-        $responseData = Json\typed($responseBody, Type\shape([
-            'html_url' => Type\non_empty_string(),
+            return new Uri($responseData['html_url']);
+        }
+
+        $errorResponseData = typed($responseBody, shape([
+            'message' => non_empty_string(),
         ]));
 
-        return new Uri($responseData['html_url']);
+        invariant_violation(
+            "Failed to create release through GitHub API;\nStatus code: %s\nMessage: %s\n",
+            $statusCode,
+            $errorResponseData['message'],
+        );
     }
 }

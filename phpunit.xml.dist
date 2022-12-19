@@ -1,20 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    colors="true"
-    verbose="true"
-    failOnRisky="true"
->
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheResultFile=".phpunit.cache/test-results"
+         executionOrder="depends,defects"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         convertDeprecationsToExceptions="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         verbose="true">
     <testsuites>
         <testsuite name="laminas/automatic-releases unit tests">
             <directory>./test/unit</directory>
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <coverage processUncoveredFiles="true">
         <include>
-            <directory>src</directory>
+            <directory suffix=".php">src</directory>
         </include>
     </coverage>
 </phpunit>

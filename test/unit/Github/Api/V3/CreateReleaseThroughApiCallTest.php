@@ -18,6 +18,10 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 
+use function sprintf;
+
+use const PHP_EOL;
+
 /** @covers \Laminas\AutomaticReleases\Github\Api\V3\CreateReleaseThroughApiCall */
 final class CreateReleaseThroughApiCallTest extends TestCase
 {
@@ -102,13 +106,13 @@ JSON
         );
     }
 
-    /** @psalm-return non-empty-list<array{positive-int}> */
+    /** @psalm-return array<int,array<array-key,positive-int>> */
     public function exampleValidResponseCodes(): array
     {
         return [
-            [200],
-            [201],
-            [204],
+            200 => [200],
+            201 => [201],
+            204 => [204],
         ];
     }
 
@@ -127,8 +131,11 @@ JSON
         $invalidResponse = (new Response())
             ->withStatus($responseCode);
 
-        $invalidResponse->getBody()
-            ->write('{"html_url": "http://the-domain.com/release"}');
+        // `message` field describing the error
+        // https://docs.github.com/en/rest/overview/resources-in-the-rest-api#client-errors
+        $invalidResponse->getBody()->write(
+            sprintf('{"message": "%s"}', 'Error code ' . $responseCode),
+        );
 
         $this->httpClient
             ->expects(self::once())
@@ -136,23 +143,27 @@ JSON
             ->willReturn($invalidResponse);
 
         $this->expectException(InvariantViolationException::class);
-        $this->expectExceptionMessage('Failed to create release through GitHub API.');
+        $this->expectExceptionMessage(
+            'Failed to create release through GitHub API;' . PHP_EOL
+            . 'Status code: ' . $responseCode . PHP_EOL
+            . 'Message: Error code ' . $responseCode . PHP_EOL,
+        );
 
-        $this->createRelease->__invoke(
+        ($this->createRelease)(
             RepositoryName::fromFullName('foo/bar'),
             SemVerVersion::fromMilestoneName('1.2.3'),
             'A description for my awesome release',
         );
     }
 
-    /** @psalm-return non-empty-list<array{positive-int}> */
+    /** @psalm-return array<int,array<array-key,positive-int>> */
     public function exampleFailureResponseCodes(): array
     {
         return [
-            [199],
-            [400],
-            [401],
-            [500],
+            199 => [199],
+            400 => [400],
+            401 => [401],
+            500 => [500],
         ];
     }
 

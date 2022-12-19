@@ -156,11 +156,9 @@ class ChangelogReleaseNotesTest extends TestCase
     ): void {
         $merged = $original->merge($secondary);
 
-        $r = new ReflectionProperty($merged, 'changelogEntry');
-        $r->setAccessible(true);
-
+        $reflectionProperty = new ReflectionProperty($merged, 'changelogEntry');
         // Equals, but not same, as the class stores a clone of the original.
-        $this->assertEquals($expectedEntry, $r->getValue($merged));
+        $this->assertEquals($expectedEntry, $reflectionProperty->getValue($merged));
     }
 
     private const CHANGELOG_ENTRY = <<< 'ENTRY'
