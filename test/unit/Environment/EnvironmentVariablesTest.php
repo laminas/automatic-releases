@@ -12,6 +12,7 @@ use Psl\Dict;
 use Psl\Env;
 use Psl\Exception\InvariantViolationException;
 use Psl\SecureRandom;
+use function Psl\Env\set_var;
 
 final class EnvironmentVariablesTest extends TestCase
 {
@@ -51,7 +52,7 @@ final class EnvironmentVariablesTest extends TestCase
                 return;
             }
 
-            Env\set_var($key, $value);
+            set_var($key, $value);
         });
 
         parent::tearDown();
@@ -68,13 +69,13 @@ final class EnvironmentVariablesTest extends TestCase
         $githubEventPath    = 'githubEventPath' . SecureRandom\string(8);
         $githubWorkspace    = 'githubWorkspace' . SecureRandom\string(8);
 
-        Env\set_var('GITHUB_TOKEN', $githubToken);
-        Env\set_var('SIGNING_SECRET_KEY', $signingSecretKey);
-        Env\set_var('GITHUB_ORGANISATION', $githubOrganisation);
-        Env\set_var('GIT_AUTHOR_NAME', $gitAuthorName);
-        Env\set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
-        Env\set_var('GITHUB_EVENT_PATH', $githubEventPath);
-        Env\set_var('GITHUB_WORKSPACE', $githubWorkspace);
+        set_var('GITHUB_TOKEN', $githubToken);
+        set_var('SIGNING_SECRET_KEY', $signingSecretKey);
+        set_var('GITHUB_ORGANISATION', $githubOrganisation);
+        set_var('GIT_AUTHOR_NAME', $gitAuthorName);
+        set_var('GIT_AUTHOR_EMAIL', $gitAuthorEmail);
+        set_var('GITHUB_EVENT_PATH', $githubEventPath);
+        set_var('GITHUB_WORKSPACE', $githubWorkspace);
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
@@ -94,13 +95,13 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testFailsOnMissingEnvironmentVariables(): void
     {
-        Env\set_var('GITHUB_TOKEN', '');
-        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
-        Env\set_var('GITHUB_ORGANISATION', 'bbb');
-        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
-        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
-        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
-        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+        set_var('GITHUB_TOKEN', '');
+        set_var('SIGNING_SECRET_KEY', 'aaa');
+        set_var('GITHUB_ORGANISATION', 'bbb');
+        set_var('GIT_AUTHOR_NAME', 'ccc');
+        set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        set_var('GITHUB_WORKSPACE', '/tmp');
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
 
@@ -118,13 +119,13 @@ final class EnvironmentVariablesTest extends TestCase
         // missing env variable.
         Env\remove_var('ACTIONS_RUNNER_DEBUG');
 
-        Env\set_var('GITHUB_TOKEN', 'token');
-        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
-        Env\set_var('GITHUB_ORGANISATION', 'bbb');
-        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
-        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
-        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
-        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+        set_var('GITHUB_TOKEN', 'token');
+        set_var('SIGNING_SECRET_KEY', 'aaa');
+        set_var('GITHUB_ORGANISATION', 'bbb');
+        set_var('GIT_AUTHOR_NAME', 'ccc');
+        set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        set_var('GITHUB_WORKSPACE', '/tmp');
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
         $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
@@ -134,19 +135,48 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testDebugModeOnEnvironmentVariables(): void
     {
-        Env\set_var('ACTIONS_RUNNER_DEBUG', 'TRUE');
-        Env\set_var('GITHUB_TOKEN', 'token');
-        Env\set_var('SIGNING_SECRET_KEY', 'aaa');
-        Env\set_var('GITHUB_ORGANISATION', 'bbb');
-        Env\set_var('GIT_AUTHOR_NAME', 'ccc');
-        Env\set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
-        Env\set_var('GITHUB_EVENT_PATH', '/tmp/event');
-        Env\set_var('GITHUB_WORKSPACE', '/tmp');
+        set_var('ACTIONS_RUNNER_DEBUG', 'TRUE');
+        set_var('GITHUB_TOKEN', 'token');
+        set_var('SIGNING_SECRET_KEY', 'aaa');
+        set_var('GITHUB_ORGANISATION', 'bbb');
+        set_var('GIT_AUTHOR_NAME', 'ccc');
+        set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        set_var('GITHUB_WORKSPACE', '/tmp');
 
         $importKey = $this->createMock(ImportGpgKeyFromString::class);
         $importKey->method('__invoke')->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
         $variables = EnvironmentVariables::fromEnvironment($importKey);
 
         self::assertSame('DEBUG', $variables->logLevel());
+    }
+
+    public function testInvalidLogLevelEnvironmentVariables(): void
+    {
+        $this->setupRequiredEnvironmentVariables();
+
+        set_var('LOG_LEVEL', 'TEMP');
+
+        $this->expectException(InvariantViolationException::class);
+        $this->expectExceptionMessage(
+            'LOG_LEVEL env MUST be a valid monolog/monolog log level constant name or value; see https://github.com/Seldaek/monolog/blob/master/doc/01-usage.md#log-levels'
+        );
+
+        $importKey = $this->createMock(ImportGpgKeyFromString::class);
+        $importKey->method('__invoke')
+            ->willReturn(SecretKeyId::fromBase16String('aabbccdd'));
+
+        EnvironmentVariables::fromEnvironment($importKey);
+    }
+
+    private function setupRequiredEnvironmentVariables(): void
+    {
+        set_var('GITHUB_TOKEN', 'token');
+        set_var('SIGNING_SECRET_KEY', 'aaa');
+        set_var('GITHUB_ORGANISATION', 'bbb');
+        set_var('GIT_AUTHOR_NAME', 'ccc');
+        set_var('GIT_AUTHOR_EMAIL', 'ddd@eee.ff');
+        set_var('GITHUB_EVENT_PATH', '/tmp/event');
+        set_var('GITHUB_WORKSPACE', '/tmp');
     }
 }
