@@ -157,6 +157,7 @@ class ChangelogReleaseNotesTest extends TestCase
         $merged = $original->merge($secondary);
 
         $r = new ReflectionProperty($merged, 'changelogEntry');
+        /** @psalm-suppress UnusedMethodCall */
         $r->setAccessible(true);
 
         // Equals, but not same, as the class stores a clone of the original.
