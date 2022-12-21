@@ -13,7 +13,6 @@ final readonly class BranchName
 {
     /** @psalm-param non-empty-string $name */
     private function __construct(
-        /** @psalm-var non-empty-string */
         private readonly string $name,
     ) {
     }

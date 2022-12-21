@@ -21,9 +21,7 @@ final readonly class RepositoryName
      * @psalm-param non-empty-string $name
      */
     private function __construct(
-        /** @psalm-var non-empty-string */
         private readonly string $owner,
-        /** @psalm-var non-empty-string */
         private readonly string $name,
     ) {
     }

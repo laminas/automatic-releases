@@ -13,7 +13,6 @@ final readonly class SecretKeyId
 {
     /** @psalm-param non-empty-string $id */
     private function __construct(
-        /** @psalm-var non-empty-string */
         private readonly string $id,
     ) {
     }

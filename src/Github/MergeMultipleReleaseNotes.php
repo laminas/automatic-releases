@@ -17,7 +17,6 @@ final readonly class MergeMultipleReleaseNotes implements CreateReleaseText
 {
     /** @psalm-param non-empty-list<CreateReleaseText> $releaseTextGenerators */
     public function __construct(
-        /** @psalm-var non-empty-list<CreateReleaseText> */
         private readonly array $releaseTextGenerators,
     ) {
     }
