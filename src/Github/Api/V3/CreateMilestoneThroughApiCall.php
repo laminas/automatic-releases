@@ -13,7 +13,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 
-final class CreateMilestoneThroughApiCall implements CreateMilestone
+final readonly class CreateMilestoneThroughApiCall implements CreateMilestone
 {
     private const API_ROOT = 'https://api.github.com/';
 

@@ -12,7 +12,7 @@ use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
-final class CreatePullRequestThroughApiCall implements CreatePullRequest
+final readonly class CreatePullRequestThroughApiCall implements CreatePullRequest
 {
     private const API_ROOT = 'https://api.github.com/';
 

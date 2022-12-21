@@ -18,7 +18,7 @@ use function Psl\Type\non_empty_string;
 use function Psl\Type\shape;
 use function sprintf;
 
-final class CreateReleaseThroughApiCall implements CreateRelease
+final readonly class CreateReleaseThroughApiCall implements CreateRelease
 {
     private const API_URI = 'https://api.github.com/repos/%s/%s/releases';
 

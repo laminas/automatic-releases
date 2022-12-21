@@ -13,7 +13,7 @@ use function Psl\Iter\first;
 use function Psl\Vec\filter;
 use function Psl\Vec\reverse;
 
-final class MergeTargetCandidateBranches
+final readonly class MergeTargetCandidateBranches
 {
     /**
      * @param BranchName[] $sortedBranches branches that can be used for releases, sorted in ascending version number
@@ -25,9 +25,7 @@ final class MergeTargetCandidateBranches
 
     public static function fromAllBranches(BranchName ...$branches): self
     {
-        $mergeTargetBranches = filter($branches, static function (BranchName $branch): bool {
-            return $branch->isReleaseBranch();
-        });
+        $mergeTargetBranches = filter($branches, static fn (BranchName $branch): bool => $branch->isReleaseBranch());
 
         $mergeTargetBranches = Vec\sort($mergeTargetBranches, self::branchOrder(...));
 

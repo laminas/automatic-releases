@@ -12,7 +12,7 @@ use Psl\Vec;
 use Psr\Http\Message\UriInterface;
 
 /** @psalm-immutable */
-final class Milestone
+final readonly class Milestone
 {
     /**
      * @param array<int, IssueOrPullRequest> $entries
@@ -101,8 +101,6 @@ final class Milestone
     /** @psalm-suppress ImpureFunctionCall the {@see \Psl\Iter\all()} API is conditionally pure */
     public function assertAllIssuesAreClosed(): void
     {
-        Psl\invariant(Iter\all($this->entries, static function (IssueOrPullRequest $entry): bool {
-            return $entry->closed();
-        }), 'Failed asserting that all milestone issues are closed.');
+        Psl\invariant(Iter\all($this->entries, static fn (IssueOrPullRequest $entry): bool => $entry->closed()), 'Failed asserting that all milestone issues are closed.');
     }
 }

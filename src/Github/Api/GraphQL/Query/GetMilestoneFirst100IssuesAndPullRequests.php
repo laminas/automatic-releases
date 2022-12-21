@@ -9,7 +9,7 @@ use Laminas\AutomaticReleases\Github\Api\GraphQL\RunQuery;
 use Laminas\AutomaticReleases\Github\Value\RepositoryName;
 use Psl\Type;
 
-final class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
+final readonly class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
 {
     // @TODO this fetches ONLY the first 100 issues!!!
     private const QUERY = <<<'GRAPHQL'

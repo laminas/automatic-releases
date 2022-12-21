@@ -9,15 +9,13 @@ use Psl\Regex;
 use Psl\Type;
 
 /** @psalm-immutable */
-final class BranchName
+final readonly class BranchName
 {
-    /** @psalm-var non-empty-string */
-    private string $name;
-
     /** @psalm-param non-empty-string $name */
-    private function __construct(string $name)
-    {
-        $this->name = $name;
+    private function __construct(
+        /** @psalm-var non-empty-string */
+        private readonly string $name,
+    ) {
     }
 
     /**

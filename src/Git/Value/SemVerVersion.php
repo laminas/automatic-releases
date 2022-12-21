@@ -8,7 +8,7 @@ use Psl;
 use Psl\Regex;
 
 /** @psalm-immutable */
-final class SemVerVersion
+final readonly class SemVerVersion
 {
     private function __construct(
         private readonly int $major,

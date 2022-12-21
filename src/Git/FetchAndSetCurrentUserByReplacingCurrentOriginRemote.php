@@ -10,7 +10,7 @@ use Psl\Filesystem;
 use Psl\Shell;
 use Psr\Http\Message\UriInterface;
 
-final class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
+final readonly class FetchAndSetCurrentUserByReplacingCurrentOriginRemote implements Fetch
 {
     public function __construct(private readonly EnvironmentVariables $variables)
     {

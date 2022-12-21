@@ -38,7 +38,7 @@ final class EnvironmentVariablesTest extends TestCase
 
         $this->originalValues = Dict\associate(self::RESET_ENVIRONMENT_VARIABLES, Dict\map(
             self::RESET_ENVIRONMENT_VARIABLES,
-            static fn (string $variable) => Env\get_var($variable),
+            static fn (string $variable): string|null => Env\get_var($variable),
         ));
     }
 

@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 /** @internal */
-final class LoggingHttpClient implements ClientInterface
+final readonly class LoggingHttpClient implements ClientInterface
 {
     public function __construct(private readonly ClientInterface $next, private readonly LoggerInterface $logger)
     {

@@ -9,15 +9,13 @@ use Psl\Regex;
 use Psl\Str;
 
 /** @psalm-immutable */
-final class SecretKeyId
+final readonly class SecretKeyId
 {
-    /** @psalm-var non-empty-string */
-    private string $id;
-
     /** @psalm-param non-empty-string $id */
-    private function __construct(string $id)
-    {
-        $this->id = $id;
+    private function __construct(
+        /** @psalm-var non-empty-string */
+        private readonly string $id,
+    ) {
     }
 
     /** @psalm-pure */
