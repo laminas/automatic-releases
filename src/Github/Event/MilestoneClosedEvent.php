@@ -10,7 +10,7 @@ use Psl\Json;
 use Psl\Type;
 
 /** @psalm-immutable */
-final class MilestoneClosedEvent
+final readonly class MilestoneClosedEvent
 {
     private function __construct(
         private readonly SemVerVersion $version,

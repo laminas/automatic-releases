@@ -17,7 +17,7 @@ use Psr\Http\Message\UriInterface;
 
 use function preg_quote;
 
-final class CreateReleaseTextThroughChangelog implements CreateReleaseText
+final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
         ### Release Notes for %release%

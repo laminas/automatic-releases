@@ -14,7 +14,7 @@ use Psl\Str;
 use Psl\Type;
 use Psr\Log\LoggerInterface;
 
-final class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
+final readonly class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
 {
     private const CHANGELOG_FILE = 'CHANGELOG.md';
 

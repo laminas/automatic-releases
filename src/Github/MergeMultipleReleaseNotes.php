@@ -13,15 +13,12 @@ use Psl\Iter;
 use Psl\Type;
 use Psl\Vec;
 
-final class MergeMultipleReleaseNotes implements CreateReleaseText
+final readonly class MergeMultipleReleaseNotes implements CreateReleaseText
 {
-    /** @psalm-var non-empty-list<CreateReleaseText> */
-    private array $releaseTextGenerators;
-
     /** @psalm-param non-empty-list<CreateReleaseText> $releaseTextGenerators */
-    public function __construct(array $releaseTextGenerators)
-    {
-        $this->releaseTextGenerators = $releaseTextGenerators;
+    public function __construct(
+        private readonly array $releaseTextGenerators,
+    ) {
     }
 
     public function __invoke(

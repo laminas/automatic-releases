@@ -9,7 +9,7 @@ use Laminas\AutomaticReleases\Github\Event\MilestoneClosedEvent;
 
 use function Psl\File\read;
 
-final class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
+final readonly class LoadCurrentGithubEventFromGithubActionPath implements LoadCurrentGithubEvent
 {
     public function __construct(private readonly EnvironmentVariables $variables)
     {

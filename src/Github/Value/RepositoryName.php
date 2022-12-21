@@ -14,22 +14,16 @@ use Psr\Http\Message\UriInterface;
 use function explode;
 
 /** @psalm-immutable */
-final class RepositoryName
+final readonly class RepositoryName
 {
-    /** @psalm-var non-empty-string */
-    private string $owner;
-
-    /** @psalm-var non-empty-string */
-    private string $name;
-
     /**
      * @psalm-param non-empty-string $owner
      * @psalm-param non-empty-string $name
      */
-    private function __construct(string $owner, string $name)
-    {
-        $this->owner = $owner;
-        $this->name  = $name;
+    private function __construct(
+        private readonly string $owner,
+        private readonly string $name,
+    ) {
     }
 
     /**

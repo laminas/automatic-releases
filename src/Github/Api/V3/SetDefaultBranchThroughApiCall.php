@@ -12,7 +12,7 @@ use Psl\Type;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 
-final class SetDefaultBranchThroughApiCall implements SetDefaultBranch
+final readonly class SetDefaultBranchThroughApiCall implements SetDefaultBranch
 {
     private const API_ROOT = 'https://api.github.com/';
 

@@ -11,7 +11,7 @@ use Psl\Type;
 use Psr\Http\Message\UriInterface;
 
 /** @psalm-immutable */
-final class Label
+final readonly class Label
 {
     /**
      * @psalm-param non-empty-string $colour

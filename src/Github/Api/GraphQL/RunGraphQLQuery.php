@@ -12,7 +12,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 use function array_key_exists;
 
-final class RunGraphQLQuery implements RunQuery
+final readonly class RunGraphQLQuery implements RunQuery
 {
     private const ENDPOINT = 'https://api.github.com/graphql';
 

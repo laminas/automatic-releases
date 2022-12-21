@@ -18,7 +18,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-final class JwageGenerateChangelog implements GenerateChangelog
+final readonly class JwageGenerateChangelog implements GenerateChangelog
 {
     public function __construct(
         private readonly ChangelogGenerator $changelogGenerator,

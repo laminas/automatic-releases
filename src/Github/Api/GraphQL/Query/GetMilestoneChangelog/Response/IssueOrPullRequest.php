@@ -10,7 +10,7 @@ use Psl\Vec;
 use Psr\Http\Message\UriInterface;
 
 /** @psalm-immutable */
-final class IssueOrPullRequest
+final readonly class IssueOrPullRequest
 {
     /**
      * @param array<int, Label> $labels

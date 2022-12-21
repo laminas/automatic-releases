@@ -8,7 +8,7 @@ use Laminas\Diactoros\Uri;
 use Psl\Type;
 use Psr\Http\Message\UriInterface;
 
-final class Author
+final readonly class Author
 {
     /** @psalm-param non-empty-string $name */
     private function __construct(
