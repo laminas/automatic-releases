@@ -128,7 +128,7 @@ use const STDERR;
             $getMilestone,
             $commitChangelog,
             $createReleaseText,
-            new CreateTagViaConsole(new HasTagViaConsole()),
+            new CreateTagViaConsole(new HasTagViaConsole(), $logger),
             $push,
             $createRelease,
         ),

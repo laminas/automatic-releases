@@ -15,8 +15,10 @@ use Psl\Env;
 use Psl\Filesystem;
 use Psl\Shell;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 use function Psl\File\read;
+use function sprintf;
 
 /** @covers \Laminas\AutomaticReleases\Git\CreateTagViaConsole */
 final class CreateTagViaConsoleTest extends TestCase
@@ -48,6 +50,9 @@ final class CreateTagViaConsoleTest extends TestCase
 
     public function testCreatesSignedTag(): void
     {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method('info');
+
         $sourceUri = $this->createMock(UriInterface::class);
         $sourceUri->method('__toString')->willReturn($this->repository);
 
@@ -56,7 +61,7 @@ final class CreateTagViaConsoleTest extends TestCase
             ->with($this->repository, 'name-of-the-tag')
             ->willReturn(false);
 
-        (new CreateTagViaConsole($hasTag))(
+        (new CreateTagViaConsole($hasTag, $logger))(
             $this->repository,
             BranchName::fromName('tag-branch'),
             'name-of-the-tag',
@@ -76,31 +81,41 @@ final class CreateTagViaConsoleTest extends TestCase
 
     public function testSkipsIfTagAlreadyExists(): void
     {
+        $tagName = 'name-of-the-tag';
+        $logger  = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())
+            ->method('info');
+
         $sourceUri = $this->createMock(UriInterface::class);
         $sourceUri->method('__toString')->willReturn($this->repository);
 
         $hasTag = new HasTagViaConsole();
 
-        (new CreateTagViaConsole($hasTag))(
+        (new CreateTagViaConsole($hasTag, $logger))(
             $this->repository,
             BranchName::fromName('tag-branch'),
-            'name-of-the-tag',
+            $tagName,
             'changelog text for the tag',
             $this->key,
         );
 
-        Shell\execute('git', ['tag', '-v', 'name-of-the-tag'], $this->repository);
-        $fetchedTag = Shell\execute('git', ['show', 'name-of-the-tag'], $this->repository);
+        Shell\execute('git', ['tag', '-v', $tagName], $this->repository);
+        $fetchedTag = Shell\execute('git', ['show', $tagName], $this->repository);
 
         self::assertStringContainsString('tag name-of-the-tag', $fetchedTag);
         self::assertStringContainsString('changelog text for the tag', $fetchedTag);
         self::assertStringContainsString('a commit', $fetchedTag);
         self::assertStringContainsString('-----BEGIN PGP SIGNATURE-----', $fetchedTag);
 
-        (new CreateTagViaConsole($hasTag))(
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())
+            ->method('info')
+            ->with(sprintf('[CreateTagViaConsole] Skipping this step; tag "%s" already exists.', $tagName));
+
+        (new CreateTagViaConsole($hasTag, $logger))(
             $this->repository,
             BranchName::fromName('tag-branch'),
-            'name-of-the-tag',
+            $tagName,
             'changelog text for the tag',
             $this->key,
         );

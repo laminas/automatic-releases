@@ -10,13 +10,16 @@ use Psl\Env;
 use Psl\File;
 use Psl\Filesystem;
 use Psl\Shell;
+use Psr\Log\LoggerInterface;
 
 use function sprintf;
 
 final class CreateTagViaConsole implements CreateTag
 {
-    public function __construct(private HasTag $hasTag)
-    {
+    public function __construct(
+        private readonly HasTag $hasTag,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     public function __invoke(
@@ -26,7 +29,11 @@ final class CreateTagViaConsole implements CreateTag
         string $changelog,
         SecretKeyId $keyId,
     ): void {
-        if (($this->hasTag)($repositoryDirectory, $tagName) === true) {
+        if (($this->hasTag)($repositoryDirectory, $tagName)) {
+            $this->logger->info(
+                sprintf('[CreateTagViaConsole] Skipping this step; tag "%s" already exists.', $tagName),
+            );
+
             return;
         }
 
