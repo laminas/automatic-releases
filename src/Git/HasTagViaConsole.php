@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\AutomaticReleases\Git;
 
-use function Psl\Shell\execute;
+use Psl\Shell;
+
 use function str_contains;
 use function trim;
 
@@ -12,12 +13,12 @@ final class HasTagViaConsole implements HasTag
 {
     public function __invoke(string $repositoryDirectory, string $tagName): bool
     {
-        $outout = execute('git', ['tag', '--list', $tagName], $repositoryDirectory);
+        $output = Shell\execute('git', ['tag', '--list', $tagName], $repositoryDirectory);
 
-        if (trim($outout) === '') {
+        if (trim($output) === '') {
             return false;
         }
 
-        return str_contains($outout, $tagName);
+        return str_contains($output, $tagName);
     }
 }

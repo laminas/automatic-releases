@@ -6,11 +6,12 @@ namespace Laminas\AutomaticReleases\Git;
 
 use Laminas\AutomaticReleases\Git\Value\BranchName;
 use Laminas\AutomaticReleases\Gpg\SecretKeyId;
+use Psl\Env;
+use Psl\File;
+use Psl\Filesystem;
+use Psl\Shell;
 
-use function Psl\Env\temp_dir;
-use function Psl\File\write;
-use function Psl\Filesystem\create_temporary_file;
-use function Psl\Shell\execute;
+use function sprintf;
 
 final class CreateTagViaConsole implements CreateTag
 {
@@ -29,13 +30,13 @@ final class CreateTagViaConsole implements CreateTag
             return;
         }
 
-        $tagFileName = create_temporary_file(temp_dir(), 'created_tag');
+        $tagFileName = Filesystem\create_temporary_file(Env\temp_dir(), 'created_tag');
 
-        write($tagFileName, $changelog);
+        File\write($tagFileName, $changelog);
 
-        execute('git', ['checkout', $sourceBranch->name()], $repositoryDirectory);
+        Shell\execute('git', ['checkout', $sourceBranch->name()], $repositoryDirectory);
 
-        execute(
+        Shell\execute(
             'git',
             ['tag', $tagName, '-F', $tagFileName, '--cleanup=whitespace', '--local-user=' . $keyId->id()],
             $repositoryDirectory,
