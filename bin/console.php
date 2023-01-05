@@ -24,6 +24,7 @@ use Laminas\AutomaticReleases\Git\CommitFileViaConsole;
 use Laminas\AutomaticReleases\Git\CreateTagViaConsole;
 use Laminas\AutomaticReleases\Git\FetchAndSetCurrentUserByReplacingCurrentOriginRemote;
 use Laminas\AutomaticReleases\Git\GetMergeTargetCandidateBranchesFromRemoteBranches;
+use Laminas\AutomaticReleases\Git\HasTagViaConsole;
 use Laminas\AutomaticReleases\Git\PushViaConsole;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\Query\GetMilestoneFirst100IssuesAndPullRequests;
 use Laminas\AutomaticReleases\Github\Api\GraphQL\RunGraphQLQuery;
@@ -127,7 +128,7 @@ use const STDERR;
             $getMilestone,
             $commitChangelog,
             $createReleaseText,
-            new CreateTagViaConsole(),
+            new CreateTagViaConsole(new HasTagViaConsole(), $logger),
             $push,
             $createRelease,
         ),
