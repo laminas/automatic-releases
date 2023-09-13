@@ -8,7 +8,6 @@ namespace Laminas\AutomaticReleases\WebApplication;
 use ChangelogGenerator\GitHubOAuthToken;
 use DateTimeZone;
 use ErrorException;
-use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
