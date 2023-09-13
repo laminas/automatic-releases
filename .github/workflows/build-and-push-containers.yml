@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.AUTOMATIC_RELEASES_CONTAINER_PAT }}
 
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
