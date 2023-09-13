@@ -98,6 +98,7 @@ final class SetDefaultBranchThroughApiCallTest extends TestCase
             [200],
             [201],
             [204],
+            [299],
         ];
     }
 

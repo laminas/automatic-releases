@@ -10,9 +10,13 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
+use function in_array;
+
 /** @covers \Laminas\AutomaticReleases\HttpClient\LoggingHttpClient */
 final class LoggingHttpClientTest extends TestCase
 {
+    private int $callCount = 0;
+
     public function testWillLogRequestAndResponse(): void
     {
         $request  = Psr17FactoryDiscovery::findRequestFactory()->createRequest('get', 'http://example.com/foo/bar');
@@ -29,17 +33,33 @@ final class LoggingHttpClientTest extends TestCase
             ->with($request)
             ->willReturn($response);
 
+        $this->callCount = 0;
+
         $logger->expects(self::exactly(2))
             ->method('debug')
-            ->withConsecutive(
-                ['Sending request {request}', ['request' => $request]],
-                [
-                    'Received response {response} to request {request}',
-                    [
-                        'request'  => $request,
-                        'response' => $response,
-                    ],
-                ],
+            ->with(
+                self::callback(static function (string $message): bool {
+                    self::assertTrue(in_array($message, [
+                        'Sending request {request}',
+                        'Received response {response} to request {request}',
+                    ], true));
+
+                    return true;
+                }),
+                self::callback(function (array $params) use ($request, $response): bool {
+                    $this->callCount++;
+                    self::assertArrayHasKey('request', $params);
+                    self::assertSame($request, $params['request']);
+
+                    if ($this->callCount === 1) {
+                        return true;
+                    }
+
+                    self::assertArrayHasKey('response', $params);
+                    self::assertSame($response, $params['response']);
+
+                    return true;
+                }),
             );
 
         self::assertSame(

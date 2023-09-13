@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use UnexpectedValueException;
 
 /** @covers \Laminas\AutomaticReleases\Application\Command\CreateMilestones */
 final class CreateMilestonesTest extends TestCase
@@ -30,6 +31,8 @@ final class CreateMilestonesTest extends TestCase
     private MilestoneClosedEvent $event;
 
     private SemVerVersion $releaseVersion;
+
+    private int $callCount = 0;
 
     protected function setUp(): void
     {
@@ -73,22 +76,27 @@ final class CreateMilestonesTest extends TestCase
             ->method('__invoke')
             ->willReturn($this->event);
 
+        $this->callCount = 0;
+
+        $match = function (SemVerVersion $version): bool {
+            match ($this->callCount) {
+                0 => self::assertEquals($this->releaseVersion->nextPatch(), $version),
+                1 => self::assertEquals($this->releaseVersion->nextMinor(), $version),
+                2 => self::assertEquals($this->releaseVersion->nextMajor(), $version),
+                default => throw new UnexpectedValueException('Expected no more than 3 calls to __invoke()'),
+            };
+
+            $this->callCount++;
+
+            return true;
+        };
+
         $this->createMilestone
             ->expects(self::exactly(3))
             ->method('__invoke')
-            ->withConsecutive(
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextPatch()),
-                ],
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextMinor()),
-                ],
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextMajor()),
-                ],
+            ->with(
+                self::equalTo(RepositoryName::fromFullName('foo/bar')),
+                self::callback($match),
             );
 
         self::assertSame(0, $this->command->execute(new ArrayInput([]), new NullOutput()));
@@ -101,22 +109,27 @@ final class CreateMilestonesTest extends TestCase
             ->method('__invoke')
             ->willReturn($this->event);
 
+        $this->callCount = 0;
+
+        $match = function (SemVerVersion $version): bool {
+            match ($this->callCount) {
+                0 => self::assertEquals($this->releaseVersion->nextPatch(), $version),
+                1 => self::assertEquals($this->releaseVersion->nextMinor(), $version),
+                2 => self::assertEquals($this->releaseVersion->nextMajor(), $version),
+                default => throw new UnexpectedValueException('Expected no more than 3 calls to __invoke()'),
+            };
+
+            $this->callCount++;
+
+            return true;
+        };
+
         $this->createMilestone
             ->expects(self::exactly(3))
             ->method('__invoke')
-            ->withConsecutive(
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextPatch()),
-                ],
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextMinor()),
-                ],
-                [
-                    self::equalTo(RepositoryName::fromFullName('foo/bar')),
-                    self::equalTo($this->releaseVersion->nextMajor()),
-                ],
+            ->with(
+                self::equalTo(RepositoryName::fromFullName('foo/bar')),
+                self::callback($match),
             )
             ->willReturnOnConsecutiveCalls(
                 self::throwException(

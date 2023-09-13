@@ -8,8 +8,8 @@ namespace Laminas\AutomaticReleases\WebApplication;
 use ChangelogGenerator\GitHubOAuthToken;
 use DateTimeZone;
 use ErrorException;
-use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Laminas\AutomaticReleases\Application\Command\BumpChangelogForReleaseBranch;
 use Laminas\AutomaticReleases\Application\Command\CreateMergeUpPullRequest;
 use Laminas\AutomaticReleases\Application\Command\CreateMilestones;
@@ -77,7 +77,7 @@ use const STDERR;
     $fetch                = new FetchAndSetCurrentUserByReplacingCurrentOriginRemote($variables);
     $getCandidateBranches = new GetMergeTargetCandidateBranchesFromRemoteBranches();
     $makeRequests         = Psr17FactoryDiscovery::findRequestFactory();
-    $httpClient           = new LoggingHttpClient(HttpClientDiscovery::find(), $logger);
+    $httpClient           = new LoggingHttpClient(Psr18ClientDiscovery::find(), $logger);
     $githubToken          = $variables->githubToken();
     $getMilestone         = new GetMilestoneFirst100IssuesAndPullRequests(new RunGraphQLQuery(
         $makeRequests,
