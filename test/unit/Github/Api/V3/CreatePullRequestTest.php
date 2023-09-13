@@ -45,7 +45,22 @@ final class CreatePullRequestTest extends TestCase
         );
     }
 
-    public function testSuccessfulRequest(): void
+    /** @return array<string, array{0: int<200, 299>}> */
+    public static function successCodes(): array
+    {
+        return [
+            'min' => [200],
+            'mid' => [250],
+            'max' => [299],
+        ];
+    }
+
+    /**
+     * @param int<200, 299> $responseCode
+     *
+     * @dataProvider successCodes
+     */
+    public function testSuccessfulRequest(int $responseCode): void
     {
         $this->messageFactory
             ->expects(self::any())
@@ -53,7 +68,7 @@ final class CreatePullRequestTest extends TestCase
             ->with('POST', 'https://api.github.com/repos/foo/bar/pulls')
             ->willReturn(new Request('https://the-domain.com/the-path'));
 
-        $validResponse = new Response();
+        $validResponse = (new Response())->withStatus($responseCode);
 
         $validResponse->getBody()->write(
             <<<'JSON'
