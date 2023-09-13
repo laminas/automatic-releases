@@ -4,19 +4,19 @@
 [![Psalm coverage](https://shepherd.dev/github/laminas/automatic-releases/coverage.svg?)](https://shepherd.dev/github/laminas/automatic-releases)
 
 > ## 🇷🇺 Русским гражданам
-> 
+>
 > Мы, участники Laminas, родились и живем в разных странах. У многих из нас есть друзья, родственники и коллеги как в России, так и в Украине. Некоторые из нас родились в России. Некоторые из нас живут в России. У некоторых бабушки и дедушки сражались с фашистами во Второй мировой войне. Здесь никто не поддерживает фашизм.
-> 
+>
 > У одного из нас есть украинская родственница, которая спаслась из дома вместе с сыном. Поезд задержался из-за бомбежки на дороге впереди. У нас есть друзья, которые прячутся в бомбоубежищах. Мы с тревогой ждем весточки от них после воздушных налетов, которые беспорядочно наносят удары и попадают по больницам, школам, детским садам и домам. Мы не берем это из каких-либо СМИ. Мы наблюдаем это напрямую.
-> 
+>
 > Вы доверяете нам достаточно, чтоб использовать наши программы, и мы просим вас довериться нам вновь. Мы нуждаемся в помощи. Выходите и протестуйте против этой бесполезной войны. Остановите кровопролитие. Скажите "Нет войне!"
-> 
+>
 > ## 🇺🇸 To Citizens of Russia
-> 
+>
 > We at Laminas come from all over the world. Many of us have friends, family and colleagues in both Russia and Ukraine. Some of us were born in Russia. Some of us currently live in Russia. Some have grandparents who fought Nazis in World War II. Nobody here supports fascism.
-> 
+>
 > One team member has a Ukrainian relative who fled her home with her son. The train was delayed due to bombing on the road ahead. We have friends who are hiding in bomb shelters. We anxiously follow up on them after the air raids, which indiscriminately fire at hospitals, schools, kindergartens and houses. We're not taking this from any media. These are our actual experiences.
-> 
+>
 > You trust us enough to use our software. We ask that you trust us to say the truth on this. We need your help. Go out and protest this unnecessary war. Stop the bloodshed. Say "stop the war!"
 
 This project is a [Github Action](https://github.com/features/actions) that allows
@@ -78,13 +78,14 @@ Next export the new sub key:
 ```bash
 gpg --output private.key --armor --export-secret-subkeys "<SubKey ID>!"
 ```
+
 This will be exported to the file `private.key`.
 The `!` at the end is important as it limits the export to just the sub key
 
-**Delete the file once you are done and don't share it with anyone else**
+**Delete the file once you are done** and don't share it with anyone else
 
 If your master key is password protected, you will need to remove the password from the subkey before you can add it into github settings.
-You can skip this if your master key is not password protected. 
+You can skip this if your master key is not password protected.
 
 To remove the password from the subkey, create an ephemeral gpg home directory:
 
@@ -143,7 +144,7 @@ To generate a new GPG key use the following command:
 gpg2 --full-generate-key
 ```
 
-Pick option 4, then type `4096` for key size, select your desired expiry. 
+Pick option 4, then type `4096` for key size, select your desired expiry.
 Fill out the user information and leave the password blank.
 
 Once generated it will output something like `gpg: key <Key ID> marked as ultimately trusted`. Take a note of this Key Id to use in the next step.
@@ -154,7 +155,7 @@ Now output the key to the file `private.key` in the correct format to put into t
 gpg --output private.key --armor --export-secret-key <Key ID>
 ```
 
-**Delete the file once you are done and don't share it with anyone else**
+**Delete the file once you are done** and don't share it with anyone else
 
 Optionally, you can export the corresponding public key to the file `public.key`:
 
@@ -171,15 +172,15 @@ Assuming your project has Github Actions enabled, each time you [**close**](http
 a [**milestone**](https://docs.github.com/en/github/managing-your-work-on-github/creating-and-editing-milestones-for-issues-and-pull-requests),
 this action will perform all following steps (or stop with an error):
 
-1.  determine if all issues and pull requests associated with this milestone are closed
-2.  determine if the milestone is named with the SemVer `x.y.z` format
-3.  create a changelog by looking at the milestone description and associated issues and pull requests
-4.  select branch `x.y.z` for the release (e.g. `1.1.x` for a `1.1.0` release)
-5.  create a tag named `x.y.z` on the selected branch, with the generated changelog
-6.  publish a release named `x.y.z`, with the generated tag and changelog
-7.  create (if applicable), a pull request from the selected branch to the next release branch
-8.  create (if necessary) a "next minor" release branch `x.y+1.z`
-9.  switch default repository branch to newest release branch
+1. determine if all issues and pull requests associated with this milestone are closed
+2. determine if the milestone is named with the SemVer `x.y.z` format
+3. create a changelog by looking at the milestone description and associated issues and pull requests
+4. select branch `x.y.z` for the release (e.g. `1.1.x` for a `1.1.0` release)
+5. create a tag named `x.y.z` on the selected branch, with the generated changelog
+6. publish a release named `x.y.z`, with the generated tag and changelog
+7. create (if applicable), a pull request from the selected branch to the next release branch
+8. create (if necessary) a "next minor" release branch `x.y+1.z`
+9. switch default repository branch to newest release branch
 
 Please read the [`feature/`](./feature) specification for more detailed scenarios on how the tool is supposed
 to operate.
@@ -189,7 +190,7 @@ to operate.
 In this model we operate with release branches (e.g. `1.0.x`, `1.1.x`, `1.2.x`).
 This provides a lot of flexibility whilst keeping a single workflow.
 
-![](./docs/branching-model.svg)
+![Branching model visualisation](./docs/branching-model.svg)
 
 ### Working on new features
 
@@ -218,7 +219,7 @@ default branch. This ensures that all release branches are up-to-date and will n
 has already been fixed. Merge-up branches are automatically created but needs to be merged manually into
 the targeted branch.
 
-**Example**
+#### Example
 
 Let's say we've released the versions `1.0.0` and `1.1.0`.
 New features are being developed on `1.2.x`.
