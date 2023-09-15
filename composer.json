@@ -10,7 +10,7 @@
         "laminas/laminas-diactoros": "^2.25.2",
         "lcobucci/clock": "^3.1.0",
         "monolog/monolog": "^3.4.0",
-        "ocramius/package-versions": "^2.7.0",
+        "ocramius/package-versions": "^2.8.0",
         "phly/keep-a-changelog": "^2.12.1",
         "php-http/curl-client": "^2.3.0",
         "php-http/discovery": "^1.19.1",
