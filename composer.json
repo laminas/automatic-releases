@@ -12,7 +12,7 @@
         "monolog/monolog": "^3.5.0",
         "ocramius/package-versions": "^2.8.0",
         "phly/keep-a-changelog": "^2.12.1",
-        "php-http/curl-client": "^2.3.0",
+        "php-http/curl-client": "^2.3.1",
         "php-http/discovery": "^1.19.1",
         "php-http/httplug": "^2.4.0",
         "psr/http-client": "^1.0.3",

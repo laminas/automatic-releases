@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af77aa23fc6c692a74aa3c7888dcbb09",
+    "content-hash": "bc1afbcc81c514dfedfc5e0f896c343a",
     "packages": [
         {
             "name": "azjezz/psl",
@@ -1228,16 +1228,16 @@
         },
         {
             "name": "php-http/curl-client",
-            "version": "2.3.0",
+            "version": "2.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/curl-client.git",
-                "reference": "f7352c0796549949900d28fe991e19c90572386a"
+                "reference": "085570be588f7cbdc4601e78886eea5b7051ad71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/curl-client/zipball/f7352c0796549949900d28fe991e19c90572386a",
-                "reference": "f7352c0796549949900d28fe991e19c90572386a",
+                "url": "https://api.github.com/repos/php-http/curl-client/zipball/085570be588f7cbdc4601e78886eea5b7051ad71",
+                "reference": "085570be588f7cbdc4601e78886eea5b7051ad71",
                 "shasum": ""
             },
             "require": {
@@ -1248,7 +1248,7 @@
                 "php-http/message": "^1.2",
                 "psr/http-client": "^1.0",
                 "psr/http-factory-implementation": "^1.0",
-                "symfony/options-resolver": "^3.4 || ^4.0 || ^5.0 || ^6.0"
+                "symfony/options-resolver": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "provide": {
                 "php-http/async-client-implementation": "1.0",
@@ -1259,6 +1259,7 @@
                 "guzzlehttp/psr7": "^1.0",
                 "laminas/laminas-diactoros": "^2.0",
                 "php-http/client-integration-tests": "^3.0",
+                "php-http/message-factory": "^1.1",
                 "phpunit/phpunit": "^7.5 || ^9.4"
             },
             "type": "library",
@@ -1286,9 +1287,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/curl-client/issues",
-                "source": "https://github.com/php-http/curl-client/tree/2.3.0"
+                "source": "https://github.com/php-http/curl-client/tree/2.3.1"
             },
-            "time": "2023-04-28T14:56:41+00:00"
+            "time": "2023-11-03T15:32:00+00:00"
         },
         {
             "name": "php-http/discovery",
