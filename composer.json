@@ -16,7 +16,7 @@
         "php-http/discovery": "^1.19.3",
         "php-http/httplug": "^2.4.0",
         "psr/http-client": "^1.0.3",
-        "psr/http-message": "^1.1",
+        "psr/http-message": "^2.0",
         "psr/log": "^3.0.0",
         "symfony/console": "^6.4.4"
     },
