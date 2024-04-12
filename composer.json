@@ -9,7 +9,7 @@
         "jwage/changelog-generator": "^1.4.0",
         "laminas/laminas-diactoros": "^2.26.0",
         "lcobucci/clock": "^3.2.0",
-        "monolog/monolog": "^3.5.0",
+        "monolog/monolog": "^3.6.0",
         "ocramius/package-versions": "^2.8.0",
         "phly/keep-a-changelog": "^2.12.1",
         "php-http/curl-client": "^2.3.2",
