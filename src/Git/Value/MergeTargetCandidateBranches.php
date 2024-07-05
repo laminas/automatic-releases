@@ -95,7 +95,7 @@ final readonly class MergeTargetCandidateBranches
     {
         return Iter\any(
             $this->sortedBranches,
-            static fn (BranchName $branch): bool => $needle->equals($branch)
+            static fn (BranchName $branch): bool => $needle->equals($branch),
         );
     }
 
