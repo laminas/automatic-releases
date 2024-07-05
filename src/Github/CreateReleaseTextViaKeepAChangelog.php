@@ -25,7 +25,7 @@ use function preg_quote;
 
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
-    /** @psalm-var list<string> */
+    /** @psalm-var non-empty-list<string> */
     private const DEFAULT_SECTIONS = [
         'Added',
         'Changed',
@@ -199,7 +199,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
         foreach (Str\Byte\split($contents, "\n") as $index => $line) {
             // If we identified an entry for our version previously, and have
             // now reached a boundary, we are done.
-            if ($entryIndex && Regex\matches($line, $boundaryRegex)) {
+            if ((bool) $entryIndex && Regex\matches($line, $boundaryRegex)) {
                 break;
             }
 
@@ -213,7 +213,7 @@ class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 
             // Are we currently in the contents for the requested version? If
             // not, move on to the next line.
-            if (! $entryIndex) {
+            if (! (bool) $entryIndex) {
                 continue;
             }
 

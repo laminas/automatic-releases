@@ -31,9 +31,9 @@ final readonly class MergeMultipleReleaseNotes implements CreateReleaseText
         $items = Vec\map(
             Vec\filter(
                 $this->releaseTextGenerators,
-                static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
+                static fn (CreateReleaseText $generator): bool => $generator->canCreateReleaseText($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
             ),
-            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory)
+            static fn (CreateReleaseText $generator): ChangelogReleaseNotes => $generator($milestone, $repositoryName, $semVerVersion, $sourceBranch, $repositoryDirectory),
         );
 
         $releaseNotes = Iter\reduce(
