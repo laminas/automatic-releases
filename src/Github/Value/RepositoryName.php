@@ -28,7 +28,6 @@ final readonly class RepositoryName
 
     /**
      * @psalm-pure
-     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\non_empty_string()} API is pure by design
      * @psalm-suppress ImpureMethodCall the {@see \Psl\Type\TypeInterface::assert()} API is conditionally pure
      */
     public static function fromFullName(string $fullName): self
