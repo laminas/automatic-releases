@@ -209,7 +209,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
         return $repo;
     }
 
-    private const INVALID_CHANGELOG = <<< 'END'
+    private const string INVALID_CHANGELOG = <<< 'END'
         # NOT A CHANGELOG
 
         This file is not a changelog.
@@ -220,7 +220,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         END;
 
-    private const READY_CHANGELOG = <<< 'END'
+    private const string READY_CHANGELOG = <<< 'END'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.
@@ -271,7 +271,7 @@ class CreateReleaseTextViaKeepAChangelogTest extends TestCase
 
         END;
 
-    private const CHANGELOG_MULTI_SECTION = <<< 'END'
+    private const string CHANGELOG_MULTI_SECTION = <<< 'END'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

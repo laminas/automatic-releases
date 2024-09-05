@@ -30,7 +30,6 @@ final readonly class Label
      * @psalm-pure
      *
      * @psalm-suppress ImpureMethodCall     {@see https://github.com/azjezz/psl/issues/130}
-     * @psalm-suppress ImpureFunctionCall   {@see https://github.com/azjezz/psl/issues/130}
      */
     public static function fromPayload(array $payload): self
     {

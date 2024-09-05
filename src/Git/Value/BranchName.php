@@ -19,7 +19,6 @@ final readonly class BranchName
 
     /**
      * @pure
-     * @psalm-suppress ImpureFunctionCall the {@see \Psl\Type\non_empty_string()} API is pure by design
      * @psalm-suppress ImpureMethodCall the {@see \Psl\Type\TypeInterface::assert()} API is conditionally pure
      */
     public static function fromName(string $name): self

@@ -10,8 +10,8 @@ use Laminas\AutomaticReleases\Gpg\SecretKeyId;
 
 interface BumpAndCommitChangelogVersion
 {
-    public const BUMP_MINOR = 'bumpMinorVersion';
-    public const BUMP_PATCH = 'bumpPatchVersion';
+    public const string BUMP_MINOR = 'bumpMinorVersion';
+    public const string BUMP_PATCH = 'bumpPatchVersion';
 
     /**
      * @psalm-param self::BUMP_*     $bumpType

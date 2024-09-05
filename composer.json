@@ -4,8 +4,8 @@
     "description": "Application that eases release management in the Laminas organisation through GitHub actions",
     "license": "BSD-3-Clause",
     "require": {
-        "php": "~8.2.0",
-        "azjezz/psl": "^2.9.1",
+        "php": "~8.3.0",
+        "azjezz/psl": "^3.0.0",
         "jwage/changelog-generator": "^1.4.0",
         "laminas/laminas-diactoros": "^2.26.0",
         "lcobucci/clock": "^3.2.0",

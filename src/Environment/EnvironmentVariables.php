@@ -15,7 +15,7 @@ use function Psl\Str\format;
 /** @psalm-immutable */
 class EnvironmentVariables implements Variables
 {
-    private const LOG_LEVELS = [
+    private const array LOG_LEVELS = [
         '100',
         '200',
         '250',

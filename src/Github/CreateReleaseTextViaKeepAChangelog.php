@@ -26,7 +26,7 @@ use function preg_quote;
 class CreateReleaseTextViaKeepAChangelog implements CreateReleaseText
 {
     /** @psalm-var non-empty-list<string> */
-    private const DEFAULT_SECTIONS = [
+    private const array DEFAULT_SECTIONS = [
         'Added',
         'Changed',
         'Deprecated',
