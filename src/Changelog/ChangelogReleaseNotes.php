@@ -13,7 +13,7 @@ use RuntimeException;
 /** @psalm-immutable */
 class ChangelogReleaseNotes
 {
-    private const CONCATENATION_STRING = "\n\n-----\n\n";
+    private const string CONCATENATION_STRING = "\n\n-----\n\n";
 
     /** @psalm-param non-empty-string $changelogFile */
     public static function writeChangelogFile(string $changelogFile, self $releaseNotes): void

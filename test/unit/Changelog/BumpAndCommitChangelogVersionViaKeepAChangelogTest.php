@@ -209,7 +209,7 @@ class BumpAndCommitChangelogVersionViaKeepAChangelogTest extends TestCase
         return $changelogFile;
     }
 
-    private const CHANGELOG_STUB = <<< 'CHANGELOG'
+    private const string CHANGELOG_STUB = <<< 'CHANGELOG'
         # Changelog
         
         All notable changes to this project will be documented in this file, in reverse chronological order by release.

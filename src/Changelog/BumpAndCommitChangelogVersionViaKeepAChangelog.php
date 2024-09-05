@@ -17,9 +17,9 @@ use Psr\Log\LoggerInterface;
 
 class BumpAndCommitChangelogVersionViaKeepAChangelog implements BumpAndCommitChangelogVersion
 {
-    private const CHANGELOG_FILE = 'CHANGELOG.md';
+    private const string CHANGELOG_FILE = 'CHANGELOG.md';
 
-    private const COMMIT_TEMPLATE = <<< 'COMMIT'
+    private const string COMMIT_TEMPLATE = <<< 'COMMIT'
         Bumps changelog version to %s
 
         Updates the %s file to add a changelog entry for a new %s version.
