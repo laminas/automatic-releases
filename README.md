@@ -59,6 +59,12 @@ you when you enable GitHub Actions. To learn more about how it works, read
 ["Authenticating with the GITHUB\_TOKEN"](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token)
 in the GitHub Docs.
 
+### Required Repository Settings
+
+Workflow permissions for the target repository must be set to Read and Write.
+Additionally, you must check the box to "Allow GitHub Actions to create and approve pull requests" in Settings > Actions > General.
+You can find the settings in: `github.com/ORG-NAME/REPO-NAME/settings/actions`
+
 ### Setting up GPG keys
 
 #### Using a subkey from an existing GPG key
