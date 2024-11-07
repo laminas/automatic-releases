@@ -20,6 +20,18 @@ use function preg_quote;
 final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
     private const TEMPLATE = <<<'MARKDOWN'
+### Release Notes for %release%
+
+%description%
+
+%changelogText%
+MARKDOWN;
+
+    private const HEADING_REGEX = '/^#+\s+(.+)$/m';
+
+final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseText
+{
+    private const TEMPLATE = <<<'MARKDOWN'
         ### Release Notes for %release%
         
         %description%
@@ -53,6 +65,7 @@ final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseT
 
         Type\non_empty_string()->assert($text);
 
+        return new ChangelogReleaseNotes($this->formatChangelogText($text));
         return new ChangelogReleaseNotes($text);
     }
 
@@ -77,6 +90,35 @@ final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseT
         $changelog = $this->removeRedundantVersionHeadings($changelog, $version);
 
         return $this->collapseMultiLineBreaks($changelog);
+    }
+
+    private function formatChangelogText(string $text): string
+    {
+        $lines = Str\split($text, "\n");
+        $formattedLines = [];
+        $inList = false;
+
+        foreach ($lines as $line) {
+            if (Regex\matches($line, self::HEADING_REGEX)) {
+                if ($inList) {
+                    $formattedLines[] = '';
+                    $inList = false;
+                }
+                $formattedLines[] = $line;
+                $formattedLines[] = '';
+            } elseif (Str\starts_with(Str\trim($line), '-')) {
+                $formattedLines[] = $line;
+                $inList = true;
+            } elseif ($inList && Str\trim($line) !== '') {
+                $formattedLines[count($formattedLines) - 1] .= ' ' . Str\trim($line);
+            } elseif (Str\trim($line) !== '') {
+                $formattedLines[] = $line;
+                $inList = false;
+            }
+        }
+
+        return Str\join($formattedLines, "\n");
+
     }
 
     /**
