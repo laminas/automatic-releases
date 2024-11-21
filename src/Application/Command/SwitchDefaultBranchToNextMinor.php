@@ -58,9 +58,16 @@ final class SwitchDefaultBranchToNextMinor extends Command
         $nextDefaultBranch = $mergeCandidates->newestFutureReleaseBranchAfter($releaseVersion);
 
         if (! $mergeCandidates->contains($nextDefaultBranch)) {
+            $baseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
+            if ($baseBranch === null) {
+                $output->writeln('Target branch for release was not found');
+
+                return 1;
+            }
+
             $this->push->__invoke(
                 $repositoryPath,
-                $newestBranch->name(),
+                $baseBranch->name(),
                 $nextDefaultBranch->name(),
             );
             ($this->bumpChangelogVersion)(

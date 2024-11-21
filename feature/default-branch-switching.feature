@@ -18,6 +18,7 @@ Feature: Default branch switching
       | 1.1.x  |
       | 1.2.x  |
       | 1.3.x  |
+    And branch "1.3.x" should branch from "1.2.x"
     And the default branch should be "1.3.x"
 
   Scenario: The latest pre-existing minor release branch is set as default branch on a successful release
@@ -59,6 +60,7 @@ Feature: Default branch switching
       | 1.2.x  |
       | 2.0.x  |
       | 2.1.x  |
+    And branch "2.1.x" should branch from "2.0.x"
     And the default branch should be "2.1.x"
 
   Scenario: A pre-existing branch of a new major release is not set as default branch on release
@@ -80,6 +82,7 @@ Feature: Default branch switching
       | 1.2.x  |
       | 1.3.x  |
       | 2.0.x  |
+    And branch "1.3.x" should branch from "1.2.x"
     And the default branch should be "1.3.x"
 
   Scenario: A pre-existing minor branch of a greater major release is set as default branch on release

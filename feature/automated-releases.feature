@@ -13,7 +13,7 @@ Feature: Automated releases
     When I close milestone "2.0.0"
     Then the tool should have halted with an error
 
-  Scenario: If no major release branch exists, the tool should not create a new minor release
+  Scenario: If no matching minor release branch exists, the tool should not create a new minor release
     Given following existing branches:
       | name    |
       | 1.0.x   |
@@ -38,7 +38,8 @@ Feature: Automated releases
     When I close milestone "2.0.0"
     Then tag "2.0.0" should have been created on branch "2.0.x"
 
-  Scenario: If a new major release branch exists, the tool does not create a new minor release
+  Scenario: If no matching minor release branch exists and new major release branch exists,
+  the tool does not create a new minor release
     Given following existing branches:
       | name    |
       | 1.0.x   |
