@@ -190,7 +190,7 @@ class CreateMilestoneTest extends TestCase
                 self::assertJsonStringEqualsJsonString(
                     <<<'JSON'
                     {
-                        "description": "Backwards incompatible release (major)",
+                        "description": "Backward incompatible release (major)",
                         "title": "3.0.0"
                     }
                     JSON,
