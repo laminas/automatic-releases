@@ -82,7 +82,7 @@ final readonly class CreateMilestoneThroughApiCall implements CreateMilestone
     private function milestoneDescription(SemVerVersion $version): string
     {
         if ($version->isNewMajorRelease()) {
-            return 'Backwards incompatible release (major)';
+            return 'Backward incompatible release (major)';
         }
 
         if ($version->isNewMinorRelease()) {
