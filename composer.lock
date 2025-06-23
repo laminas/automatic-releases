@@ -5540,16 +5540,16 @@
         },
         {
             "name": "sanmai/pipeline",
-            "version": "6.16",
+            "version": "6.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sanmai/pipeline.git",
-                "reference": "f32413630904f83b069a7fbdfab34267dbaecdb6"
+                "reference": "491b172349d77c9e2f2f2aa1791c9de95bfd1abe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sanmai/pipeline/zipball/f32413630904f83b069a7fbdfab34267dbaecdb6",
-                "reference": "f32413630904f83b069a7fbdfab34267dbaecdb6",
+                "url": "https://api.github.com/repos/sanmai/pipeline/zipball/491b172349d77c9e2f2f2aa1791c9de95bfd1abe",
+                "reference": "491b172349d77c9e2f2f2aa1791c9de95bfd1abe",
                 "shasum": ""
             },
             "require": {
@@ -5593,7 +5593,7 @@
             "description": "General-purpose collections pipeline",
             "support": {
                 "issues": "https://github.com/sanmai/pipeline/issues",
-                "source": "https://github.com/sanmai/pipeline/tree/6.16"
+                "source": "https://github.com/sanmai/pipeline/tree/6.17"
             },
             "funding": [
                 {
@@ -5601,7 +5601,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-02T06:36:22+00:00"
+            "time": "2025-06-16T07:09:33+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6701,16 +6701,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.13.1",
+            "version": "3.13.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "1b71b4dd7e7ef651ac749cea67e513c0c832f4bd"
+                "reference": "5b5e3821314f947dd040c70f7992a64eac89025c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/1b71b4dd7e7ef651ac749cea67e513c0c832f4bd",
-                "reference": "1b71b4dd7e7ef651ac749cea67e513c0c832f4bd",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/5b5e3821314f947dd040c70f7992a64eac89025c",
+                "reference": "5b5e3821314f947dd040c70f7992a64eac89025c",
                 "shasum": ""
             },
             "require": {
@@ -6781,7 +6781,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2025-06-12T15:04:34+00:00"
+            "time": "2025-06-17T22:17:01+00:00"
         },
         {
             "name": "symfony/filesystem",
