@@ -19,7 +19,7 @@ use function preg_quote;
 
 final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseText
 {
-    private const TEMPLATE = <<<'MARKDOWN'
+    private const string TEMPLATE = <<<'MARKDOWN'
         ### Release Notes for %release%
         
         %description%
@@ -28,7 +28,7 @@ final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseT
         
         MARKDOWN;
 
-    public function __construct(private readonly GenerateChangelog $generateChangelog)
+    public function __construct(private GenerateChangelog $generateChangelog)
     {
     }
 

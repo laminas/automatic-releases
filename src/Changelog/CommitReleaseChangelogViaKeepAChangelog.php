@@ -16,9 +16,9 @@ use Psr\Log\LoggerInterface;
 
 final readonly class CommitReleaseChangelogViaKeepAChangelog implements CommitReleaseChangelog
 {
-    private const CHANGELOG_FILE = 'CHANGELOG.md';
+    private const string CHANGELOG_FILE = 'CHANGELOG.md';
 
-    private const COMMIT_TEMPLATE = <<< 'COMMIT'
+    private const string COMMIT_TEMPLATE = <<< 'COMMIT'
         %s readiness
 
         Updates the %s to set the release date.

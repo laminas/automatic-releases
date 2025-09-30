@@ -14,13 +14,13 @@ use function array_key_exists;
 
 final readonly class RunGraphQLQuery implements RunQuery
 {
-    private const ENDPOINT = 'https://api.github.com/graphql';
+    private const string ENDPOINT = 'https://api.github.com/graphql';
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        private readonly RequestFactoryInterface $messageFactory,
-        private readonly ClientInterface $client,
-        private readonly string $apiToken,
+        private RequestFactoryInterface $messageFactory,
+        private ClientInterface $client,
+        private string $apiToken,
     ) {
     }
 
