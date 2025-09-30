@@ -17,7 +17,7 @@ use function Psl\Env\set_var;
 
 final class EnvironmentVariablesTest extends TestCase
 {
-    private const RESET_ENVIRONMENT_VARIABLES = [
+    private const array RESET_ENVIRONMENT_VARIABLES = [
         'GITHUB_HOOK_SECRET',
         'GITHUB_TOKEN',
         'SIGNING_SECRET_KEY',

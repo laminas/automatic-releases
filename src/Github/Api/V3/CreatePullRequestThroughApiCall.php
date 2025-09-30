@@ -14,13 +14,13 @@ use Psr\Http\Message\RequestFactoryInterface;
 
 final readonly class CreatePullRequestThroughApiCall implements CreatePullRequest
 {
-    private const API_ROOT = 'https://api.github.com/';
+    private const string API_ROOT = 'https://api.github.com/';
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        private readonly RequestFactoryInterface $messageFactory,
-        private readonly ClientInterface $client,
-        private readonly string $apiToken,
+        private RequestFactoryInterface $messageFactory,
+        private ClientInterface $client,
+        private string $apiToken,
     ) {
     }
 

@@ -12,7 +12,7 @@ use Psl\Type;
 final readonly class GetMilestoneFirst100IssuesAndPullRequests implements GetGithubMilestone
 {
     // @TODO this fetches ONLY the first 100 issues!!!
-    private const QUERY = <<<'GRAPHQL'
+    private const string QUERY = <<<'GRAPHQL'
         query GetStuff($owner: String!, $repositoryName: String!, $milestoneNumber: Int!) {
           repository(name: $repositoryName, owner: $owner) {
             milestone (number: $milestoneNumber) {
@@ -66,7 +66,7 @@ final readonly class GetMilestoneFirst100IssuesAndPullRequests implements GetGit
         }
         GRAPHQL;
 
-    public function __construct(private readonly RunQuery $runQuery)
+    public function __construct(private RunQuery $runQuery)
     {
     }
 

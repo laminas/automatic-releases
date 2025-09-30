@@ -15,14 +15,14 @@ use Psr\Log\LoggerInterface;
 
 final readonly class CreateMilestoneThroughApiCall implements CreateMilestone
 {
-    private const API_ROOT = 'https://api.github.com/';
+    private const string API_ROOT = 'https://api.github.com/';
 
     /** @psalm-param non-empty-string $apiToken */
     public function __construct(
-        private readonly RequestFactoryInterface $messageFactory,
-        private readonly ClientInterface $client,
-        private readonly string $apiToken,
-        private readonly LoggerInterface $logger,
+        private RequestFactoryInterface $messageFactory,
+        private ClientInterface $client,
+        private string $apiToken,
+        private LoggerInterface $logger,
     ) {
     }
 
