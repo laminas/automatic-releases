@@ -38,7 +38,7 @@ Feature: Automated releases
     When I close milestone "2.0.0"
     Then tag "2.0.0" should have been created on branch "2.0.x"
 
-  Scenario: If a new major release branch exists, the tool does not create a new minor release
+  Scenario: If matching minor release branch exists, the tool does not create a new minor release
     Given following existing branches:
       | name    |
       | 1.0.x   |
@@ -65,6 +65,21 @@ Feature: Automated releases
     When I close milestone "1.1.0"
     Then tag "1.1.0" should have been created on branch "1.1.x"
     And a new pull request from branch "1.1.x" to "1.2.x" should have been created
+
+  Scenario: If a minor release branch exists, when closing the minor release milestone,
+  the tool tags the minor release from the branch, and creates a pull request
+  against the next newer minor or major release branch.
+    Given following existing branches:
+      | name   |
+      | 1.1.x  |
+      | 2.0.x  |
+      | master |
+    And following open milestones:
+      | name  |
+      | 1.1.0 |
+    When I close milestone "1.1.0"
+    Then tag "1.1.0" should have been created on branch "1.1.x"
+    And a new pull request from branch "1.1.x" to "2.0.x" should have been created
 
   Scenario: If no newer release branch exists, the tool will not create any pull requests
     Given following existing branches:

@@ -145,6 +145,146 @@ final class SwitchDefaultBranchToNextMinorTest extends TestCase
         self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
     }
 
+    public function testWillSwitchToExistingNewestDefaultBranchEvenWithNewMajorBranchExist(): void
+    {
+        $event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.3.0",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
+        );
+
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
+
+        $this->variables->method('githubWorkspacePath')
+            ->willReturn($workspace);
+
+        $this->loadEvent->method('__invoke')
+            ->willReturn($event);
+
+        $this->fetch->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                'https://github.com/foo/bar.git',
+                'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
+                $workspace,
+            );
+
+        $this->getMergeTargets->method('__invoke')
+            ->with($workspace)
+            ->willReturn(MergeTargetCandidateBranches::fromAllBranches(
+                BranchName::fromName('1.1.x'),
+                BranchName::fromName('1.2.x'),
+                BranchName::fromName('1.3.x'),
+                BranchName::fromName('2.0.x'),
+                BranchName::fromName('master'),
+            ));
+
+        $this->push->expects(self::once())
+            ->method('__invoke')
+            ->with($workspace, '1.3.x', '1.4.x');
+
+        $this->bumpChangelogVersion->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                BumpAndCommitChangelogVersion::BUMP_MINOR,
+                $workspace,
+                SemVerVersion::fromMilestoneName('1.3.0'),
+                BranchName::fromName('1.4.x'),
+            );
+
+        $this->setDefaultBranch->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                self::equalTo(RepositoryName::fromFullName('foo/bar')),
+                self::equalTo(BranchName::fromName('1.4.x')),
+            );
+
+        self::assertSame(0, $this->command->run(new ArrayInput([]), new NullOutput()));
+    }
+
+    public function testWillNotSwitchToBranchWhenTargetBranchNotFound(): void
+    {
+        $event = MilestoneClosedEvent::fromEventJson(
+            <<<'JSON'
+            {
+                "milestone": {
+                    "title": "1.4.0",
+                    "number": 123
+                },
+                "repository": {
+                    "full_name": "foo/bar"
+                },
+                "action": "closed"
+            }
+            JSON,
+        );
+
+        $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');
+
+        Filesystem\delete_file($workspace);
+        Filesystem\create_directory($workspace);
+        Filesystem\create_directory($workspace . '/.git');
+
+        $this->variables->method('githubWorkspacePath')
+            ->willReturn($workspace);
+
+        $this->loadEvent->method('__invoke')
+            ->willReturn($event);
+
+        $this->fetch->expects(self::once())
+            ->method('__invoke')
+            ->with(
+                'https://github.com/foo/bar.git',
+                'https://github-auth-token:x-oauth-basic@github.com/foo/bar.git',
+                $workspace,
+            );
+
+        $this->getMergeTargets->method('__invoke')
+            ->with($workspace)
+            ->willReturn(MergeTargetCandidateBranches::fromAllBranches(
+                BranchName::fromName('1.1.x'),
+                BranchName::fromName('1.2.x'),
+                BranchName::fromName('1.3.x'),
+                BranchName::fromName('2.0.x'),
+                BranchName::fromName('master'),
+            ));
+
+        $this->push->expects(self::never())
+            ->method('__invoke');
+
+        $this->bumpChangelogVersion->expects(self::never())
+            ->method('__invoke');
+
+        $this->setDefaultBranch->expects(self::never())
+            ->method('__invoke');
+
+        $output = new BufferedOutput();
+
+        self::assertSame(1, $this->command->run(new ArrayInput([]), $output));
+
+        self::assertSame(
+            <<<'OUTPUT'
+            Target branch for release [1.4.0] was not found. Expected [1.4.x] to exist.
+            
+            OUTPUT
+            ,
+            $output->fetch(),
+        );
+    }
+
     public function testWillSwitchToNewlyCreatedDefaultBranchWhenNoNewerReleaseBranchExists(): void
     {
         $workspace = Filesystem\create_temporary_file(Env\temp_dir(), 'workspace');

@@ -11,9 +11,9 @@ use Psl\Regex;
 final readonly class SemVerVersion
 {
     private function __construct(
-        private readonly int $major,
-        private readonly int $minor,
-        private readonly int $patch,
+        private int $major,
+        private int $minor,
+        private int $patch,
     ) {
     }
 

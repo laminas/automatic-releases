@@ -17,6 +17,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function sprintf;
+
 final class SwitchDefaultBranchToNextMinor extends Command
 {
     public function __construct(
@@ -58,9 +60,20 @@ final class SwitchDefaultBranchToNextMinor extends Command
         $nextDefaultBranch = $mergeCandidates->newestFutureReleaseBranchAfter($releaseVersion);
 
         if (! $mergeCandidates->contains($nextDefaultBranch)) {
+            $baseBranch = $mergeCandidates->targetBranchFor($releaseVersion);
+            if ($baseBranch === null) {
+                $output->writeln(sprintf(
+                    'Target branch for release [%s] was not found. Expected [%s] to exist.',
+                    $releaseVersion->fullReleaseName(),
+                    $releaseVersion->targetReleaseBranchName()->name(),
+                ));
+
+                return 1;
+            }
+
             $this->push->__invoke(
                 $repositoryPath,
-                $newestBranch->name(),
+                $baseBranch->name(),
                 $nextDefaultBranch->name(),
             );
             ($this->bumpChangelogVersion)(
