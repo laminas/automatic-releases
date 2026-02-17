@@ -7,6 +7,11 @@ on:
 jobs:
   release-container:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Compile tag list
         id: tags
