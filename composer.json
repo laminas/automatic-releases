@@ -5,7 +5,7 @@
     "license": "BSD-3-Clause",
     "require": {
         "php": "~8.3.12",
-        "azjezz/psl": "^4.2.1",
+        "azjezz/psl": "^5.5.0",
         "jwage/changelog-generator": "^1.4.0",
         "laminas/laminas-diactoros": "^2.26.0",
         "lcobucci/clock": "^3.3.1",
