@@ -7,5 +7,30 @@ on:
     tags:
 
 jobs:
-  ci:
-    uses: laminas/workflow-continuous-integration/.github/workflows/continuous-integration.yml@1.x
+  matrix:
+    name: Generate job matrix
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write # Creates checks
+      contents: read
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Gather CI configuration
+        id: matrix
+        uses: laminas/laminas-ci-matrix-action@6383012fc66934b529727af575aa783bd82a4c03 # 1.33.0
+
+  qa:
+    name: QA Checks
+    needs: [ matrix ]
+    runs-on: ${{ matrix.operatingSystem }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+    steps:
+      - name: ${{ matrix.name }}
+        uses: laminas/laminas-continuous-integration-action@07bce265971b2d19f607e47adbb3c04a913145ec # 1.45.0
+        with:
+          job: ${{ matrix.job }}
