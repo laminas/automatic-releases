@@ -18,4 +18,19 @@ jobs:
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
 
       - name: "Docker Build"
-        run: "DOCKER_BUILDKIT=1 docker build ."
+        run: "DOCKER_BUILDKIT=1 docker build --tag 'automatic-releases:ci' ."
+
+      # Regression test for https://github.com/laminas/automatic-releases/issues/304: a job runs this image
+      # several times with the same $HOME volume, and the second GPG import used to time out on the state
+      # left behind by the first one.
+      - name: "Import a GPG key twice, as a release job does"
+        run: |
+          mkdir -p "${RUNNER_TEMP}/github-home"
+          for attempt in 1 2; do
+            timeout 120 docker run --rm \
+              --volume "${RUNNER_TEMP}/github-home:/github/home" \
+              --volume "${GITHUB_WORKSPACE}/test/asset:/asset:ro" \
+              --env "HOME=/github/home" \
+              --entrypoint gpg \
+              'automatic-releases:ci' --batch --import /asset/dummy-gpg-key.asc
+          done
