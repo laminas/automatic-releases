@@ -36,6 +36,15 @@ COPY src /app/src/
 
 RUN composer dump-autoload -a --no-dev
 
+# Keep the GnuPG state inside the container. In GitHub Actions $HOME is a volume shared by every step of a
+# job, so a GNUPGHOME under $HOME leaks from one step to the next: the imported private key stays readable
+# by later steps, and GnuPG 2.4 makes it worse by enabling keyboxd when it creates a default home directory,
+# leaving a database and a dead socket that make the next import time out. A directory created here is fresh
+# in every container, so no state is ever shared. As a bonus, GnuPG 2.4 leaves an existing GNUPGHOME on the
+# plain keyring instead of switching it to keyboxd.
+ENV GNUPGHOME=/gnupg
+RUN mkdir -m 0700 /gnupg
+
 ENV SHELL_VERBOSITY=3
 
 ENTRYPOINT ["/app/bin/console.php"]
