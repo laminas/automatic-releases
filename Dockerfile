@@ -36,6 +36,9 @@ COPY src /app/src/
 
 RUN composer dump-autoload -a --no-dev
 
+# Keep the GnuPG state inside the container so it does not leak through the shared $HOME volume.
+ENV GNUPGHOME=/tmp
+
 ENV SHELL_VERBOSITY=3
 
 ENTRYPOINT ["/app/bin/console.php"]
