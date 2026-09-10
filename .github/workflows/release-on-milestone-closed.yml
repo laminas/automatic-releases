@@ -6,7 +6,72 @@ on:
       - "closed"
 
 jobs:
+  build-container:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # commit the pinned digest back to action.yml
+      packages: write
+
+    steps:
+      - name: "Compute version and branch from the milestone title"
+        id: "version"
+        env:
+          MILESTONE_TITLE: ${{ github.event.milestone.title }}
+        run: |
+          if ! echo "${MILESTONE_TITLE}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Milestone title '${MILESTONE_TITLE}' is not a valid version"
+            exit 1
+          fi
+          {
+            echo "tag=${MILESTONE_TITLE}"
+            echo "branch=$(echo "${MILESTONE_TITLE}" | cut -d. -f1-2).x"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: "Checkout"
+        uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7
+        with:
+          ref: ${{ steps.version.outputs.branch }}
+
+      - name: "Setup QEMU"
+        uses: "docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a" # v4
+
+      - name: "Setup Docker Buildx"
+        uses: "docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e" # v4
+
+      - name: "Login to GitHub Container Registry"
+        uses: "docker/login-action@dbcb813823bdd20940b903addbd779551569679f" # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Build and push"
+        id: "build"
+        uses: "docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a" # v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/laminas/automatic-releases:${{ steps.version.outputs.tag }}
+
+      - name: "Pin the image digest in action.yml"
+        run: |
+          IMAGE="docker://ghcr.io/laminas/automatic-releases:${{ steps.version.outputs.tag }}@${{ steps.build.outputs.digest }}"
+          sed -i "s|^  image: .*|  image: '${IMAGE}'|" action.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add action.yml
+          if git diff --cached --quiet; then
+            echo "action.yml already pins this digest, nothing to commit"
+            exit 0
+          fi
+          git commit -m "Pin release image to ${{ steps.version.outputs.tag }}@${{ steps.build.outputs.digest }}"
+          git push origin ${{ steps.version.outputs.branch }}
+
   release:
+    needs: "build-container"
     uses: laminas/workflow-automatic-releases/.github/workflows/release-on-milestone-closed.yml@1.x
     secrets:
       GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
