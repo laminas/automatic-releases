@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write # commit the pinned digest back to action.yml
       packages: write
 
     steps:
@@ -21,10 +21,19 @@ jobs:
           MAJOR="${PREFIX}:$(echo ${TAG} | cut -d. -f1)"
           MINOR="${MAJOR}.$(echo ${TAG} | cut -d. -f2)"
           PATCH="${PREFIX}:${TAG}"
-          echo "::set-output name=tags::[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
+          BRANCH="$(echo ${TAG} | cut -d. -f1-2).x"
+          {
+            echo "tag=${TAG}"
+            echo "patch=${PATCH}"
+            echo "branch=${BRANCH}"
+            echo "tags=[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ steps.tags.outputs.branch }}
+          fetch-depth: 0
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a # v4
@@ -40,6 +49,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
         with:
           context: .
@@ -47,3 +57,13 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ join(fromJSON(steps.tags.outputs.tags), ',') }}
+
+      - name: Pin the image digest in action.yml
+        run: |
+          IMAGE="docker://ghcr.io/laminas/automatic-releases:${{ steps.tags.outputs.tag }}@${{ steps.build.outputs.digest }}"
+          sed -i "s|^  image: .*|  image: '${IMAGE}'|" action.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add action.yml
+          git commit -m "Pin release image to ${{ steps.tags.outputs.tag }}@${{ steps.build.outputs.digest }}"
+          git push origin ${{ steps.tags.outputs.branch }}
