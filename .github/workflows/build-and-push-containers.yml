@@ -4,30 +4,31 @@ on:
   release:
     types: [published]
 
+env:
+  IMAGE: ghcr.io/laminas/automatic-releases
+
 jobs:
-  release-container:
-    runs-on: ubuntu-latest
+  # Each platform is built natively on a runner of its own architecture, and pushed by digest only:
+  # the tags are given once, to the manifest list that names both images.
+  build-container:
+    name: "Build container (${{ matrix.platform }})"
+    runs-on: ${{ matrix.runner }}
 
     permissions:
       contents: read
       packages: write
 
-    steps:
-      - name: Compile tag list
-        id: tags
-        run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          PREFIX=ghcr.io/laminas/automatic-releases
-          MAJOR="${PREFIX}:$(echo ${TAG} | cut -d. -f1)"
-          MINOR="${MAJOR}.$(echo ${TAG} | cut -d. -f2)"
-          PATCH="${PREFIX}:${TAG}"
-          echo "::set-output name=tags::[\"${MAJOR}\",\"${MINOR}\",\"${PATCH}\"]"
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-26.04
+          - platform: linux/arm64
+            runner: ubuntu-26.04-arm
 
+    steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
@@ -39,11 +40,84 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64
-          push: true
-          tags: ${{ join(fromJSON(steps.tags.outputs.tags), ',') }}
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/digests"
+          touch "${RUNNER_TEMP}/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: digest-${{ matrix.runner }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  release-container:
+    name: "Push the multi-platform container"
+    needs: build-container
+    runs-on: ubuntu-26.04
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Compile tag list
+        id: tags
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          MAJOR="${IMAGE}:$(echo "${TAG}" | cut -d. -f1)"
+          MINOR="${MAJOR}.$(echo "${TAG}" | cut -d. -f2)"
+          PATCH="${IMAGE}:${TAG}"
+          {
+            echo "major=${MAJOR}"
+            echo "minor=${MINOR}"
+            echo "patch=${PATCH}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Download digests
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push the manifest list
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          MAJOR: ${{ steps.tags.outputs.major }}
+          MINOR: ${{ steps.tags.outputs.minor }}
+          PATCH: ${{ steps.tags.outputs.patch }}
+        run: |
+          images=()
+          for digest in *; do
+            images+=("${IMAGE}@sha256:${digest}")
+          done
+          docker buildx imagetools create -t "${MAJOR}" -t "${MINOR}" -t "${PATCH}" "${images[@]}"
+
+      - name: Inspect the pushed image
+        env:
+          PATCH: ${{ steps.tags.outputs.patch }}
+        run: docker buildx imagetools inspect "${PATCH}"
