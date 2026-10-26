@@ -9,9 +9,15 @@ on:
 
 jobs:
   docker-build:
-    name: "Simulate Docker Build"
+    name: "Simulate Docker Build (${{ matrix.runner }})"
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-26.04
+          - ubuntu-26.04-arm
 
     steps:
       - name: "Checkout"
