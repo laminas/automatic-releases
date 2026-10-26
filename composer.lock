@@ -151,16 +151,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.16.0",
+            "version": "7.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "ffb62ec787050ae4fa9449cdd6b80335db69bda2"
+                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ffb62ec787050ae4fa9449cdd6b80335db69bda2",
-                "reference": "ffb62ec787050ae4fa9449cdd6b80335db69bda2",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/81755d989b3007ca7f88a069857553cd08e7dc2e",
+                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e",
                 "shasum": ""
             },
             "require": {
@@ -259,7 +259,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.16.0"
+                "source": "https://github.com/guzzle/guzzle/tree/7.16.1"
             },
             "funding": [
                 {
@@ -275,7 +275,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-18T13:38:36+00:00"
+            "time": "2026-10-25T21:35:21+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -3365,16 +3365,16 @@
         },
         {
             "name": "composer/semver",
-            "version": "3.5.1",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "528948210cc46f967a4b98e83b19e76f2b504993"
+                "reference": "9dfce66f1e97360ea5e6d3e38ab14277e4cc591e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/528948210cc46f967a4b98e83b19e76f2b504993",
-                "reference": "528948210cc46f967a4b98e83b19e76f2b504993",
+                "url": "https://api.github.com/repos/composer/semver/zipball/9dfce66f1e97360ea5e6d3e38ab14277e4cc591e",
+                "reference": "9dfce66f1e97360ea5e6d3e38ab14277e4cc591e",
                 "shasum": ""
             },
             "require": {
@@ -3426,7 +3426,7 @@
             "support": {
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/semver/issues",
-                "source": "https://github.com/composer/semver/tree/3.5.1"
+                "source": "https://github.com/composer/semver/tree/3.5.2"
             },
             "funding": [
                 {
@@ -3438,7 +3438,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-05T13:12:12+00:00"
+            "time": "2026-10-22T15:37:26+00:00"
         },
         {
             "name": "composer/xdebug-handler",
@@ -6661,32 +6661,32 @@
         },
         {
             "name": "slevomat/coding-standard",
-            "version": "8.31.1",
+            "version": "8.31.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slevomat/coding-standard.git",
-                "reference": "0a40807a48873948bfa7ffce2a4e69ba40cf5e76"
+                "reference": "d4fcefff8bec24814e1c165dfb4c3bdfa91faf5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/0a40807a48873948bfa7ffce2a4e69ba40cf5e76",
-                "reference": "0a40807a48873948bfa7ffce2a4e69ba40cf5e76",
+                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/d4fcefff8bec24814e1c165dfb4c3bdfa91faf5c",
+                "reference": "d4fcefff8bec24814e1c165dfb4c3bdfa91faf5c",
                 "shasum": ""
             },
             "require": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.2.1",
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpdoc-parser": "^2.3.3",
-                "squizlabs/php_codesniffer": "^4.0.1"
+                "phpstan/phpdoc-parser": "^2.3.6",
+                "squizlabs/php_codesniffer": "^4.0.4"
             },
             "require-dev": {
                 "phing/phing": "3.0.1|3.1.2",
                 "php-parallel-lint/php-parallel-lint": "1.4.0",
-                "phpstan/phpstan": "2.2.7",
+                "phpstan/phpstan": "2.3.2",
                 "phpstan/phpstan-deprecation-rules": "2.0.5",
-                "phpstan/phpstan-phpunit": "2.0.18",
-                "phpstan/phpstan-strict-rules": "2.0.12",
-                "phpunit/phpunit": "9.6.34|10.5.63|11.4.4|11.5.56|12.5.33"
+                "phpstan/phpstan-phpunit": "2.1.1",
+                "phpstan/phpstan-strict-rules": "2.1.0",
+                "phpunit/phpunit": "9.6.38|10.5.66|11.4.4|11.5.57|12.5.40"
             },
             "type": "phpcodesniffer-standard",
             "extra": {
@@ -6710,7 +6710,7 @@
             ],
             "support": {
                 "issues": "https://github.com/slevomat/coding-standard/issues",
-                "source": "https://github.com/slevomat/coding-standard/tree/8.31.1"
+                "source": "https://github.com/slevomat/coding-standard/tree/8.31.2"
             },
             "funding": [
                 {
@@ -6722,7 +6722,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-31T10:42:43+00:00"
+            "time": "2026-10-25T09:45:11+00:00"
         },
         {
             "name": "spatie/array-to-xml",
