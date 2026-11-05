@@ -99,7 +99,7 @@ final readonly class CreateReleaseTextThroughChangelog implements CreateReleaseT
         foreach ($lines as $i => $line) {
             // Does the line match one of the delimiter line types? If so,
             // capture that in $matches.
-            $matches = Regex\first_match($line, '/^(?P<delimiter>-{3,}|={3,})$/', Regex\capture_groups(['delimiter']));
+            $matches = Regex\first_match($line, '/^(?P<delimiter>-+|=+)$/', Regex\capture_groups(['delimiter']));
             if ($matches === null) {
                 continue;
             }
