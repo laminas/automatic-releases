@@ -34,8 +34,12 @@ final class CreateChangelogTextTest extends TestCase
             Bug
             ---
 
-
             - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
+
+            CI
+            --
+
+            - [1000: Update GitHub Actions workflow](https://www.example.com/issues/1000) thanks to @somebody
 
             NOTES;
 
@@ -67,6 +71,10 @@ final class CreateChangelogTextTest extends TestCase
                 
                 - [999: Some bug that got fixed](https://www.example.com/issues/999) thanks to @somebody
                 
+                #### CI
+
+                - [1000: Update GitHub Actions workflow](https://www.example.com/issues/1000) thanks to @somebody
+
                 RELEASE,
             (new CreateReleaseTextThroughChangelog($generateChangelog))
                 ->__invoke(
